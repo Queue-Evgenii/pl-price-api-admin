@@ -1,11 +1,43 @@
-# PL Price API Admin
+# 🧩 App: NestJS + Vue 3 + PostgreSQL + Docker
 
-Админ-панель для управления ценами через API.
+## 📦 Technologies
 
-## Установка
+- **Backend:** [NestJS](https://nestjs.com/) + TypeScript
+- **Frontend:** [Vue 3](https://vuejs.org/) + TypeScript + Vite
+- **Database:** PostgreSQL
+- **Containerization:** Docker + Docker Compose
+
+
+## 📁 Structure
+
+.
+│
+├── backend/
+│ └── Dockerfile
+│
+├── frontend-admin/
+│ └── Dockerfile
+│
+├── docker-compose.yml
+└── README.md
+
+
+## 🚀 Build & Run
+
+### ✨ Clone repository
 
 ```bash
-git clone https://github.com/your-org/pl-price-api-admin.git
-cd pl-price-api-admin
-docker-compose up -d
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
 ```
+
+### 🐳 Run with Docker
+
+```bash
+docker-compose up --build
+```
+
+- Hosts:
+  - backend - http://localhost:3000/
+  - frontend-admin - htttp://localhost/
+  - database - localhost:5432
