@@ -40,5 +40,5 @@ docker-compose up --build
 
 - Hosts:
   - backend - http://localhost:3000/
-  - frontend-admin - htttp://localhost/
+  - frontend-admin - htttp://localhost:80/
   - database - localhost:5432
