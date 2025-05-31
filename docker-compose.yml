@@ -3,6 +3,13 @@ services:
     build: ./backend
     container_name: pl-price-api-backend
     command: node dist/main
+    environment:
+      API_PORT: ${API_PORT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
     ports:
       - "3000:3000"
     depends_on:
@@ -12,11 +19,11 @@ services:
 
   pl-price-api-db:
     image: postgres:13
-    container_name: pl-price-api-db
+    container_name: ${DATABASE_HOST}
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1111
-      POSTGRES_DB: pl-price-api
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
     ports:
       - "5432:5432"
     networks:
