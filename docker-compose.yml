@@ -1,0 +1,41 @@
+services:
+  pl-price-api-backend:
+    build: ./backend
+    container_name: pl-price-api-backend
+    command: node dist/main
+    ports:
+      - "3000:3000"
+    depends_on:
+      - pl-price-api-db
+    networks:
+      - backend
+
+  pl-price-api-db:
+    image: postgres:13
+    container_name: pl-price-api-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1111
+      POSTGRES_DB: pl-price-api
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - pl_price_api_db_data:/var/lib/postgresql/data
+
+  pl-price-api-frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - pl-price-api-backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  pl_price_api_db_data:
+    driver: local

@@ -1,0 +1,7 @@
+# Игнорируем node_modules
+node_modules
+
+# Игнорируем логи и временные файлы
+npm-debug.log
+dist
+.env
