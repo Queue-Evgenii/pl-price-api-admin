@@ -9,7 +9,7 @@
 
 
 ## 📁 Structure
-
+```text
 .
 │
 ├── backend/
@@ -20,6 +20,7 @@
 │
 ├── docker-compose.yml
 └── README.md
+```
 
 
 ## 🚀 Build & Run
