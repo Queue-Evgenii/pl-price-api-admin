@@ -8,6 +8,12 @@ import { PasswordModule } from '../password/password.module';
 @Module({
   imports: [TokenModule, UserModule, PasswordModule],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [
+    {
+      provide: 'AuthService',
+      useClass: AuthService,
+    },
+  ],
+  exports: ['AuthService'],
 })
 export class AuthModule {}

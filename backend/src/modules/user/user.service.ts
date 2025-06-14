@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserDto } from 'src/models/user-dto';
+import { UserRequestDto } from 'src/models/http/user-dto';
 import { UserEntity } from 'src/orm/user.entity';
 import { Repository } from 'typeorm';
 import { UserStrategy } from './user.strategy';
@@ -13,8 +13,8 @@ export class UserService implements UserStrategy {
     @Inject('PasswordService') private passwordService: PasswordService,
   ) {}
 
-  async create(userDto: UserDto): Promise<UserEntity> {
-    const password = await this.passwordService.hash(userDto.password)
+  async create(userDto: UserRequestDto): Promise<UserEntity> {
+    const password = await this.passwordService.hash(userDto.password);
     const user = this.usersRepo.create({
       ...userDto,
       password,

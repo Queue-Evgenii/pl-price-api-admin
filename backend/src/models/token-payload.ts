@@ -1,3 +1,3 @@
-import { UserDto } from './user-dto';
+import { UserRequestDto } from './http/user-dto';
 
-export type TokenPayload = UserDto;
+export type TokenPayload = UserRequestDto;
