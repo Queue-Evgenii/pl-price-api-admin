@@ -1,11 +1,18 @@
 import { UserEntity } from 'src/orm/user.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
-export interface UserRequestDto {
+export class UserRequestDto {
+  @ApiProperty()
   email: string;
+
+  @ApiProperty()
   password: string;
 }
 
-export interface UserResponseDto {
+export class UserResponseDto {
+  @ApiProperty()
   token: string;
+
+  @ApiProperty({ type: UserEntity })
   user: UserEntity;
 }
