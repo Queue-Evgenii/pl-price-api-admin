@@ -3,7 +3,7 @@ $nestUrl = 'http://127.0.0.1:3000';
 
 // Убираем "/price-api.polandgroups.pl" из пути
 $path = $_SERVER['REQUEST_URI'];
-$cleanPath = preg_replace('#^/price-api\.polandgroups\.pl#', '', $path);
+$cleanPath = preg_replace('#^/pl-price-api-admin\.polandgroups\.pl#', '', $path);
 
 // Проксируем запрос
 $ch = curl_init();
