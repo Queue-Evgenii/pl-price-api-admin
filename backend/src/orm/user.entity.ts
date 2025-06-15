@@ -27,5 +27,5 @@ export class UserEntity {
     default: [UserRoles.DEFAULT],
   })
   @ApiProperty()
-  roles: UserRoles;
+  role: UserRoles;
 }

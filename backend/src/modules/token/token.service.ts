@@ -7,8 +7,8 @@ import { TokenPayload } from 'src/models/token-payload';
 export class TokenService implements TokenStrategy {
   constructor(private jwtService: JwtService) {}
 
-  createToken(user: TokenPayload): string {
-    return this.jwtService.sign(user);
+  createToken(payload: TokenPayload): string {
+    return this.jwtService.sign(payload);
   }
 
   verifyToken(token: string): boolean {
@@ -19,10 +19,10 @@ export class TokenService implements TokenStrategy {
     }
   }
 
-  decodeToken(token: string): string {
+  decodeToken(token: string): TokenPayload {
     if (!this.verifyToken(token)) {
       throw new HttpException('Token has expired!', HttpStatus.UNAUTHORIZED);
     }
-    return this.jwtService.decode(token);
+    return this.jwtService.decode<TokenPayload>(token);
   }
 }

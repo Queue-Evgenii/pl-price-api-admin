@@ -1,3 +1,10 @@
-import { UserRequestDto } from './http/user-dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { UserRoles } from './roles';
 
-export type TokenPayload = UserRequestDto;
+export class TokenPayload {
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  role: UserRoles;
+}

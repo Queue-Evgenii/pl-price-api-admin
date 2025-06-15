@@ -1,5 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, Inject } from '@nestjs/common';
 import { IncomingMessage } from 'http';
+import { TokenRequestDto } from 'src/models/http/token-dto';
+import { UserRoles } from 'src/models/roles';
 import { TokenStrategy } from 'src/modules/token/token.strategy';
 
 @Injectable()
@@ -8,8 +10,9 @@ export class AuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<IncomingMessage>();
-    const authHeader = request.headers.authorization as string;
+    const tokenInstance = new TokenRequestDto(request.headers.authorization as string);
 
-    return this.tokenService.verifyToken(authHeader);
+    const payload = this.tokenService.decodeToken(tokenInstance.getToken());
+    return payload.role === UserRoles.ADMIN;
   }
 }

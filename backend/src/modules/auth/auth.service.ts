@@ -4,6 +4,7 @@ import { TokenStrategy } from '../token/token.strategy';
 import { AuthStrategy } from './auth.strategy';
 import { UserStrategy } from '../user/user.strategy';
 import { PasswordStrategy } from '../password/password.strategy';
+import { TokenPayload } from 'src/models/token-payload';
 
 @Injectable()
 export class AuthService implements AuthStrategy {
@@ -13,8 +14,8 @@ export class AuthService implements AuthStrategy {
     @Inject('PasswordService') private readonly passwordService: PasswordStrategy,
   ) {}
 
-  private createToken(user: UserRequestDto): string {
-    return this.tokenService.createToken(user);
+  private createToken(payload: TokenPayload): string {
+    return 'Bearer ' + this.tokenService.createToken(payload);
   }
 
   async signIn(user: UserRequestDto) {
@@ -24,7 +25,7 @@ export class AuthService implements AuthStrategy {
     const isPasswordCorrect = await this.passwordService.compare(user.password, originUser.password);
     if (!isPasswordCorrect) throw new HttpException('Wrong password', HttpStatus.UNAUTHORIZED);
     return {
-      token: this.createToken(user),
+      token: this.createToken({ email: originUser.email, role: originUser.role }),
       user: originUser,
     };
   }
@@ -35,7 +36,7 @@ export class AuthService implements AuthStrategy {
 
     const createdUser = await this.userService.create(user);
     return {
-      token: this.createToken(user),
+      token: this.createToken({ email: createdUser.email, role: createdUser.role }),
       user: createdUser,
     };
   }
