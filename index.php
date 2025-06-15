@@ -1,5 +1,5 @@
 <?php
-$nestUrl = 'http://127.0.0.1:3000';
+$nestUrl = 'http://localhost:3000';
 
 $path = $_SERVER['REQUEST_URI'];
 $cleanPath = preg_replace('#^/pl-price-api-admin#', '', $path);
