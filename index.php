@@ -1,3 +1,3 @@
 <?php
 
-json_encode("it works")
+json_encode("it works");
