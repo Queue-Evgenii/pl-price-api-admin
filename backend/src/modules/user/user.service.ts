@@ -4,13 +4,13 @@ import { UserRequestDto } from 'src/models/http/user-dto';
 import { UserEntity } from 'src/orm/user.entity';
 import { Repository } from 'typeorm';
 import { UserStrategy } from './user.strategy';
-import { PasswordService } from '../password/password.service';
+import { PasswordStrategy } from '../password/password.strategy';
 
 @Injectable()
 export class UserService implements UserStrategy {
   constructor(
     @InjectRepository(UserEntity) private usersRepo: Repository<UserEntity>,
-    @Inject('PasswordService') private passwordService: PasswordService,
+    @Inject('PasswordService') private passwordService: PasswordStrategy,
   ) {}
 
   async create(userDto: UserRequestDto): Promise<UserEntity> {

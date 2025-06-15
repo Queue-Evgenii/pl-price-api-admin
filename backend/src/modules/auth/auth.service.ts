@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { UserRequestDto } from 'src/models/http/user-dto';
 import { TokenStrategy } from '../token/token.strategy';
-import { UserService } from '../user/user.service';
-import { PasswordService } from '../password/password.service';
 import { AuthStrategy } from './auth.strategy';
+import { UserStrategy } from '../user/user.strategy';
+import { PasswordStrategy } from '../password/password.strategy';
 
 @Injectable()
 export class AuthService implements AuthStrategy {
   constructor(
     @Inject('TokenService') private readonly tokenService: TokenStrategy,
-    @Inject('UserService') private readonly userService: UserService,
-    @Inject('PasswordService') private readonly passwordService: PasswordService,
+    @Inject('UserService') private readonly userService: UserStrategy,
+    @Inject('PasswordService') private readonly passwordService: PasswordStrategy,
   ) {}
 
   private createToken(user: UserRequestDto): string {

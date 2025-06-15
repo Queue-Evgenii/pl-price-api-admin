@@ -10,7 +10,7 @@ export const ApiSignInResponses = () => {
     ApiResponse({ status: 401, description: 'Wrong password', type: HttpErrorDto }),
     ApiResponse({ status: 404, description: 'User not found', type: HttpErrorDto }),
   );
-}
+};
 
 export const ApiSignUpResponses = () => {
   return applyDecorators(
@@ -18,4 +18,4 @@ export const ApiSignUpResponses = () => {
     ApiResponse({ status: 201, description: 'User created and token issued', type: UserResponseDto }),
     ApiResponse({ status: 409, description: 'User already exists', type: HttpErrorDto }),
   );
-}
+};
