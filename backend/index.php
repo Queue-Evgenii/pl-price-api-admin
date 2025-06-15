@@ -1,4 +1,7 @@
 <?php
+
+echo "it works"
+
 $nestUrl = 'http://127.0.0.1:3000';
 
 // Убираем "/price-api.polandgroups.pl" из пути
