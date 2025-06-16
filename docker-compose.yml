@@ -33,7 +33,7 @@ services:
       - pl_price_api_db_data:/var/lib/postgresql/data
 
   pl-price-api-frontend:
-    build: ./frontend-admin
+    build: ./frontend
     ports:
       - "80:80"
     restart: always
