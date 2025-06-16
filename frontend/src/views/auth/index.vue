@@ -3,6 +3,5 @@
 </script>
 
 <template>
-  Auth
   <router-view />
 </template>
