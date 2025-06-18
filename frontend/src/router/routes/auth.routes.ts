@@ -3,7 +3,6 @@ import { RouteName } from '@/constants/route-name';
 export const authRoutes = [
   {
     path: '/auth',
-    name: RouteName.AUTH.DEFAULT,
     component: () => import('@/views/auth/index.vue'),
     children: [
       {

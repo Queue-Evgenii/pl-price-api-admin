@@ -3,7 +3,6 @@ import { RouteName } from '@/constants/route-name';
 export const adminRoutes = [
   {
     path: '/admin',
-    name: RouteName.ADMIN.DEFAULT,
     component: () => import('@/views/admin/index.vue'),
     children: [
       {

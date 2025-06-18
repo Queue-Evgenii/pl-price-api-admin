@@ -2,6 +2,10 @@ import { RouteName } from '@/constants/route-name';
 
 export const commonRoutes = [
   {
+    path: '/',
+    redirect: { name: RouteName.AUTH.ROOT },
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: { name: RouteName.NOT_FOUND },
   },
