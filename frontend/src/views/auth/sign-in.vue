@@ -9,10 +9,10 @@
     email: '',
     password: ''
   })
-
   const rules: FormRules = {
     email: [
       { required: true, message: 'Email is required', trigger: 'blur' },
+      { type: 'email', message: 'Should satisfy pattern: example@gmail.com', trigger: 'blur'  }
     ],
     password: [
       { required: true, message: 'Password is required', trigger: 'blur' },

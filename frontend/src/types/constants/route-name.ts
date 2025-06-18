@@ -1,13 +1,11 @@
 
 export const RouteName = {
   ADMIN: {
-    DEFAULT: "admin",
     ROOT: "admin-root",
-    CATALOGUE: "admin-catalogue",
+    CATEGORIES: "categories",
   },
 
   AUTH: {
-    DEFAULT: "auth",
     ROOT: "auth-root",
     SIGN_IN: "sign-in",
   },

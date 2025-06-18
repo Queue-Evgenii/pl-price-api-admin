@@ -1,4 +1,4 @@
-import { RouteName } from '@/constants/route-name';
+import { RouteName } from '@/types/constants/route-name';
 
 export const adminRoutes = [
   {
@@ -8,11 +8,11 @@ export const adminRoutes = [
       {
         path: '',
         name: RouteName.ADMIN.ROOT,
-        redirect: { name: RouteName.ADMIN.CATALOGUE }
+        redirect: { name: RouteName.ADMIN.CATEGORIES }
       },
       {
         path: 'categories',
-        name: RouteName.ADMIN.CATALOGUE,
+        name: RouteName.ADMIN.CATEGORIES,
         component: () => import('@/views/admin/categories.vue')
       },
     ], 

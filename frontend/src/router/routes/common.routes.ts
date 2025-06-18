@@ -1,4 +1,4 @@
-import { RouteName } from '@/constants/route-name';
+import { RouteName } from '@/types/constants/route-name';
 
 export const commonRoutes = [
   {
