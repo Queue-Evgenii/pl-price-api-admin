@@ -1,63 +1,43 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive, h } from 'vue'
+import { ref, onMounted, reactive, h, inject } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 import { NInput, NButton, useMessage } from 'naive-ui'
-
-interface CategoryEntity {
-  id: number
-  name: string
-  slug: string
-  parent: CategoryEntity | null
-  children: CategoryEntity[]
-  isEditing?: boolean
-}
+import type { CategoryEntity } from '@/types/models/entities/category.entity'
+import type { CategoriesApi } from '@/api/modules/categories'
 
 const message = useMessage()
 
-const mockCategories: CategoryEntity[] = [
-  {
-    id: 1,
-    name: 'Электроника',
-    slug: 'elektronika',
-    parent: null,
-    children: [
-      {
-        id: 2,
-        name: 'Смартфоны',
-        slug: 'smartfony',
-        parent: null,
-        children: [],
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Одежда',
-    slug: 'odezhda',
-    parent: null,
-    children: [],
-  },
-]
+const categories = ref<CategoryEntity[]>([])
+const editingCategory = ref<CategoryEntity | null>(null)
+const showModal = ref(false)
 
-const tableData = ref<CategoryEntity[]>([])
+const openEditModal = (row: CategoryEntity) => {
+  editingCategory.value = { ...row }
+  showModal.value = true
+}
 
-const toggleEdit = (row: CategoryEntity) => {
-  row.isEditing = !row.isEditing
-  if (!row.isEditing) {
-    message.success(`Сохранено: ${row.name}`)
+const saveChanges = () => {
+  if (!editingCategory.value) return
+
+  const index = categories.value.findIndex(cat => cat.id === editingCategory.value?.id)
+  if (index !== -1) {
+    categories.value[index] = { ...editingCategory.value }
+    message.success(`Изменения сохранены: ${editingCategory.value.name}`)
   }
+  showModal.value = false
+  editingCategory.value = null
 }
 
 const addCategory = () => {
-  const newId = tableData.value.length + 1
-  tableData.value.push({
+  const newId = categories.value.length + 1
+  editingCategory.value = {
     id: newId,
     name: '',
     slug: '',
-    parent: null,
+    parent: undefined,
     children: [],
-    isEditing: true,
-  })
+  }
+  showModal.value = true
 }
 
 const columns: DataTableColumns<CategoryEntity> = [
@@ -69,28 +49,10 @@ const columns: DataTableColumns<CategoryEntity> = [
   {
     title: 'Название',
     key: 'name',
-    render(row) {
-      return row.isEditing
-        ? h(NInput, {
-            value: row.name,
-            onUpdateValue: (val) => (row.name = val),
-            placeholder: 'Введите название',
-          })
-        : row.name
-    },
   },
   {
     title: 'Slug',
     key: 'slug',
-    render(row) {
-      return row.isEditing
-        ? h(NInput, {
-            value: row.slug,
-            onUpdateValue: (val) => (row.slug = val),
-            placeholder: 'Введите slug',
-          })
-        : row.slug
-    },
   },
   {
     title: 'Действия',
@@ -101,10 +63,10 @@ const columns: DataTableColumns<CategoryEntity> = [
         NButton,
         {
           size: 'small',
-          type: row.isEditing ? 'success' : 'primary',
-          onClick: () => toggleEdit(row),
+          type: 'primary',
+          onClick: () => openEditModal(row),
         },
-        { default: () => (row.isEditing ? 'Save' : 'Edit') }
+        { default: () => 'Edit' }
       )
     },
   },
@@ -124,8 +86,13 @@ const pagination = reactive({
   },
 })
 
+const fetchCategories = async () => {
+  const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
+  categories.value = await categoriesApi.getCategories();
+}
+
 onMounted(() => {
-  tableData.value = mockCategories
+  fetchCategories();
 })
 
 </script>
@@ -134,7 +101,7 @@ onMounted(() => {
   <n-card title="Категории (таблица)">
     <n-data-table
       :columns="columns"
-      :data="tableData"
+      :data="categories"
       :pagination="pagination"
       :row-key="(row) => row.id"
       default-expand-all
@@ -142,15 +109,26 @@ onMounted(() => {
     />
   </n-card>
 
-  <div
-    style="
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-    "
-  >
-    <n-button type="primary" size="large" circle @click="addCategory">
-      +
-    </n-button>
+  <div style="position: fixed; bottom: 20px; right: 20px;">
+    <n-button type="primary" size="large" circle @click="addCategory">+</n-button>
   </div>
+
+  <n-modal v-model:show="showModal" title="Редактировать категорию" preset="dialog">
+  <div v-if="editingCategory" style="display: flex; flex-direction: column; gap: 1rem;">
+    <n-input
+      v-model:value="editingCategory.name"
+      placeholder="Название"
+    />
+    <n-input
+      v-model:value="editingCategory.slug"
+      placeholder="Slug"
+    />
+    <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+      <n-button @click="showModal = false">Отмена</n-button>
+      <n-button type="primary" @click="saveChanges">Сохранить</n-button>
+    </div>
+  </div>
+</n-modal>
+
 </template>
+

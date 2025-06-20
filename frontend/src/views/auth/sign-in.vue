@@ -1,31 +1,36 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import type { FormInst, FormRules } from 'naive-ui'
-  import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
+import { inject, ref } from 'vue'
+import type { FormInst, FormRules } from 'naive-ui'
+import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
+import type { AuthApi } from '@/api/modules/auth';
 
-  const formRef = ref<FormInst | null>(null)
+const authApi = inject<AuthApi>('AuthApi')!;
+const formRef = ref<FormInst | null>(null);
 
-  const form = ref({
-    email: '',
-    password: ''
+const form = ref({
+  email: '',
+  password: ''
+})
+const rules: FormRules = {
+  email: [
+    { required: true, message: 'Email is required', trigger: 'blur' },
+    { type: 'email', message: 'Should satisfy pattern: example@gmail.com', trigger: 'blur'  }
+  ],
+  password: [
+    { required: true, message: 'Password is required', trigger: 'blur' },
+  ]
+}
+
+const handleLogin = () => {
+  formRef.value?.validate((errors) => {
+    if (!errors) {
+      authApi.authorization(form.value)
+        .then(res => {
+          console.log(res);
+        })
+    }
   })
-  const rules: FormRules = {
-    email: [
-      { required: true, message: 'Email is required', trigger: 'blur' },
-      { type: 'email', message: 'Should satisfy pattern: example@gmail.com', trigger: 'blur'  }
-    ],
-    password: [
-      { required: true, message: 'Password is required', trigger: 'blur' },
-    ]
-  }
-
-  const handleLogin = () => {
-    formRef.value?.validate((errors) => {
-      if (!errors) {
-        console.log('Данные формы:', form.value)
-      }
-    })
-  }
+}
 </script>
 
 <template>

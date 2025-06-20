@@ -15,7 +15,7 @@ export class AuthService implements AuthStrategy {
   ) {}
 
   private createToken(payload: TokenPayload): string {
-    return 'Bearer ' + this.tokenService.createToken(payload);
+    return this.tokenService.createToken(payload);
   }
 
   async signIn(user: UserRequestDto) {

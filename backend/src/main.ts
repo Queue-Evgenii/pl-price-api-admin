@@ -6,6 +6,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 void (async () => {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors();
+
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder().setTitle('PL PRICE API').setVersion('1.0').build();
