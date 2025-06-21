@@ -1,14 +1,6 @@
 RewriteEngine On
 
-# Если запрос к swagger или api - проксируем на PHP
-RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/(swagger|api) [NC]
-RewriteRule ^(.*)$ /pl-price-api-admin/proxy.php [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-# Иначе, если запрос к pl-price-api-admin/, пытаемся отдать файл из frontend/dist
-RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/?$ [NC,OR]
-RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/(.*)$ [NC]
-RewriteCond %{DOCUMENT_ROOT}/pl-price-api-admin/frontend/dist/%1 -f
-RewriteRule ^pl-price-api-admin/(.*)$ /pl-price-api-admin/frontend/dist/$1 [L]
-
-# fallback: отдать index.html фронтенда (для SPA роутинга)
-RewriteRule ^pl-price-api-admin/?$ /pl-price-api-admin/frontend/dist/index.html [L]
+RewriteRule ^.*$ index.php [L,QSA]
