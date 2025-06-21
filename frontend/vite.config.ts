@@ -5,6 +5,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/pl-price-api-admin/frontend/',
   plugins: [vue()],
   resolve: {
     alias: {
