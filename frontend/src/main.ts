@@ -1,15 +1,15 @@
 import { createApp } from 'vue'
 import './style.css'
-import App from './app.vue'
+import app from './app.vue'
 import { router } from './router'
 import naive from 'naive-ui'
 import { useApiProvider } from './api/api-provider'
 
-const app = createApp(App);
-app.use(router);
+const application = createApp(app);
+application.use(router);
 
-app.use(naive);
+application.use(naive);
 
-useApiProvider(app);
+useApiProvider(application);
 
-app.mount('#app');
+application.mount('#app');
