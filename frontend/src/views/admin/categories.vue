@@ -103,7 +103,7 @@ onMounted(() => {
       :columns="columns"
       :data="categories"
       :pagination="pagination"
-      :row-key="(row) => row.id"
+      :row-key="(row: CategoryEntity) => row.id"
       default-expand-all
       bordered
     />

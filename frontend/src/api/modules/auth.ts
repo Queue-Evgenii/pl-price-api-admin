@@ -13,7 +13,7 @@ export class AuthApi extends Api {
   };
 
   registration = (payload: UserEntity) => {
-    console.warn("NOT IMPLEMENTED");
-    throw Error("NOT IMPLEMENTED");
+    console.warn("NOT IMPLEMENTED", payload);
+    throw Error("NOT IMPLEMENTED" + payload);
   };
 }
