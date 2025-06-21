@@ -5,11 +5,11 @@ import { router } from './router'
 import naive from 'naive-ui'
 import { useApiProvider } from './api/api-provider'
 
-const application = createApp(app);
-application.use(router);
+const instance = createApp(app);
+instance.use(router);
 
-application.use(naive);
+instance.use(naive);
 
-useApiProvider(application);
+useApiProvider(instance);
 
-application.mount('#app');
+instance.mount('#app');
