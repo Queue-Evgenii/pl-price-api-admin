@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /pl-price-api-admin/fronted
+
+# Redirect all requests to /shop/dist/index.html
+RewriteRule ^$ dist/index.html [L]
+RewriteRule (.*) dist/$1 [L]

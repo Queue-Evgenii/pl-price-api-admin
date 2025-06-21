@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /pl-price-api-admin/
+
+# If the request is not for a valid file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect to index.html in the /shop/dist/ directory
+RewriteRule . /pl-price-api-admin/frontend/dist/index.html [L]
