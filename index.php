@@ -42,7 +42,7 @@ if (preg_match('#^/(api|swagger)/#', $cleanPath)) {
     exit;
 }
 
-$distPath = __DIR__ . '/dist';
+$distPath = __DIR__ . '/frontend/dist';
 $requestedFile = realpath($distPath . $cleanPath);
 
 if ($requestedFile && str_starts_with($requestedFile, realpath($distPath)) && is_file($requestedFile)) {
