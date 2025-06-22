@@ -4,6 +4,7 @@ export const adminRoutes = [
   {
     path: '/admin',
     component: () => import('@/views/admin/index.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
     children: [
       {
         path: '',

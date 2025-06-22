@@ -11,4 +11,5 @@ export const RouteName = {
   },
 
   NOT_FOUND: "not-found",
+  FORBIDDEN: "forbidden",
 } as const;

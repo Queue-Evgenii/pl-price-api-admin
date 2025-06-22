@@ -3,7 +3,10 @@ import { inject, ref } from 'vue'
 import type { FormInst, FormRules } from 'naive-ui'
 import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
 import type { AuthApi } from '@/api/modules/auth';
+import { Token } from '@/types/models/utils/Token';
+import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore();
 const authApi = inject<AuthApi>('AuthApi')!;
 const formRef = ref<FormInst | null>(null);
 
@@ -21,14 +24,17 @@ const rules: FormRules = {
   ]
 }
 
+const authorization = () => {
+  authApi.authorization(form.value)
+    .then(res => {
+      Token.set(res.token);
+      userStore.setUser(res.user);
+    })
+}
+
 const handleLogin = () => {
   formRef.value?.validate((errors) => {
-    if (!errors) {
-      authApi.authorization(form.value)
-        .then(res => {
-          console.log(res);
-        })
-    }
+    if (!errors) authorization();
   })
 }
 </script>
