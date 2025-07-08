@@ -88,7 +88,7 @@ const pagination = reactive({
 
 const fetchCategories = async () => {
   const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
-  categories.value = await categoriesApi.getCategories();
+  categories.value = (await categoriesApi.getCategories()).data;
 }
 
 onMounted(() => {

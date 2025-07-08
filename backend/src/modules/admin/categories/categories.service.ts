@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateCategoryRequestDto, UpdateCategoryRequestDto } from 'src/models/http/category-dto';
+import { CreateCategoryRequestDto, FindAllCategoriesDto, FindAllCategoriesOptionsDto, UpdateCategoryRequestDto } from 'src/models/http/category-dto';
 import { CategoryEntity } from 'src/orm/category.entity';
 import { Repository } from 'typeorm';
 import { CategoriesStrategy } from './categories.strategy';
@@ -34,10 +34,25 @@ export class CategoriesService implements CategoriesStrategy {
     return this.categoryRepo.save(category);
   }
 
-  async findAll(): Promise<CategoryEntity[]> {
-    return this.categoryRepo.find({
-      relations: ['parent', 'children'],
-    });
+  async findAll(params: FindAllCategoriesOptionsDto): Promise<FindAllCategoriesDto> {
+    const query = this.categoryRepo.createQueryBuilder('category').leftJoinAndSelect('category.children', 'children').leftJoinAndSelect('category.parent', 'parent');
+
+    if (!params.notChild) {
+      query.where('category.parentId IS NULL');
+    }
+
+    query.skip((params.page - 1) * params.limit).take(params.limit);
+
+    const [data, total] = await query.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        total,
+        page: params.page,
+        limit: params.limit,
+      },
+    };
   }
 
   async findOne(id: number): Promise<CategoryEntity> {

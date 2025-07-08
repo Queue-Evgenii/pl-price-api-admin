@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { UserRequestDto } from 'src/models/http/user-dto';
+import { UserRequestDto, UserResponseDto } from 'src/models/http/user-dto';
 import { TokenStrategy } from '../token/token.strategy';
 import { AuthStrategy } from './auth.strategy';
 import { UserStrategy } from '../user/user.strategy';
@@ -18,7 +18,7 @@ export class AuthService implements AuthStrategy {
     return this.tokenService.createToken(payload);
   }
 
-  async signIn(user: UserRequestDto) {
+  async signIn(user: UserRequestDto): Promise<UserResponseDto> {
     const originUser = await this.userService.findByEmail(user.email);
     if (originUser === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
@@ -30,7 +30,7 @@ export class AuthService implements AuthStrategy {
     };
   }
 
-  async signUp(user: UserRequestDto) {
+  async signUp(user: UserRequestDto): Promise<UserResponseDto> {
     const originUser = await this.userService.findByEmail(user.email);
     if (originUser !== null) throw new HttpException('User already exists', HttpStatus.CONFLICT);
 
@@ -38,6 +38,16 @@ export class AuthService implements AuthStrategy {
     return {
       token: this.createToken({ email: createdUser.email, role: createdUser.role }),
       user: createdUser,
+    };
+  }
+
+  async getUser(payload: TokenPayload): Promise<UserResponseDto> {
+    const originUser = await this.userService.findByEmail(payload.email);
+    if (originUser === null) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    return {
+      token: this.createToken({ email: originUser.email, role: originUser.role }),
+      user: originUser,
     };
   }
 }

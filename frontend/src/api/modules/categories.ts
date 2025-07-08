@@ -1,6 +1,6 @@
 import type { AxiosInstance } from "axios";
 import { Api } from "../api";
-import type { CategoryEntity } from "@/types/models/entities/category.entity";
+import type { CategoriesDto } from "@/types/models/dto/categories-dta";
 
 export class CategoriesApi extends Api {
   constructor(apiClient: AxiosInstance) {
@@ -8,6 +8,6 @@ export class CategoriesApi extends Api {
   }
   
   getCategories = () => {
-    return this.getRequest<CategoryEntity[]>('/categories');
+    return this.getRequest<CategoriesDto>('/categories');
   };
 }

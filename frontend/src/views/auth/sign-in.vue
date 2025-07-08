@@ -5,10 +5,13 @@ import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
 import type { AuthApi } from '@/api/modules/auth';
 import { Token } from '@/types/models/utils/Token';
 import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
+import { RouteName } from '@/types/constants/route-name';
 
 const userStore = useUserStore();
 const authApi = inject<AuthApi>('AuthApi')!;
 const formRef = ref<FormInst | null>(null);
+const router = useRouter();
 
 const form = ref({
   email: '',
@@ -29,6 +32,7 @@ const authorization = () => {
     .then(res => {
       Token.set(res.token);
       userStore.setUser(res.user);
+      router.push({ name: RouteName.ADMIN.ROOT })
     })
 }
 

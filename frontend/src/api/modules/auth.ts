@@ -16,4 +16,8 @@ export class AuthApi extends Api {
     console.warn("NOT IMPLEMENTED", payload);
     throw Error("NOT IMPLEMENTED" + payload);
   };
+
+  getMe = () => {
+    return this.getRequest<UserDto>('/me');
+  };
 }

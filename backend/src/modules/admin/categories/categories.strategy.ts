@@ -1,10 +1,10 @@
-import { CreateCategoryRequestDto, UpdateCategoryRequestDto } from 'src/models/http/category-dto';
+import { CreateCategoryRequestDto, FindAllCategoriesDto, FindAllCategoriesOptionsDto, UpdateCategoryRequestDto } from 'src/models/http/category-dto';
 import { CategoryEntity } from 'src/orm/category.entity';
 
 export interface CategoriesStrategy {
   create(dto: CreateCategoryRequestDto): Promise<CategoryEntity>;
 
-  findAll(): Promise<CategoryEntity[]>;
+  findAll(query: FindAllCategoriesOptionsDto): Promise<FindAllCategoriesDto>;
 
   findOne(id: number): Promise<CategoryEntity>;
 

@@ -1,6 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsInt } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsInt, Min } from 'class-validator';
+import { CategoryEntity } from 'src/orm/category.entity';
 
 export class CreateCategoryRequestDto {
   @ApiProperty()
@@ -40,4 +42,29 @@ export class CategoryResponseDto {
 
   @ApiProperty()
   updatedAt: Date;
+}
+
+export class FindAllCategoriesOptionsDto {
+  @IsOptional()
+  @Type(() => Boolean)
+  notChild: boolean = false;
+
+  @IsOptional()
+  @Type(() => Number)
+  @Min(1)
+  page: number = 1;
+
+  @IsOptional()
+  @Type(() => Number)
+  @Min(1)
+  limit: number = 10;
+}
+
+export interface FindAllCategoriesDto {
+  data: CategoryEntity[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
 }

@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { CreateCategoryRequestDto, UpdateCategoryRequestDto } from 'src/models/http/category-dto';
+import { CreateCategoryRequestDto, FindAllCategoriesOptionsDto, UpdateCategoryRequestDto } from 'src/models/http/category-dto';
 import { CategoriesStrategy } from './categories.strategy';
 import { ApiCreateResponses, ApiFindAllResponses, ApiFindOneResponses, ApiRemoveResponses, ApiUpdateResponses } from 'src/decorators/categories.decorator';
 import { ApiTokenResponse } from 'src/decorators/token.decorator';
@@ -19,8 +19,9 @@ export class CategoriesController {
 
   @Get()
   @ApiFindAllResponses()
-  findAll() {
-    return this.categoriesService.findAll();
+  @UsePipes(new ValidationPipe({ transform: true }))
+  findAll(@Query() query: FindAllCategoriesOptionsDto) {
+    return this.categoriesService.findAll(query);
   }
 
   @Get(':id')
