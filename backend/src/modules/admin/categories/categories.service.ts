@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCategoryRequestDto, FindAllCategoriesDto, FindAllCategoriesOptionsDto, UpdateCategoryRequestDto } from 'src/models/http/category-dto';
 import { CategoryEntity } from 'src/orm/category.entity';
-import { Repository } from 'typeorm';
+import { TreeRepository } from 'typeorm';
 import { CategoriesStrategy } from './categories.strategy';
 
 @Injectable()
 export class CategoriesService implements CategoriesStrategy {
   constructor(
     @InjectRepository(CategoryEntity)
-    private readonly categoryRepo: Repository<CategoryEntity>,
+    private readonly categoryRepo: TreeRepository<CategoryEntity>,
   ) {}
 
   private async throwIfSlugExists(slug: string | undefined) {
@@ -31,19 +31,25 @@ export class CategoriesService implements CategoriesStrategy {
       category.parent = parent;
     }
 
-    return this.categoryRepo.save(category);
+    const createCategory = this.categoryRepo.save(category);
+    return this.findOne((await createCategory).id);
   }
 
   async findAll(params: FindAllCategoriesOptionsDto): Promise<FindAllCategoriesDto> {
-    const query = this.categoryRepo.createQueryBuilder('category').leftJoinAndSelect('category.children', 'children').leftJoinAndSelect('category.parent', 'parent');
+    const query = this.categoryRepo.createQueryBuilder('category');
 
-    if (!params.notChild) {
+    if (params.root) {
       query.where('category.parentId IS NULL');
     }
 
-    query.skip((params.page - 1) * params.limit).take(params.limit);
+    query
+      .orderBy('category.createdAt', 'DESC')
+      .skip((params.page - 1) * params.limit)
+      .take(params.limit);
 
-    const [data, total] = await query.getManyAndCount();
+    const [roots, total] = await query.getManyAndCount();
+
+    const data = await Promise.all(roots.map((root) => this.categoryRepo.findDescendantsTree(root)));
 
     return {
       data,
@@ -56,17 +62,20 @@ export class CategoriesService implements CategoriesStrategy {
   }
 
   async findOne(id: number): Promise<CategoryEntity> {
-    const category = await this.categoryRepo.findOne({
-      where: { id },
-      relations: ['parent', 'children'],
-    });
-    if (!category) throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
-    return category;
+    const category = await this.categoryRepo.findOne({ where: { id } });
+
+    if (!category) {
+      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+    }
+
+    const fullTree = await this.categoryRepo.findDescendantsTree(category);
+
+    return fullTree;
   }
 
   async update(id: number, dto: UpdateCategoryRequestDto): Promise<CategoryEntity> {
     const category = await this.findOne(id);
-    await this.throwIfSlugExists(dto.slug);
+    if (category.slug !== dto.slug) await this.throwIfSlugExists(dto.slug);
 
     if (dto.name !== undefined) category.name = dto.name;
     if (dto.slug !== undefined) category.slug = dto.slug;

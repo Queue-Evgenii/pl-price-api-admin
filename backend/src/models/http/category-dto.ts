@@ -47,7 +47,7 @@ export class CategoryResponseDto {
 export class FindAllCategoriesOptionsDto {
   @IsOptional()
   @Type(() => Boolean)
-  notChild: boolean = false;
+  root: boolean = true;
 
   @IsOptional()
   @Type(() => Number)

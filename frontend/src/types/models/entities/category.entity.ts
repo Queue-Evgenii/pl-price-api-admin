@@ -5,7 +5,7 @@ export interface CategoryEntity {
 
   slug: string;
 
-  parent?: CategoryEntity;
+  parent?: CategoryEntity | Partial<CategoryEntity>;
 
   children: CategoryEntity[];
 }

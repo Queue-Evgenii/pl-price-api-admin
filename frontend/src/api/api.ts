@@ -16,8 +16,8 @@ export class Api {
     return this.apiClient.post(this.endpoint + node, payload).then((res) => res.data);
   };
 
-  protected putRequest = async <T, S>(node: string, payload: S): Promise<T> => {
-    return this.apiClient.put(this.endpoint + node, payload).then((res) => res.data);
+  protected patchRequest = async <T, S>(node: string, payload: S): Promise<T> => {
+    return this.apiClient.patch(this.endpoint + node, payload).then((res) => res.data);
   };
 
   protected deleteRequest = async <T>(node: string): Promise<T> => {

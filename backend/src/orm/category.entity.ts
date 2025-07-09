@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
 @Entity()
+@Tree('nested-set')
 export class CategoryEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   @ApiProperty()
@@ -16,14 +17,11 @@ export class CategoryEntity extends BaseEntity {
   @ApiProperty()
   slug: string;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.children, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
+  @TreeParent()
   @ApiProperty()
   parent: CategoryEntity | null;
 
-  @OneToMany(() => CategoryEntity, (category) => category.parent)
+  @TreeChildren()
   @ApiProperty()
   children: CategoryEntity[];
 }
