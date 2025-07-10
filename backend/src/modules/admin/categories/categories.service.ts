@@ -62,7 +62,7 @@ export class CategoriesService implements CategoriesStrategy {
   }
 
   async findOne(id: number): Promise<CategoryEntity> {
-    const category = await this.categoryRepo.findOne({ where: { id } });
+    const category = await this.categoryRepo.findOne({ where: { id }, relations: ['parent']});
 
     if (!category) {
       throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
@@ -96,7 +96,13 @@ export class CategoriesService implements CategoriesStrategy {
   }
 
   async remove(id: number): Promise<void> {
-    const category = await this.findOne(id);
-    await this.categoryRepo.remove(category);
+    const category = await this.categoryRepo.findOne({ where: { id } });
+
+    if (!category) {
+      throw new HttpException(`Category with id=${id} not found`, HttpStatus.NOT_FOUND);
+    }
+
+    const descendants = await this.categoryRepo.findDescendants(category);
+    await this.categoryRepo.remove(descendants.reverse());
   }
 }

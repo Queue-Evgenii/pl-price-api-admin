@@ -8,33 +8,83 @@ import { useCategoriesStore } from '@/stores/categories'
 import type { CategoriesMetaDto } from '@/types/models/dto/categories-dto'
 import { RouterLink } from 'vue-router'
 import type { _DeepPartial } from 'pinia'
+import { AxiosError } from 'axios'
 
-const message = useMessage()
+const message = useMessage();
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const categoriesStore = useCategoriesStore();
 const categoriesMeta = ref<CategoriesMetaDto | null>(null);
 const editingCategory = ref<CategoryEntity | null>(null);
-const showModal = ref(false);
+const isCategoryAdding = ref(false);
+const isDeleteConfirmation = ref(false);
 
-const openEditModal = (row: CategoryEntity) => {
-  editingCategory.value = { ...row };
-  showModal.value = true;
-}
-
+// ===== CRUD =====
 const saveChanges = async () => {
   if (!editingCategory.value) {
-    showModal.value = false;
+    isCategoryAdding.value = false;
+    editingCategory.value = null;
     return;
   }
-  if (editingCategory.value.id === -1) {
-    const payload = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined };
-    const createdCategory = await categoriesApi.createCategory(payload);
-    categoriesStore.addCategory(createdCategory);
-  } else {
-    const updatedCategory = await categoriesApi.patchCategory(editingCategory.value.id, editingCategory.value);
-    categoriesStore.replaceCategory(updatedCategory);
+  try {
+    if (editingCategory.value.id === -1) {
+      const payload = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined };
+      const createdCategory = await categoriesApi.createCategory(payload);
+      categoriesStore.addCategory(createdCategory);
+      message.success("Category successfully added!");
+    } else {
+      const updatedCategory = await categoriesApi.patchCategory(editingCategory.value.id, editingCategory.value);
+      categoriesStore.replaceCategory(updatedCategory);
+      message.success("Category successfully changed!");
+    }
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      message.error(e.response?.data.message);
+    } else {
+      message.error("Unknown error occurred");
+    }
   }
-  showModal.value = false;
+  closeEditModal();
+}
+
+const deleteCategory = async (id: number) => {
+  try {
+    await categoriesApi.deleteCategory(id);
+    categoriesStore.deleteCategoryWithId(id);
+    
+    message.success("Category successfully deleted!");
+  } catch (e: unknown) {
+    if (e instanceof AxiosError) {
+      message.error(e.response?.data.message);
+    } else {
+      message.error("Unknown error occurred");
+    }
+  }
+  closeDeleteModal();
+}
+
+const fetchCategories = async () => {
+  const { data, meta } = (await categoriesApi.getCategories());
+  categoriesMeta.value = meta;
+  categoriesStore.setCategories(data);
+}
+
+// ===== UI =====
+const openEditModal = (row: CategoryEntity) => {
+  editingCategory.value = { ...row };
+  isCategoryAdding.value = true;
+}
+const closeEditModal = () => {
+  editingCategory.value = null;
+  isCategoryAdding.value = false;
+}
+
+const openDeleteModal = (row: CategoryEntity) => {
+  editingCategory.value = { ...row };
+  isDeleteConfirmation.value = true;
+}
+const closeDeleteModal = () => {
+  editingCategory.value = null;
+  isDeleteConfirmation.value = false;
 }
 
 const addCategory = (row: CategoryEntity | undefined) => {
@@ -50,10 +100,6 @@ const addCategory = (row: CategoryEntity | undefined) => {
   }
 
   openEditModal(newCategory);
-}
-
-const deleteCategory = (row: CategoryEntity) => {
-  categoriesApi.deleteCategory(row.id);
 }
 
 const columns: DataTableColumns<CategoryEntity> = [
@@ -111,7 +157,7 @@ const columns: DataTableColumns<CategoryEntity> = [
           {
             size: 'small',
             type: 'error',
-            onClick: () => deleteCategory(row),
+            onClick: () => openDeleteModal(row),
           },
           { default: () => 'Delete' }
         )
@@ -134,11 +180,6 @@ const pagination = reactive({
   },
 })
 
-const fetchCategories = async () => {
-  const { data, meta } = (await categoriesApi.getCategories());
-  categoriesMeta.value = meta;
-  categoriesStore.setCategories(data);
-}
 
 onMounted(() => {
   fetchCategories();
@@ -162,8 +203,8 @@ onMounted(() => {
     <n-button type="primary" size="large" circle @click="() => addCategory(undefined)">+</n-button>
   </div>
 
-  <n-modal v-if="editingCategory" v-model:show="showModal" :title="`${editingCategory.id !== -1 ? 'Edit' : 'Create'} category`" preset="dialog">
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
+  <n-modal v-if="editingCategory" v-model:show="isCategoryAdding" :title="`${editingCategory.id !== -1 ? 'Edit' : 'Create'} category`" preset="dialog" v-model:on-after-leave="closeEditModal">
+    <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 16px;">
       <n-input
         v-model:value="editingCategory.name"
         placeholder="Name"
@@ -173,8 +214,27 @@ onMounted(() => {
         placeholder="Slug"
       />
       <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-        <n-button @click="showModal = false">Cancel</n-button>
+        <n-button @click="closeEditModal">Cancel</n-button>
         <n-button type="primary" @click="saveChanges">Save</n-button>
+      </div>
+    </div>
+  </n-modal>
+  
+  <n-modal v-if="editingCategory" v-model:show="isDeleteConfirmation" :title="`Sure you want to delete category ${editingCategory.id}`" preset="dialog" v-model:on-after-leave="closeDeleteModal">
+    <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 16px;">
+      <n-input
+        v-model:value="editingCategory.name"
+        placeholder="Name"
+        disabled
+      />
+      <n-input
+        v-model:value="editingCategory.slug"
+        placeholder="Slug"
+        disabled
+      />
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <n-button @click="closeDeleteModal">Cancel</n-button>
+        <n-button type="error" @click="() => { if (editingCategory) deleteCategory(editingCategory.id) }">Delete</n-button>
       </div>
     </div>
   </n-modal>

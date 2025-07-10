@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent 
 import { BaseEntity } from './base.entity';
 
 @Entity()
-@Tree('nested-set')
+@Tree('closure-table')
 export class CategoryEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   @ApiProperty()

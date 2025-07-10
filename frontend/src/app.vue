@@ -20,5 +20,9 @@ authApi.getMe()
 </script>
 
 <template>
-  <router-view />
+  <n-config-provider>
+    <n-message-provider placement="bottom">
+      <router-view />
+    </n-message-provider>
+  </n-config-provider>
 </template>

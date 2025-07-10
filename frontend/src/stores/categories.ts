@@ -72,5 +72,26 @@ export const useCategoriesStore = defineStore('categories', {
 
       replaceRecursive(this._categories);
     },
+    deleteCategoryWithId(id: number) {
+      const deleteRecursive = (categories: CategoryEntity[]): boolean => {
+        for (let i = 0; i < categories.length; i++) {
+          const category = categories[i];
+
+          if (category.id === id) {
+            categories.splice(i, 1);
+            return true;
+          }
+
+          if (category.children?.length) {
+            const deleted = deleteRecursive(category.children);
+            if (deleted) return true;
+          }
+        }
+
+        return false;
+      };
+
+      deleteRecursive(this._categories);
+    },
   },
 });
