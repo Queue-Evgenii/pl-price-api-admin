@@ -7,6 +7,7 @@ import { UserModule } from './modules/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PasswordModule } from './modules/password/password.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PasswordModule } from './modules/password/password.module';
     AdminModule,
     UserModule,
     PasswordModule,
+    CategoriesModule,
   ],
 })
 export class AppModule {}

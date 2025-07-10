@@ -6,5 +6,5 @@ export const ApiTokenResponse = () => {
   return applyDecorators(
     ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Permission denied', type: HttpErrorDto }),
     ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Token has expired', type: HttpErrorDto }),
-  )
-}
+  );
+};

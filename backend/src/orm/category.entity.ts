@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { PhotoEntity } from './photo.entity';
 
 @Entity()
 @Tree('closure-table')
@@ -24,4 +25,8 @@ export class CategoryEntity extends BaseEntity {
   @TreeChildren()
   @ApiProperty()
   children: CategoryEntity[];
+
+  @OneToMany(() => PhotoEntity, (photo) => photo.category)
+  @ApiProperty({ type: () => [PhotoEntity] })
+  photos: PhotoEntity[];
 }
