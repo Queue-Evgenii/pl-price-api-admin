@@ -8,8 +8,8 @@ export class Api {
     this.endpoint = endpoint;
   }
 
-  protected getRequest = async <T>(node: string): Promise<T> => {
-    return this.apiClient.get(this.endpoint + node).then((res) => res.data);
+  protected getRequest = async <T>(node: string, params: unknown): Promise<T> => {
+    return this.apiClient.get(this.endpoint + node, { params }).then((res) => res.data);
   };
 
   protected postRequest = async <T, S>(node: string, payload: S): Promise<T> => {

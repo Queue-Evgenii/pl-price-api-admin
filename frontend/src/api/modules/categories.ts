@@ -9,8 +9,8 @@ export class CategoriesApi extends Api {
     super(apiClient, '/admin');
   }
   
-  getCategories = () => {
-    return this.getRequest<CategoriesDto>('/categories');
+  getCategories = (params: { page: number, limit: number }) => {
+    return this.getRequest<CategoriesDto>('/categories', params);
   };
   
   createCategory = (payload: CreateCategoryDto) => {

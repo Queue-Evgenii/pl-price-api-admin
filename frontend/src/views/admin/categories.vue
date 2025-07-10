@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, h, inject } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
-import { NInput, NButton, useMessage } from 'naive-ui'
+import { NPagination, NDataTable, NInput, NButton, useMessage } from 'naive-ui'
 import type { CategoryEntity } from '@/types/models/entities/category.entity'
 import type { CategoriesApi } from '@/api/modules/categories'
 import { useCategoriesStore } from '@/stores/categories'
@@ -9,6 +9,7 @@ import type { CategoriesMetaDto } from '@/types/models/dto/categories-dto'
 import { RouterLink } from 'vue-router'
 import type { _DeepPartial } from 'pinia'
 import { AxiosError } from 'axios'
+import { prefix } from 'naive-ui/es/_utils/cssr'
 
 const message = useMessage();
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
@@ -62,10 +63,14 @@ const deleteCategory = async (id: number) => {
   closeDeleteModal();
 }
 
-const fetchCategories = async () => {
-  const { data, meta } = (await categoriesApi.getCategories());
+const fetchCategories = async (page = 1, pageSize = 10) => {
+  const { data, meta } = (await categoriesApi.getCategories({ page, limit: pageSize }));
   categoriesMeta.value = meta;
   categoriesStore.setCategories(data);
+
+  pagination.page = meta.page;
+  pagination.pageSize = meta.limit;
+  pagination.itemCount = meta.total;
 }
 
 // ===== UI =====
@@ -168,21 +173,22 @@ const columns: DataTableColumns<CategoryEntity> = [
 
 const pagination = reactive({
   page: 1,
-  pageSize: 5,
+  pageSize: 10,
   showSizePicker: true,
-  pageSizes: [3, 5, 10],
+  pageSizes: [5, 10, 15],
+  itemCount: 0,
   onChange: (page: number) => {
-    pagination.page = page
+    console.log(page)
+    fetchCategories(page, pagination.pageSize);
   },
   onUpdatePageSize: (pageSize: number) => {
-    pagination.pageSize = pageSize
-    pagination.page = 1
+    fetchCategories(1, pageSize);
   },
 })
 
 
 onMounted(() => {
-  fetchCategories();
+  fetchCategories(pagination.page, pagination.pageSize);
 });
 
 </script>
@@ -192,11 +198,19 @@ onMounted(() => {
     <n-data-table
       :columns="columns"
       :data="categoriesStore.categories"
-      :pagination="pagination"
       :row-key="(row: CategoryEntity) => row.id"
       default-expand-all
       bordered
     />
+    <n-pagination
+        v-model:page="pagination.page"
+        v-model:page-size="pagination.pageSize"
+        :page-sizes="pagination.pageSizes"
+        :item-count="pagination.itemCount"
+        @change="pagination.onChange"
+        @update-page-size="pagination.onUpdatePageSize"
+        show-size-picker
+        style="justify-content: right; margin-top: 16px;" />
   </n-card>
 
   <div style="position: fixed; bottom: 20px; right: 20px;">
