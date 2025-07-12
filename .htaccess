@@ -1,22 +1,6 @@
 RewriteEngine On
-RewriteBase /pl-price-api-admin/
 
-# Проксирование API и Swagger на localhost:3000
-RewriteRule ^swagger$ http://localhost:3000/swagger [P,L]
-RewriteRule ^api/(.*)$ http://localhost:3000/api/$1 [P,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-# Отдача статических файлов из frontend/dist
-Alias /pl-price-api-admin/web /var/www/html/pl-price-api-admin/frontend/dist
-<Directory /var/www/html/pl-price-api-admin/frontend/dist>
-    Options Indexes FollowSymLinks
-    AllowOverride None
-    Require all granted
-</Directory>
-
-# Доступ к загружаемым файлам
-Alias /pl-price-api-admin/backend/uploads /var/www/html/pl-price-api-admin/backend/uploads
-<Directory /var/www/html/pl-price-api-admin/backend/uploads>
-    Options Indexes FollowSymLinks
-    AllowOverride None
-    Require all granted
-</Directory>
+RewriteRule ^.*$ index.php [L,QSA]
