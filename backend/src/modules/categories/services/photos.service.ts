@@ -1,17 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryEntity } from 'src/orm/category.entity';
 import { Repository } from 'typeorm';
 import { PhotoEntity } from 'src/orm/photo.entity';
+import { FindAllPhotosDto } from 'src/models/http/photos-dto';
 
 @Injectable()
 export class PhotosService {
   constructor(
-    @InjectRepository(CategoryEntity)
+    @InjectRepository(PhotoEntity)
     private readonly photosRepo: Repository<PhotoEntity>,
   ) {}
 
-  async findAll(categoryId: number): Promise<PhotoEntity[]> {
-    return this.photosRepo.find({ where: { category: { id: categoryId } } });
+  async findAll(categoryId: number): Promise<FindAllPhotosDto> {
+    const data = await this.photosRepo.find({ where: { category: { id: categoryId } }, relations: ['category'], order: { orderId: 'ASC' } });
+    return { data };
+  }
+
+  async findOne(id: number, relations: boolean = false): Promise<PhotoEntity> {
+    const photo = await (relations ? this.photosRepo.findOne({ where: { id }, relations: ['category'] }) : this.photosRepo.findOne({ where: { id } }));
+
+    if (photo === null) throw new HttpException(`Photo with id=${id} not found`, HttpStatus.NOT_FOUND);
+
+    return photo;
   }
 }

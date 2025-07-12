@@ -14,4 +14,9 @@ export const commonRoutes = [
     name: RouteName.NOT_FOUND,
     component: () => import('@/views/common/not-found.vue'),
   },
+  {
+    path: '/forbidden',
+    name: RouteName.FORBIDDEN,
+    component: () => import('@/views/common/forbidden.vue'),
+  },
 ]

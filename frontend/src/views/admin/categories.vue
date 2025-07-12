@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, h, inject } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
-import { NPagination, NDataTable, NInput, NButton, useMessage } from 'naive-ui'
+import { DeleteFilled, EditFilled, AddCircleFilled, FolderOpenRound } from '@vicons/material'
+import { NPagination, NDataTable, NInput, NButton, useMessage, NIcon } from 'naive-ui'
 import type { CategoryEntity } from '@/types/models/entities/category.entity'
 import type { CategoriesApi } from '@/api/modules/categories'
 import { useCategoriesStore } from '@/stores/categories'
 import type { CategoriesMetaDto } from '@/types/models/dto/categories-dto'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import type { _DeepPartial } from 'pinia'
 import { AxiosError } from 'axios'
-import { prefix } from 'naive-ui/es/_utils/cssr'
 
 const message = useMessage();
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
@@ -18,6 +18,7 @@ const categoriesMeta = ref<CategoriesMetaDto | null>(null);
 const editingCategory = ref<CategoryEntity | null>(null);
 const isCategoryAdding = ref(false);
 const isDeleteConfirmation = ref(false);
+const route = useRoute();
 
 // ===== CRUD =====
 const saveChanges = async () => {
@@ -33,7 +34,7 @@ const saveChanges = async () => {
       categoriesStore.addCategory(createdCategory);
       message.success("Category successfully added!");
     } else {
-      const updatedCategory = await categoriesApi.patchCategory(editingCategory.value.id, editingCategory.value);
+      const updatedCategory = await categoriesApi.updateCategory(editingCategory.value.id, editingCategory.value);
       categoriesStore.replaceCategory(updatedCategory);
       message.success("Category successfully changed!");
     }
@@ -126,6 +127,9 @@ const columns: DataTableColumns<CategoryEntity> = [
     key: 'actions',
     width: 220,
     render(row) {
+      const renderIcon = (iconComponent: any) =>
+        h(NIcon, null, { default: () => h(iconComponent) });
+      
       return h('div', { style: 'display: flex; gap: 8px;' }, [
         h(
           NButton,
@@ -134,17 +138,23 @@ const columns: DataTableColumns<CategoryEntity> = [
             type: 'primary',
             onClick: () => addCategory(row),
           },
-          { default: () => 'Add' }
+          {
+            icon: () => renderIcon(AddCircleFilled),
+            default: () => 'Add'
+          }
         ),
         h(
           RouterLink,
-          { to: `/categories/${row.id}` },
+          { to: `${route.path}/${row.id}/photos` },
           {
             default: () =>
               h(
                 NButton,
                 { size: 'small', type: 'info' },
-                { default: () => 'Details' }
+                {
+                  icon: () => renderIcon(FolderOpenRound),
+                  default: () => 'Details'
+                }
               ),
           }
         ),
@@ -155,7 +165,10 @@ const columns: DataTableColumns<CategoryEntity> = [
             type: 'info',
             onClick: () => openEditModal(row),
           },
-          { default: () => 'Edit' }
+          {
+            icon: () => renderIcon(EditFilled),
+            default: () => 'Edit'
+          }
         ),
         h(
           NButton,
@@ -164,7 +177,10 @@ const columns: DataTableColumns<CategoryEntity> = [
             type: 'error',
             onClick: () => openDeleteModal(row),
           },
-          { default: () => 'Delete' }
+          {
+            icon: () => renderIcon(DeleteFilled),
+            default: () => 'Delete'
+          }
         )
       ]);
     },
@@ -199,7 +215,6 @@ onMounted(() => {
       :columns="columns"
       :data="categoriesStore.categories"
       :row-key="(row: CategoryEntity) => row.id"
-      default-expand-all
       bordered
     />
     <n-pagination
@@ -207,7 +222,7 @@ onMounted(() => {
         v-model:page-size="pagination.pageSize"
         :page-sizes="pagination.pageSizes"
         :item-count="pagination.itemCount"
-        @change="pagination.onChange"
+        @update:page="pagination.onChange"
         @update-page-size="pagination.onUpdatePageSize"
         show-size-picker
         style="justify-content: right; margin-top: 16px;" />

@@ -1,4 +1,5 @@
 import { RouteName } from '@/types/constants/route-name';
+import type { RouteLocationNormalizedLoadedGeneric as VueRoute } from 'vue-router';
 
 export const adminRoutes = [
   {
@@ -15,6 +16,12 @@ export const adminRoutes = [
         path: 'categories',
         name: RouteName.ADMIN.CATEGORIES,
         component: () => import('@/views/admin/categories.vue')
+      },
+      {
+        path: 'categories/:id/photos',
+        name: RouteName.ADMIN.CATEGORY_PHOTOS,
+        component: () => import('@/views/admin/photos.vue'),
+        props: (route: VueRoute) => ({ categoryId: Number(route.params.id) })
       },
     ], 
   },

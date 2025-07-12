@@ -10,9 +10,17 @@ export class PhotoEntity {
 
   @Column({ type: 'varchar', length: 255 })
   @ApiProperty()
-  path: string;
+  url: string;
 
   @ManyToOne(() => CategoryEntity, (category) => category.photos, { onDelete: 'CASCADE' })
   @ApiProperty({ type: () => CategoryEntity })
   category: CategoryEntity;
+
+  @Column({ nullable: false, unique: true })
+  @ApiProperty()
+  orderId: number;
+
+  @Column({ type: 'boolean', default: false })
+  @ApiProperty()
+  isActive: boolean;
 }

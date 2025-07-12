@@ -3,6 +3,7 @@ export const RouteName = {
   ADMIN: {
     ROOT: "admin-root",
     CATEGORIES: "categories",
+    CATEGORY_PHOTOS: "category-photos"
   },
 
   AUTH: {

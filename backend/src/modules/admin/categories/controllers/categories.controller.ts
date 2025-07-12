@@ -7,6 +7,7 @@ import { ApiTokenResponse } from 'src/decorators/token.decorator';
 import { CategoriesStrategy } from 'src/modules/categories/services/categories.strategy';
 
 @Controller('categories')
+@UseGuards(AuthGuard)
 export class CategoriesController {
   constructor(
     @Inject('CategoriesAdminService') private categoriesAdminService: CategoriesAdminStrategy,
@@ -14,7 +15,6 @@ export class CategoriesController {
   ) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   @ApiCreateResponses()
   @ApiTokenResponse()
   create(@Body() dto: CreateCategoryRequestDto) {
@@ -35,7 +35,6 @@ export class CategoriesController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
   @ApiUpdateResponses()
   @ApiTokenResponse()
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateCategoryRequestDto) {
@@ -43,7 +42,6 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
   @ApiRemoveResponses()
   @ApiTokenResponse()
   remove(@Param('id', ParseIntPipe) id: number) {
