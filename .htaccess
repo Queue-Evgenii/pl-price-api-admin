@@ -1,11 +1,11 @@
 RewriteEngine On
 
-RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/(api|swagger)(.*)$
-RewriteRule ^pl-price-api-admin/(api|swagger)(.*)$ http://127.0.0.1:3000/$1$2 [P,L]
+RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/api/
+RewriteRule ^pl-price-api-admin/api/(.*)$ http://127.0.0.1:3000/$1 [P,L]
 
 RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/uploads/
 RewriteRule ^pl-price-api-admin/uploads/(.*)$ pl-price-api-admin/backend/uploads/$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^pl-price-api-admin/(.*)$ pl-price-api-admin/frontend/dist$1 [L]
+RewriteRule ^pl-price-api-admin/(.*)$ pl-price-api-admin/frontend/dist/$1 [L]
