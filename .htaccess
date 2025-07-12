@@ -1,11 +1,6 @@
 RewriteEngine On
-RewriteBase /pl-price-api-admin/
 
-RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/api
-RewriteRule ^api/(.*)$ http://localhost:3000/api/$1 [P,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/web
-RewriteRule ^web/(.*)$ frontend/dist/$1 [L]
-
-ProxyPreserveHost On
-ProxyRequests Off
+RewriteRule ^.*$ index.php [L,QSA]

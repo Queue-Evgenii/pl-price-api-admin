@@ -11,7 +11,7 @@ if (preg_match('#^/(api|swagger)/#', $cleanPath)) {
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
 
-    if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
+    if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents('php://input'));
     }
 
