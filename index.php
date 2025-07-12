@@ -1,5 +1,9 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $nestUrl = 'http://localhost:3000';
 $basePath = '/pl-price-api-admin';
 
@@ -114,4 +118,8 @@ function serveStaticFile(string $filePath)
     header('Content-Length: ' . filesize($filePath));
     readfile($filePath);
     exit;
+}
+
+function str_starts_with($haystack, $needle) {
+    return substr($haystack, 0, strlen($needle)) === $needle;
 }
