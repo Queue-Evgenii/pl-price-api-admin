@@ -1,13 +1,11 @@
 RewriteEngine On
+RewriteBase /pl-price-api-admin/
 
-# Проксировать /api к локальному серверу на 3000 порту
 RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/api
 RewriteRule ^api/(.*)$ http://localhost:3000/api/$1 [P,L]
 
-# Делегировать /web в директорию frontend/dist
 RewriteCond %{REQUEST_URI} ^/pl-price-api-admin/web
-RewriteRule ^web/(.*)$ /pl-price-api-admin/frontend/dist/$1 [L]
+RewriteRule ^web/(.*)$ frontend/dist/$1 [L]
 
-# Разрешить прокси
 ProxyPreserveHost On
 ProxyRequests Off
