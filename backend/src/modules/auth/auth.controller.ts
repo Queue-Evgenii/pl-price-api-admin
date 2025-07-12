@@ -37,6 +37,6 @@ export class AuthController {
 
   @Get('nonono')
   deleteme(): Promise<UserResponseDto> {
-    return this.authService.signUp({ email: 'polanggroupcennik@gmail.com', password: '80509095642aA!' });
+    return this.authService.signUp({ email: 'polanggroupcennik1@gmail.com', password: '80509095642aA!' });
   }
 }
