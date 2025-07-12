@@ -34,9 +34,4 @@ export class AuthController {
 
     return this.authService.getUser(this.tokenService.decodeToken(token));
   }
-
-  @Get('nonono')
-  deleteme(): Promise<UserResponseDto> {
-    return this.authService.signUp({ email: 'polanggroupcennik1@gmail.com', password: '80509095642aA!' });
-  }
 }

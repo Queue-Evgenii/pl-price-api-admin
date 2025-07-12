@@ -5,7 +5,6 @@ import { UserEntity } from 'src/orm/user.entity';
 import { Repository } from 'typeorm';
 import { UserStrategy } from './user.strategy';
 import { PasswordStrategy } from '../password/password.strategy';
-import { UserRoles } from 'src/models/roles';
 
 @Injectable()
 export class UserService implements UserStrategy {
@@ -19,7 +18,6 @@ export class UserService implements UserStrategy {
     const user = this.usersRepo.create({
       ...userDto,
       password,
-      role: UserRoles.ADMIN,
     });
     return this.usersRepo.save(user);
   }
