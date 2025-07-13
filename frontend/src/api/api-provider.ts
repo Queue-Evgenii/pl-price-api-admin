@@ -7,7 +7,7 @@ import { CategoriesApi } from './modules/categories';
 export function useApiProvider(app: App) {
   const apiClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    timeout: 1000,
+    timeout: 10000,
     headers: {
       ContentType: 'application/json',
       Accept: 'application/json',
