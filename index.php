@@ -77,8 +77,15 @@ function proxyRequest(string $url)
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
 
+    $headers = [];
+    foreach (getallheaders() as $name => $value) {
+        if (strtolower($name) !== 'host') {
+            $headers[] = "$name: $value";
+        }
+    }
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES)) {
-        // multipart/form-data
         $postFields = [];
 
         foreach ($_FILES as $key => $file) {
@@ -91,25 +98,14 @@ function proxyRequest(string $url)
             }
         }
 
-        // Добавим остальные поля (если они есть)
         foreach ($_POST as $key => $value) {
             $postFields[$key] = $value;
         }
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
     } elseif (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
-        // обычный raw-body JSON и т.д.
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents('php://input'));
     }
-
-    // Заголовки, кроме Host
-    $headers = [];
-    foreach (getallheaders() as $name => $value) {
-        if (strtolower($name) !== 'host') {
-            $headers[] = "$name: $value";
-        }
-    }
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
     $response = curl_exec($ch);
 
