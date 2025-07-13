@@ -77,7 +77,28 @@ function proxyRequest(string $url)
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
 
-    if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES)) {
+        // multipart/form-data
+        $postFields = [];
+
+        foreach ($_FILES as $key => $file) {
+            if (is_uploaded_file($file['tmp_name'])) {
+                $postFields[$key] = new CURLFile(
+                    $file['tmp_name'],
+                    $file['type'],
+                    $file['name']
+                );
+            }
+        }
+
+        // Добавим остальные поля (если они есть)
+        foreach ($_POST as $key => $value) {
+            $postFields[$key] = $value;
+        }
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+    } elseif (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+        // обычный raw-body JSON и т.д.
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents('php://input'));
     }
 
