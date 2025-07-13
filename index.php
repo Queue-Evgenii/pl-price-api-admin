@@ -74,37 +74,62 @@ function proxyRequest(string $url)
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_HEADER, true); // нужно получить заголовки ответа
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
 
     $headers = [];
     foreach (getallheaders() as $name => $value) {
-        if (strtolower($name) !== 'host') {
-            $headers[] = "$name: $value";
+        $lname = strtolower($name);
+        if ($lname === 'host' || $lname === 'content-length') {
+            continue;
         }
+        $headers[] = "$name: $value";
     }
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES)) {
-        $postFields = [];
+    if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
+        if (!empty($_FILES)) {
+            // собираем multipart/form-data поля
+            $postFields = [];
 
-        foreach ($_FILES as $key => $file) {
-            if (is_uploaded_file($file['tmp_name'])) {
-                $postFields[$key] = new CURLFile(
-                    $file['tmp_name'],
-                    $file['type'],
-                    $file['name']
-                );
+            foreach ($_FILES as $key => $file) {
+                if (is_array($file['tmp_name'])) {
+                    // обработка массивов файлов (например multiple)
+                    for ($i = 0; $i < count($file['tmp_name']); $i++) {
+                        if (is_uploaded_file($file['tmp_name'][$i])) {
+                            $postFields["$key[$i]"] = new CURLFile(
+                                $file['tmp_name'][$i],
+                                $file['type'][$i],
+                                $file['name'][$i]
+                            );
+                        }
+                    }
+                } else {
+                    if (is_uploaded_file($file['tmp_name'])) {
+                        $postFields[$key] = new CURLFile(
+                            $file['tmp_name'],
+                            $file['type'],
+                            $file['name']
+                        );
+                    }
+                }
             }
-        }
 
-        foreach ($_POST as $key => $value) {
-            $postFields[$key] = $value;
-        }
+            foreach ($_POST as $key => $value) {
+                $postFields[$key] = $value;
+            }
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-    } elseif (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents('php://input'));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        } else {
+            // если нет файлов, просто передаём тело запроса (JSON и др.)
+            $rawBody = file_get_contents('php://input');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $rawBody);
+        }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+        $rawBody = file_get_contents('php://input');
+        if ($rawBody) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $rawBody);
+        }
     }
 
     $response = curl_exec($ch);
@@ -116,17 +141,28 @@ function proxyRequest(string $url)
         exit;
     }
 
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-    curl_close($ch);
+    // Разделяем заголовки и тело ответа
+    $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $response_headers_raw = substr($response, 0, $header_size);
+    $response_body = substr($response, $header_size);
 
-    http_response_code($httpCode);
-    if ($contentType) {
-        header("Content-Type: $contentType");
+    // Парсим заголовки и отправляем клиенту (кроме некоторых)
+    $response_headers = explode("\r\n", $response_headers_raw);
+    foreach ($response_headers as $header_line) {
+        if (stripos($header_line, 'Transfer-Encoding:') === 0) continue;
+        if (stripos($header_line, 'Content-Length:') === 0) continue;
+        if (empty(trim($header_line))) continue;
+        header($header_line, false);
     }
-    echo $response;
+
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    http_response_code($httpCode);
+
+    echo $response_body;
+    curl_close($ch);
     exit;
 }
+
 
 function serveStaticFile(string $filePath)
 {
