@@ -31,6 +31,7 @@ export class PhotosAdminController {
     }),
   )
   create(@Param('id') id: number, @UploadedFile() file: Express.Multer.File) {
+    console.log('Received file:', file);
     return this.photosAdminService.create(id, file.filename);
   }
 

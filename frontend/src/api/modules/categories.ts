@@ -35,7 +35,7 @@ export class CategoriesApi extends Api {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.postRequest<PhotoEntity, FormData>(`/categories/${id}/photos`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    return this.postRequest<PhotoEntity, FormData>(`/categories/${id}/photos`, formData);
   };
   
   updatePhoto = (id: number, payload: UpdatePhotosDto) => {
