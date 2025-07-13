@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CategoryEntity } from './category.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class PhotoEntity {
+export class PhotoEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
