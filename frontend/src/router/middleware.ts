@@ -3,12 +3,16 @@ import { UserRoles } from "@/types/models/entities/user.entity"
 import { useUserStore } from "@/stores/user"
 
 import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router"
-import { Token } from "@/types/models/utils/token"
 
-export const beforeEach = ((to: RouteLocationNormalized, _ : unknown, next: NavigationGuardNext) => {
+export const beforeEach = ((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   const userStore = useUserStore();
 
-  if (to.meta.requiresAuth && !Token.exists()) {
+  if (to.name === RouteName.AUTH.SIGN_IN && userStore.user !== undefined) {
+    console.log(from.name)
+    return next({ name: from.name });
+  }
+
+  if (to.meta.requiresAuth && userStore.user === undefined) {
     return next({ name: RouteName.AUTH.SIGN_IN })
   }
 

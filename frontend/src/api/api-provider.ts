@@ -1,8 +1,8 @@
 import { type App } from 'vue';
 import axios from 'axios';
-import { Token } from '@/types/models/utils/token';
 import { AuthApi } from './modules/auth';
 import { CategoriesApi } from './modules/categories';
+import { Token } from '@/types/models/utils/browser/token';
 
 export function useApiProvider(app: App) {
   const apiClient = axios.create({

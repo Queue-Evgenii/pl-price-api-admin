@@ -2,11 +2,11 @@
 import { inject, ref } from 'vue'
 import type { FormInst, FormRules } from 'naive-ui'
 import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
-import type { AuthApi } from '@/api/modules/auth';
-import { Token } from '@/types/models/utils/token';
+import type { AuthApi } from '@/api/modules/auth'
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { RouteName } from '@/types/constants/route-name';
+import { Token } from '@/types/models/utils/browser/token';
 
 const userStore = useUserStore();
 const authApi = inject<AuthApi>('AuthApi')!;

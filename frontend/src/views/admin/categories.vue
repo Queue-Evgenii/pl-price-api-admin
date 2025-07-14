@@ -11,6 +11,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import type { _DeepPartial } from 'pinia'
 import { AxiosError } from 'axios'
 import { Slug } from '@/types/models/utils/slug'
+import { withErrorHandling } from '@/api/api-error-handler'
 
 const message = useMessage();
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
@@ -31,11 +32,11 @@ const saveChanges = async () => {
   try {
     if (editingCategory.value.id === -1) {
       const payload: CreateCategoryDto = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined };
-      const createdCategory = await categoriesApi.createCategory(payload);
+      const createdCategory = await withErrorHandling(categoriesApi.createCategory(payload));
       categoriesStore.addCategory(createdCategory);
       message.success("Category successfully added!");
     } else {
-      const updatedCategory = await categoriesApi.updateCategory(editingCategory.value.id, editingCategory.value);
+      const updatedCategory = await withErrorHandling(categoriesApi.updateCategory(editingCategory.value.id, editingCategory.value));
       categoriesStore.replaceCategory(updatedCategory);
       message.success("Category successfully changed!");
     }
@@ -51,7 +52,7 @@ const saveChanges = async () => {
 
 const deleteCategory = async (id: number) => {
   try {
-    await categoriesApi.deleteCategory(id);
+    await withErrorHandling(categoriesApi.deleteCategory(id));
     categoriesStore.deleteCategoryWithId(id);
     
     message.success("Category successfully deleted!");
@@ -66,7 +67,7 @@ const deleteCategory = async (id: number) => {
 }
 
 const fetchCategories = async (page = 1, pageSize = 10) => {
-  const { data, meta } = (await categoriesApi.getCategories({ page, limit: pageSize }));
+  const { data, meta } = (await withErrorHandling(categoriesApi.getCategories({ page, limit: pageSize })));
   categoriesMeta.value = meta;
   categoriesStore.setCategories(data);
 
