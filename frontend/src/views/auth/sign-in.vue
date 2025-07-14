@@ -3,7 +3,7 @@ import { inject, ref } from 'vue'
 import type { FormInst, FormRules } from 'naive-ui'
 import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
 import type { AuthApi } from '@/api/modules/auth';
-import { Token } from '@/types/models/utils/Token';
+import { Token } from '@/types/models/utils/token';
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { RouteName } from '@/types/constants/route-name';

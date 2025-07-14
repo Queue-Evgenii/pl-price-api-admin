@@ -1,6 +1,6 @@
 import { type App } from 'vue';
 import axios from 'axios';
-import { Token } from '@/types/models/utils/Token';
+import { Token } from '@/types/models/utils/token';
 import { AuthApi } from './modules/auth';
 import { CategoriesApi } from './modules/categories';
 

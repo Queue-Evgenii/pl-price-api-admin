@@ -2,14 +2,15 @@
 import { ref, onMounted, reactive, h, inject } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 import { DeleteFilled, EditFilled, AddCircleFilled, FolderOpenRound } from '@vicons/material'
-import { NPagination, NDataTable, NInput, NButton, useMessage, NIcon } from 'naive-ui'
+import { NPagination, NDataTable, NInput, NButton, useMessage, NIcon, NTooltip } from 'naive-ui'
 import type { CategoryEntity } from '@/types/models/entities/category.entity'
 import type { CategoriesApi } from '@/api/modules/categories'
 import { useCategoriesStore } from '@/stores/categories'
-import type { CategoriesMetaDto } from '@/types/models/dto/categories-dto'
+import type { CategoriesMetaDto, CreateCategoryDto } from '@/types/models/dto/categories-dto'
 import { RouterLink, useRoute } from 'vue-router'
 import type { _DeepPartial } from 'pinia'
 import { AxiosError } from 'axios'
+import { Slug } from '@/types/models/utils/slug'
 
 const message = useMessage();
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
@@ -29,7 +30,7 @@ const saveChanges = async () => {
   }
   try {
     if (editingCategory.value.id === -1) {
-      const payload = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined };
+      const payload: CreateCategoryDto = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined };
       const createdCategory = await categoriesApi.createCategory(payload);
       categoriesStore.addCategory(createdCategory);
       message.success("Category successfully added!");
@@ -108,6 +109,11 @@ const addCategory = (row: CategoryEntity | undefined) => {
   openEditModal(newCategory);
 }
 
+const transliterateName = (value: string) => {
+  if (editingCategory.value === null) return;
+  editingCategory.value.slug = Slug.transliterate(value);
+}
+
 const columns: DataTableColumns<CategoryEntity> = [
   {
     title: 'ID',
@@ -132,15 +138,23 @@ const columns: DataTableColumns<CategoryEntity> = [
       
       return h('div', { style: 'display: flex; gap: 8px;' }, [
         h(
-          NButton,
+          NTooltip,
+          { placement: 'bottom' },
           {
-            size: 'small',
-            type: 'primary',
-            onClick: () => addCategory(row),
-          },
-          {
-            icon: () => renderIcon(AddCircleFilled),
-            default: () => 'Add'
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'primary',
+                  onClick: () => addCategory(row),
+                },
+                {
+                  icon: () => renderIcon(AddCircleFilled),
+                  default: () => 'Add'
+                }
+              ),
+            default: () => 'Adds sub-category'
           }
         ),
         h(
@@ -236,11 +250,13 @@ onMounted(() => {
     <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 16px;">
       <n-input
         v-model:value="editingCategory.name"
+        @update:value="transliterateName"
         placeholder="Name"
       />
       <n-input
         v-model:value="editingCategory.slug"
         placeholder="Slug"
+        disabled
       />
       <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
         <n-button @click="closeEditModal">Cancel</n-button>

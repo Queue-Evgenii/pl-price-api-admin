@@ -3,7 +3,7 @@ import { UserRoles } from "@/types/models/entities/user.entity"
 import { useUserStore } from "@/stores/user"
 
 import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router"
-import { Token } from "@/types/models/utils/Token"
+import { Token } from "@/types/models/utils/token"
 
 export const beforeEach = ((to: RouteLocationNormalized, _ : unknown, next: NavigationGuardNext) => {
   const userStore = useUserStore();
