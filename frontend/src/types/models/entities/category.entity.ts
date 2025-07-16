@@ -8,4 +8,6 @@ export interface CategoryEntity {
   parent?: CategoryEntity | Partial<CategoryEntity>;
 
   children: CategoryEntity[];
+
+  countPhotos: number;
 }

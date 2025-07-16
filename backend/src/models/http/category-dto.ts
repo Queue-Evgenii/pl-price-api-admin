@@ -57,7 +57,7 @@ export class FindAllCategoriesOptionsDto {
   @IsOptional()
   @Type(() => Number)
   @Min(1)
-  limit: number = 10;
+  limit: number | undefined;
 }
 
 export interface FindAllCategoriesDto {
@@ -65,6 +65,6 @@ export interface FindAllCategoriesDto {
   meta: {
     total: number;
     page: number;
-    limit: number;
+    limit: number | undefined;
   };
 }

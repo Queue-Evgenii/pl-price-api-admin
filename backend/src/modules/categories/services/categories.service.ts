@@ -19,14 +19,46 @@ export class CategoriesService implements CategoriesStrategy {
       query.where('category.parentId IS NULL');
     }
 
-    query
-      .orderBy('category.createdAt', 'DESC')
-      .skip((params.page - 1) * params.limit)
-      .take(params.limit);
+    query.orderBy('category.createdAt', 'DESC');
+
+    if (params.limit) {
+      query.skip((params.page - 1) * params.limit).take(params.limit);
+    }
 
     const [roots, total] = await query.getManyAndCount();
+    const trees = await Promise.all(roots.map((root) => this.categoryRepo.findDescendantsTree(root)));
 
-    const data = await Promise.all(roots.map((root) => this.categoryRepo.findDescendantsTree(root)));
+    // Собираем все ID категорий из дерева
+    const allCategories: CategoryEntity[] = [];
+    const collectIds = (node: CategoryEntity) => {
+      allCategories.push(node);
+      node.children?.forEach(collectIds);
+    };
+    trees.forEach(collectIds);
+    const allIds = allCategories.map((c) => c.id);
+
+    const photoCounts = await this.categoryRepo.manager
+      .createQueryBuilder()
+      .select('photo.categoryId', 'categoryId')
+      .addSelect('COUNT(*)', 'count')
+      .from('photo_entity', 'photo')
+      .where('photo.isActive = true')
+      .andWhere('photo.categoryId IN (:...ids)', { ids: allIds })
+      .groupBy('photo.categoryId')
+      .getRawMany<{ categoryId: string; count: string }>();
+
+    const countMap = new Map<number, number>();
+    photoCounts.forEach((row) => {
+      countMap.set(Number(row.categoryId), Number(row.count));
+    });
+
+    const attachCountPhotos = (node: CategoryEntity): CategoryEntity => ({
+      ...node,
+      countPhotos: countMap.get(node.id) || 0,
+      children: node.children?.map(attachCountPhotos) || [],
+    });
+
+    const data = trees.map(attachCountPhotos);
 
     return {
       data,

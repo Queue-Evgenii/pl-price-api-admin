@@ -5,7 +5,7 @@ import { Token } from '@/types/models/utils/browser/token';
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { RouteName } from '@/types/constants/route-name';
-import { LogOutFilled, WarningFilled } from '@vicons/material'
+import { HomeFilled, LogOutFilled, WarningFilled } from '@vicons/material'
 import { useThemeVars } from 'naive-ui';
 
 const isConfirmationVisible = ref(false);
@@ -38,12 +38,22 @@ const openLogoutDialog = () => {
           />
           <breadcrumbs />
         </n-flex>
-        <n-button @click="openLogoutDialog">
-          <template #icon>
-            <LogOutFilled style="vertical-align: middle; transform: translateY(1px);" />
-          </template>
-          Log Out
-        </n-button>
+        <n-flex :align="'center'" >
+          <router-link :to="{ name: RouteName.SITE.ROOT }">
+            <n-button>
+              <template #icon>
+                <HomeFilled style="vertical-align: middle; transform: translateY(1px);" />
+              </template>
+              Home
+            </n-button>
+          </router-link>
+          <n-button @click="openLogoutDialog">
+            <template #icon>
+              <LogOutFilled style="vertical-align: middle; transform: translateY(1px);" />
+            </template>
+            Log Out
+          </n-button>
+        </n-flex>
       </n-flex>
     </n-space>
     <slot></slot>

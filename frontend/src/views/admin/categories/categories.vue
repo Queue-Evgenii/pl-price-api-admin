@@ -2,7 +2,7 @@
 import { ref, onMounted, reactive, h, inject } from 'vue'
 import type { DataTableColumns } from 'naive-ui'
 import { DeleteFilled, EditFilled, AddCircleFilled, FolderOpenRound } from '@vicons/material'
-import { NPagination, NDataTable, NInput, NButton, useMessage, NIcon, NTooltip } from 'naive-ui'
+import { NPagination, NDataTable, NInput, NButton, useMessage, NIcon, NTooltip, NTag } from 'naive-ui'
 import type { CategoryEntity } from '@/types/models/entities/category.entity'
 import type { CategoriesApi } from '@/api/modules/categories'
 import { useCategoriesStore } from '@/stores/categories'
@@ -101,6 +101,7 @@ const addCategory = (row: CategoryEntity | undefined) => {
     name: '',
     slug: '',
     children: [],
+    countPhotos: 0
   };
 
   if (row !== undefined) {
@@ -138,6 +139,15 @@ const columns: DataTableColumns<CategoryEntity> = [
         h(NIcon, null, { default: () => h(iconComponent) });
       
       return h('div', { style: 'display: flex; gap: 8px;' }, [
+        h(
+          NTag,
+          {
+            style: `visibility: ${row.countPhotos === 0 ? 'hidden' : 'visible'}`
+          },
+          {
+            default: () => `${row.countPhotos} photos`
+          },
+        ),
         h(
           NTooltip,
           { placement: 'bottom' },
