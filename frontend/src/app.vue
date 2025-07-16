@@ -11,6 +11,12 @@ const authApi = inject<AuthApi>('AuthApi')!;
 const router = useRouter();
 const route = useRoute();
 
+const themeOverrides = {
+  common: {
+    warningColor: 'rgb(240, 160, 32)'
+  }
+}
+
 authApi.getMe()
   .then(res => {
     Token.set(res.token);
@@ -24,7 +30,7 @@ authApi.getMe()
 </script>
 
 <template>
-  <n-config-provider>
+  <n-config-provider :theme-overrides="themeOverrides">
     <n-message-provider placement="bottom">
       <router-view />
     </n-message-provider>

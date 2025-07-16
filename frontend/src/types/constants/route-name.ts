@@ -2,8 +2,18 @@
 export const RouteName = {
   ADMIN: {
     ROOT: "admin-root",
-    CATEGORIES: "categories",
-    CATEGORY_PHOTOS: "category-photos"
+    CATEGORIES: {
+      ROOT: "admin-categories",
+      PHOTOS: "admin-category-photos"
+    }
+  },
+
+  SITE: {
+    ROOT: "root",
+    CATEGORIES: {
+      ROOT: "categories",
+      DETAIL: "categories-detail"
+    }
   },
 
   AUTH: {
