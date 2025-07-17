@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    base: mode === 'development' ? './' : '/pl-price-api-admin/frontend/dist/',
+    base: mode === 'development' ? './' : '/pl-price-api-admin/web/',
     plugins: [vue()],
     resolve: {
       alias: {

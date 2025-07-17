@@ -91,4 +91,16 @@ export class CategoriesService implements CategoriesStrategy {
 
     return category;
   }
+
+  async findOneBySlug(slug: string): Promise<CategoryEntity> {
+    const category = await this.categoryRepo.findOne({ where: { slug }, relations: ['parent'] });
+
+    if (!category) {
+      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+    }
+
+    const fullTree = await this.categoryRepo.findDescendantsTree(category);
+
+    return fullTree;
+  }
 }

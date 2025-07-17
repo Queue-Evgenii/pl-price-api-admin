@@ -11,8 +11,8 @@ export class PhotosService {
     private readonly photosRepo: Repository<PhotoEntity>,
   ) {}
 
-  async findAll(categoryId: number): Promise<FindAllPhotosDto> {
-    const data = await this.photosRepo.find({ where: { category: { id: categoryId } }, relations: ['category'], order: { orderId: 'ASC' } });
+  async findAll(slug: string): Promise<FindAllPhotosDto> {
+    const data = await this.photosRepo.find({ where: { category: { slug } }, relations: ['category'], order: { orderId: 'ASC' } });
     return { data };
   }
 

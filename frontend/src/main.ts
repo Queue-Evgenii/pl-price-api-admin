@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import './style.css'
+import './style.scss'
 import app from './app.vue'
 import { router } from './router'
 import naive from 'naive-ui'

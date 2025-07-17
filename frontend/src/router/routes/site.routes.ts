@@ -4,6 +4,7 @@ import { commonRoutes } from './common.routes';
 export const siteRoutes = [
   {
     path: '/',
+    component: () => import('@/views/site/index.vue'),
     meta: {
       breadcrumb: 'Home',
     },
@@ -25,15 +26,23 @@ export const siteRoutes = [
             path: '',
             name: RouteName.SITE.CATEGORIES.ROOT,
             component: () => import('@/views/site/categories/categories.vue'),
-            props: (route: any) => ({ categoryId: Number(route.params.id) }),
           },
           {
-            path: ':id',
-            name: RouteName.SITE.CATEGORIES.DETAIL,
+            path: ':slug',
+            name: RouteName.SITE.CATEGORIES.SLUG,
             component: () => import('@/views/site/categories/categories.vue'),
-            props: (route: any) => ({ categoryId: Number(route.params.id) }),
+            props: (route: any) => ({ slug: route.params.slug }),
             meta: {
-              breadcrumb: (route: any) => `#${route.params.id}`,
+              breadcrumb: (route: any) => `${route.params.slug}`,
+            },
+          },
+          {
+            path: ':slug/photo',
+            name: RouteName.SITE.CATEGORIES.DETAIL,
+            component: () => import('@/views/site/categories/detail.vue'),
+            props: (route: any) => ({ slug: route.params.slug }),
+            meta: {
+              breadcrumb: (route: any) => `${route.params.slug}`,
             },
           },
         ]

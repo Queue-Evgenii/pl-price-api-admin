@@ -28,12 +28,12 @@ export const adminRoutes = [
             component: () => import('@/views/admin/categories/categories.vue'),
           },
           {
-            path: ':id/photos',
+            path: ':slug/photos',
             name: RouteName.ADMIN.CATEGORIES.PHOTOS,
             component: () => import('@/views/admin/categories/photos.vue'),
-            props: (route: any) => ({ categoryId: Number(route.params.id) }),
+            props: (route: any) => ({ slug: route.params.slug }),
             meta: {
-              breadcrumb: (route: any) => `#${route.params.id}`,
+              breadcrumb: (route: any) => `${route.params.slug}`,
             },
           },
         ],

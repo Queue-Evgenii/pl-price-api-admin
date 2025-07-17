@@ -9,11 +9,11 @@ import { DeleteFilled, AddCircleFilled, ArrowDropUpFilled, ArrowDropDownFilled }
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photosStore = usePhotosStore();
-const props = defineProps<{ categoryId: number }>();
+const props = defineProps<{ slug: string }>();
 
 const fetchPhotos = async () => {
   try {
-    const { data } = await categoriesApi.getPhotos(props.categoryId);
+    const { data } = await categoriesApi.getPhotos(props.slug);
     photosStore.setPhotos(data);
   } catch (error) {
     console.error('Photo fetch error:', error);
@@ -22,7 +22,7 @@ const fetchPhotos = async () => {
 
 const createPhotos = async (file: File) => {
   try {
-    const createdPhoto = await categoriesApi.addPhoto(props.categoryId, file);
+    const createdPhoto = await categoriesApi.addPhoto(props.slug, file);
     photosStore.addPhoto(createdPhoto);
   } catch (error) {
     console.error('Photo creating error:', error);

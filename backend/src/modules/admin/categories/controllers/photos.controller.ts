@@ -16,7 +16,7 @@ export class PhotosAdminController {
     private photosService: PhotosService,
   ) {}
 
-  @Post('categories/:id/photos')
+  @Post('categories/:slug/photos')
   @ApiTokenResponse()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -30,14 +30,14 @@ export class PhotosAdminController {
       }),
     }),
   )
-  create(@Param('id') id: number, @UploadedFile() file: Express.Multer.File) {
-    return this.photosAdminService.create(id, file.filename);
+  create(@Param('slug') slug: string, @UploadedFile() file: Express.Multer.File) {
+    return this.photosAdminService.create(slug, file.filename);
   }
 
-  @Get('categories/:id/photos')
+  @Get('categories/:slug/photos')
   @UsePipes(new ValidationPipe({ transform: true }))
-  findAll(@Param('id') id: number) {
-    return this.photosService.findAll(id);
+  findAll(@Param('slug') slug: string) {
+    return this.photosService.findAll(slug);
   }
 
   @Patch('photos/:id')

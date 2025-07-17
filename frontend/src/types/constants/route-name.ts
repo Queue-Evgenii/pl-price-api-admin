@@ -12,7 +12,8 @@ export const RouteName = {
     ROOT: "root",
     CATEGORIES: {
       ROOT: "categories",
-      DETAIL: "categories-detail"
+      DETAIL: "categories-detail",
+      SLUG: "categories-slug",
     }
   },
 

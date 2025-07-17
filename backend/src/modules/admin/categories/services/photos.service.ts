@@ -20,8 +20,8 @@ export class PhotosAdminService {
     private readonly configService: ConfigService,
   ) {}
 
-  async create(categoryId: number, filename: string): Promise<PhotoEntity> {
-    const category = await this.categoriesService.findOne(categoryId);
+  async create(slug: string, filename: string): Promise<PhotoEntity> {
+    const category = await this.categoriesService.findOneBySlug(slug);
     const maxOrder = await this.photosRepo.maximum('orderId');
     const apiUrl = this.configService.get<string>('API_URL');
 
@@ -52,14 +52,14 @@ export class PhotosAdminService {
     }
     if (dto.isActive !== undefined) photo.isActive = dto.isActive;
 
-    const categoryId = photo.category.id;
+    const slug = photo.category.slug;
     await this.photosRepo.save(photo);
-    return this.photosService.findAll(categoryId);
+    return this.photosService.findAll(slug);
   }
 
   async remove(id: number): Promise<FindAllPhotosDto> {
     const photo = await this.photosService.findOne(id, true);
-    const categoryId = photo.category.id;
+    const slug = photo.category.slug;
     const orderId = photo.orderId;
     const unlinkAsync = promisify(fs.unlink);
 
@@ -79,8 +79,8 @@ export class PhotosAdminService {
 
     await this.photosRepo.remove(photo);
 
-    const needsToUpdate = await this.photosService.findAll(categoryId);
+    const needsToUpdate = await this.photosService.findAll(slug);
     await Promise.all(needsToUpdate.data.filter((el) => el.orderId > orderId).map((el) => this.update(el.id, { orderId: el.orderId - 1 })));
-    return this.photosService.findAll(categoryId);
+    return this.photosService.findAll(slug);
   }
 }

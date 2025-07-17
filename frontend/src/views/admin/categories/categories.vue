@@ -170,7 +170,7 @@ const columns: DataTableColumns<CategoryEntity> = [
         ),
         h(
           RouterLink,
-          { to: `${route.path}/${row.id}/photos` },
+          { to: `${route.path}/${row.slug}/photos` },
           {
             default: () =>
               h(

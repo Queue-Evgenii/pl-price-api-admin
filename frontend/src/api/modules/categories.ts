@@ -11,7 +11,7 @@ export class CategoriesApi extends Api {
     super(apiClient, '/admin');
   }
   
-  getCategories = (params: { page: number, limit: number }) => {
+  getCategories = (params?: { page: number, limit: number }) => {
     return this.getRequest<CategoriesDto>('/categories', params);
   };
   
@@ -27,15 +27,15 @@ export class CategoriesApi extends Api {
     return this.deleteRequest<void>(`/categories/${id}`);
   };
 
-  getPhotos = (id: number) => {
-    return this.getRequest<PhotosDto>(`/categories/${id}/photos`);
+  getPhotos = (slug: string) => {
+    return this.getRequest<PhotosDto>(`/categories/${slug}/photos`);
   };
   
-  addPhoto = (id: number, file: File) => {
+  addPhoto = (slug: string, file: File) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.postRequest<PhotoEntity, FormData>(`/categories/${id}/photos`, formData);
+    return this.postRequest<PhotoEntity, FormData>(`/categories/${slug}/photos`, formData);
   };
   
   updatePhoto = (id: number, payload: UpdatePhotosDto) => {

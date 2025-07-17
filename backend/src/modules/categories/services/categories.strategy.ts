@@ -7,4 +7,6 @@ export interface CategoriesStrategy {
   findOne(id: number): Promise<CategoryEntity>;
 
   findRootById(id: number): Promise<CategoryEntity>;
+
+  findOneBySlug(slug: string): Promise<CategoryEntity>;
 }
