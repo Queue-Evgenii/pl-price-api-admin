@@ -145,7 +145,7 @@ onMounted(() => {
                 Delete
               </n-button>
             </n-flex>
-            <span>{{ image.name.split('--')[0] + '.' + image.name.split('.')[1] }}</span>
+            <span v-if="image.name">{{ image.name.split('--')[0] + '.' + image.name.split('.')[1] }}</span>
             </div>
           </n-flex>
         </n-list-item>
