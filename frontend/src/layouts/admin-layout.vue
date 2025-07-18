@@ -32,7 +32,7 @@ const openLogoutDialog = () => {
     <n-space vertical style="max-width: 1920px; margin: 0 auto; padding: 16px 24px;">
       <n-flex :align="'center'" justify="space-between">
         <n-flex :align="'center'" >
-          <n-image
+          <img
             height="50"
             src="../assets/logo.png"
           />
