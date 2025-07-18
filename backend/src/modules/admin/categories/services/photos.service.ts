@@ -27,6 +27,7 @@ export class PhotosAdminService {
 
     const photo = this.photosRepo.create({
       url: `${apiUrl}/uploads/categories/photos/${filename}`,
+      name: filename,
       category,
       orderId: (maxOrder ?? 0) + 1,
     });

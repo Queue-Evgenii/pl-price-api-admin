@@ -23,9 +23,12 @@ export class PhotosAdminController {
       storage: diskStorage({
         destination: './uploads/categories/photos',
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const timestamp = Date.now();
+          const random = Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);
-          cb(null, `${uniqueSuffix}${ext}`);
+          const baseName = file.originalname.replace(ext, '');
+          const slugified = baseName.replace(/\s+/g, '-').toLowerCase();
+          cb(null, `${slugified}--${timestamp}-${random}${ext}`);
         },
       }),
     }),

@@ -13,6 +13,10 @@ export class PhotoEntity extends BaseEntity {
   @ApiProperty()
   url: string;
 
+  @Column({ nullable: true, type: 'varchar', length: 255 })
+  @ApiProperty()
+  name?: string;
+
   @ManyToOne(() => CategoryEntity, (category) => category.photos, { onDelete: 'CASCADE' })
   @ApiProperty({ type: () => CategoryEntity })
   category: CategoryEntity;
