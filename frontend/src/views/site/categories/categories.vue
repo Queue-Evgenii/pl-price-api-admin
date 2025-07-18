@@ -117,6 +117,6 @@ watch(
 
 <style>
 .page {
-  background: url('/background.jpg') center / cover no-repeat;
+  background: url('../../../assets/background.jpg') center / cover no-repeat;
 }
 </style>

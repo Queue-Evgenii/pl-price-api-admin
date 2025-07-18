@@ -34,7 +34,7 @@ const openLogoutDialog = () => {
         <n-flex :align="'center'" >
           <n-image
             height="50"
-            src="logo.png"
+            src="../assets/logo.png"
           />
           <breadcrumbs />
         </n-flex>
