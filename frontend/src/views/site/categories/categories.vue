@@ -55,7 +55,7 @@ watch(
     <header class="header" bordered>
       <div class="_container" style="display: flex; justify-content: center;">
         <a href="https://polandgroups.pl/" target="_blank" class="logo _img">
-          <img src="/logo.png" alt="" />
+          <img src="../../../assets/logo.png" alt="" />
         </a>
       </div>
     </header>
