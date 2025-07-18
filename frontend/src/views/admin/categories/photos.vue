@@ -119,29 +119,34 @@ onMounted(() => {
                 </template>
               </n-button>
             </n-flex>
-            <n-card hoverable style="flex: 0 0 auto; width: initial; margin-right: 24px;">
-              <n-image
-                object-fit="contain"
-                width="200"
-                height="200"
-                lazy
-                :src="image.url"
-                :intersection-observer-options="{
-                  root: '#image-scroll-container',
-                }"
-              >
-                <template #placeholder>
-                    <n-skeleton height="100px" width="100px" />
+            <div>
+              <n-flex :align="'center'" :size="32">
+              <n-card hoverable style="flex: 0 0 auto; width: min-content; margin-right: 24px;">
+                <n-image
+                  object-fit="contain"
+                  width="200"
+                  height="200"
+                  lazy
+                  :src="image.url"
+                  :intersection-observer-options="{
+                    root: '#image-scroll-container',
+                  }"
+                >
+                  <template #placeholder>
+                      <n-skeleton height="100px" width="100px" />
+                  </template>
+                </n-image>
+              </n-card>
+              <n-switch v-model:value="image.isActive" @update:value="(value: boolean) => switchStatus(image, value)"  :round="false" size="large" />
+              <n-button size="small" type="error" @click="removePhoto(image.id)">
+                <template #icon>
+                  <DeleteFilled />
                 </template>
-              </n-image>
-            </n-card>
-            <n-switch v-model:value="image.isActive" @update:value="(value: boolean) => switchStatus(image, value)"  :round="false" size="large" />
-            <n-button size="small" type="error" @click="removePhoto(image.id)">
-              <template #icon>
-                <DeleteFilled />
-              </template>
-              Delete
-            </n-button>
+                Delete
+              </n-button>
+            </n-flex>
+            <span>{{ image.name.split('--')[0] + '.' + image.name.split('.')[1] }}</span>
+            </div>
           </n-flex>
         </n-list-item>
       </n-list>

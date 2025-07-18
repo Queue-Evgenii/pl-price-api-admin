@@ -10,4 +10,6 @@ export interface PhotoEntity {
   orderId: number;
 
   isActive: boolean;
+
+  name: string;
 }
