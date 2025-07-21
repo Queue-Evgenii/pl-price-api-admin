@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import type { FormInst, FormRules } from 'naive-ui'
 import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
 import type { AuthApi } from '@/api/modules/auth'
@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { RouteName } from '@/types/constants/route-name';
 import { Token } from '@/types/models/utils/browser/token';
+import { UserRoles } from '@/types/models/entities/user.entity';
 
 const userStore = useUserStore();
 const authApi = inject<AuthApi>('AuthApi')!;
@@ -41,6 +42,15 @@ const handleLogin = () => {
     if (!errors) authorization();
   })
 }
+
+onMounted(() => {
+  if (userStore.user !== undefined) {
+    if (userStore.userRole === UserRoles.ADMIN)
+      return router.push({ name: RouteName.ADMIN.ROOT });
+    
+    return router.push({ name: RouteName.SITE.ROOT });
+  }
+})
 </script>
 
 <template>
