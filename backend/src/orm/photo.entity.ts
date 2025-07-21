@@ -21,7 +21,7 @@ export class PhotoEntity extends BaseEntity {
   @ApiProperty({ type: () => CategoryEntity })
   category: CategoryEntity;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: false })
   @ApiProperty()
   orderId: number;
 

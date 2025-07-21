@@ -22,7 +22,7 @@ export class PhotosAdminService {
 
   async create(slug: string, filename: string): Promise<PhotoEntity> {
     const category = await this.categoriesService.findOneBySlug(slug);
-    const maxOrder = await this.photosRepo.maximum('orderId');
+    const maxOrder = await this.photosRepo.maximum('orderId', { category: { id: category.id } });
     const apiUrl = this.configService.get<string>('API_URL');
 
     const photo = this.photosRepo.create({
