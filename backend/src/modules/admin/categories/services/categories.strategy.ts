@@ -6,5 +6,7 @@ export interface CategoriesAdminStrategy {
 
   update(id: number, dto: UpdateCategoryRequestDto): Promise<CategoryEntity>;
 
+  swap(sourceId: number, targetId: number): Promise<void>;
+
   remove(id: number): Promise<void>;
 }

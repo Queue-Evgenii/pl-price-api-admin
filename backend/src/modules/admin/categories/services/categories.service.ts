@@ -24,6 +24,7 @@ export class CategoriesAdminService implements CategoriesAdminStrategy {
     const category = new CategoryEntity();
     category.name = dto.name;
     category.slug = dto.slug;
+    category.orderId = dto.orderId;
 
     if (dto.parentId) {
       const parent = await this.categoriesService.findRootById(dto.parentId);
@@ -53,6 +54,26 @@ export class CategoriesAdminService implements CategoriesAdminStrategy {
     }
 
     return this.categoryRepo.save(category);
+  }
+
+  async swap(sourceId: number, targetId: number): Promise<void> {
+    console.log(sourceId, targetId);
+    const source = await this.categoriesService.findOne(sourceId);
+    const target = await this.categoriesService.findOne(targetId);
+
+    if (!source || !target) {
+      throw new HttpException('One or both categories not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (!source.parent || !target.parent || source.parent.id !== target.parent.id) {
+      throw new HttpException('Categories not in one subdirectory', HttpStatus.BAD_REQUEST);
+    }
+
+    const tempOrder = source.orderId;
+    source.orderId = target.orderId;
+    target.orderId = tempOrder;
+
+    await this.categoryRepo.save([source, target]);
   }
 
   async remove(id: number): Promise<void> {

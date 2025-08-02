@@ -17,6 +17,11 @@ export class CreateCategoryRequestDto {
   @IsOptional()
   @IsInt()
   parentId?: number;
+
+  @ApiProperty()
+  @IsInt()
+  @Min(1)
+  orderId: number;
 }
 
 export class UpdateCategoryRequestDto extends PartialType(CreateCategoryRequestDto) {}
@@ -67,4 +72,16 @@ export interface FindAllCategoriesDto {
     page: number;
     limit: number | undefined;
   };
+}
+
+export class SwapCategoriesRequestDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  sourceId: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  targetId: number;
 }

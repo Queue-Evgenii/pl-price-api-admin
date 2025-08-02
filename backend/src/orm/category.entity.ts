@@ -19,6 +19,10 @@ export class CategoryEntity extends BaseEntity {
   @ApiProperty()
   slug: string;
 
+  @Column({ nullable: false })
+  @ApiProperty()
+  orderId: number;
+
   @TreeParent()
   @ApiProperty()
   parent: CategoryEntity | null;

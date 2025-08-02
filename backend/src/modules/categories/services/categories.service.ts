@@ -19,13 +19,24 @@ export class CategoriesService implements CategoriesStrategy {
       query.where('category.parentId IS NULL');
     }
 
-    query.orderBy('category.createdAt', 'DESC');
+    query.orderBy('category.orderId', 'ASC');
 
     if (params.limit) {
       query.skip((params.page - 1) * params.limit).take(params.limit);
     }
 
     const [roots, total] = await query.getManyAndCount();
+    if (roots.length === 0) {
+      return {
+        data: [],
+        meta: {
+          total: 0,
+          page: params.page,
+          limit: params.limit,
+        },
+      };
+    }
+
     const trees = await Promise.all(roots.map((root) => this.categoryRepo.findDescendantsTree(root)));
 
     // Собираем все ID категорий из дерева
