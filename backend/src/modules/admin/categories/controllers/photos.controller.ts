@@ -9,7 +9,6 @@ import { PhotosService } from 'src/modules/categories/services/photos.service';
 import { UpdatePhotoRequestDto } from 'src/models/http/photos-dto';
 
 @Controller()
-@UseGuards(AuthGuard)
 export class PhotosAdminController {
   constructor(
     private photosAdminService: PhotosAdminService,
@@ -17,6 +16,7 @@ export class PhotosAdminController {
   ) {}
 
   @Post('categories/:slug/photos')
+  @UseGuards(AuthGuard)
   @ApiTokenResponse()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -45,12 +45,14 @@ export class PhotosAdminController {
   }
 
   @Patch('photos/:id')
+  @UseGuards(AuthGuard)
   @ApiTokenResponse()
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdatePhotoRequestDto) {
     return this.photosAdminService.update(id, dto);
   }
 
   @Delete('photos/:id')
+  @UseGuards(AuthGuard)
   @ApiTokenResponse()
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.photosAdminService.remove(id);
