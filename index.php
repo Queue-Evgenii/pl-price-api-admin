@@ -77,6 +77,7 @@ function proxyRequest(string $url)
     curl_setopt($ch, CURLOPT_HEADER, true); // нужно получить заголовки ответа
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
 
+    echo json_encode($_FILES);
     $headers = [];
     foreach (getallheaders() as $name => $value) {
         $lname = strtolower($name);
