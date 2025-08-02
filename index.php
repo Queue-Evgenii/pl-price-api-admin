@@ -1,5 +1,5 @@
 <?php
-phpinfo();
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -77,8 +77,6 @@ function proxyRequest(string $url)
     curl_setopt($ch, CURLOPT_HEADER, true); // нужно получить заголовки ответа
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
 
-    echo ini_get('upload_max_filesize');
-    echo ini_get('post_max_size');
     $headers = [];
     foreach (getallheaders() as $name => $value) {
         $lname = strtolower($name);
