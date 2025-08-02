@@ -77,6 +77,8 @@ function proxyRequest(string $url)
     curl_setopt($ch, CURLOPT_HEADER, true); // нужно получить заголовки ответа
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD']);
 
+    echo ini_get('upload_max_filesize');
+    echo ini_get('post_max_size');
     echo json_encode($_FILES);
     $headers = [];
     foreach (getallheaders() as $name => $value) {
