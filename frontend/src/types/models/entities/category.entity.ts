@@ -10,4 +10,6 @@ export interface CategoryEntity {
   children: CategoryEntity[];
 
   countPhotos: number;
+
+  orderId: number;
 }

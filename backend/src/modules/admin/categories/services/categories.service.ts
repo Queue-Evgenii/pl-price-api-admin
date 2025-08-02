@@ -57,7 +57,6 @@ export class CategoriesAdminService implements CategoriesAdminStrategy {
   }
 
   async swap(sourceId: number, targetId: number): Promise<void> {
-    console.log(sourceId, targetId);
     const source = await this.categoriesService.findOne(sourceId);
     const target = await this.categoriesService.findOne(targetId);
 
@@ -65,7 +64,7 @@ export class CategoriesAdminService implements CategoriesAdminStrategy {
       throw new HttpException('One or both categories not found', HttpStatus.NOT_FOUND);
     }
 
-    if (!source.parent || !target.parent || source.parent.id !== target.parent.id) {
+    if ((!source.parent && target.parent) || (source.parent && !target.parent) || (source.parent && target.parent && source.parent.id !== target.parent.id)) {
       throw new HttpException('Categories not in one subdirectory', HttpStatus.BAD_REQUEST);
     }
 

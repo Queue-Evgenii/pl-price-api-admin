@@ -1,6 +1,6 @@
 import type { AxiosInstance } from "axios";
 import { Api } from "../api";
-import type { CategoriesDto, CreateCategoryDto } from "@/types/models/dto/categories-dto";
+import type { CategoriesDto, CreateCategoryDto, SwapCategoryDto } from "@/types/models/dto/categories-dto";
 import type { CategoryEntity } from "@/types/models/entities/category.entity";
 import type { _DeepPartial } from "pinia";
 import type { PhotosDto, UpdatePhotosDto } from "@/types/models/dto/photos-dto";
@@ -20,7 +20,11 @@ export class CategoriesApi extends Api {
   };
   
   updateCategory = (id: number, payload: _DeepPartial<CategoryEntity>) => {
-    return this.patchRequest<CategoryEntity, _DeepPartial<CategoryEntity>>(`/categories/${id}`, payload);
+    return this.patchRequest<CategoryEntity, _DeepPartial<CategoryEntity>>(`/categories/id/${id}`, payload);
+  };
+  
+  swapCategory = (payload: SwapCategoryDto) => {
+    return this.patchRequest<void, SwapCategoryDto>(`/categories/swap`, payload);
   };
   
   deleteCategory = (id: number) => {

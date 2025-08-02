@@ -31,7 +31,7 @@ const saveChanges = async () => {
   }
   try {
     if (editingCategory.value.id === -1) {
-      const payload: CreateCategoryDto = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined };
+      const payload: CreateCategoryDto = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined, orderId: editingCategory.value.orderId };
       const createdCategory = await withErrorHandling(categoriesApi.createCategory(payload));
       categoriesStore.addCategory(createdCategory);
       message.success("Category successfully added!");
@@ -76,6 +76,10 @@ const fetchCategories = async (page = 1, pageSize = 10) => {
   pagination.itemCount = meta.total;
 }
 
+const swapCategories = async (sourceId: number, targetId: number) => {
+  await withErrorHandling(categoriesApi.swapCategory({ sourceId, targetId }));
+}
+
 // ===== UI =====
 const openEditModal = (row: CategoryEntity) => {
   editingCategory.value = { ...row };
@@ -101,11 +105,13 @@ const addCategory = (row: CategoryEntity | undefined) => {
     name: '',
     slug: '',
     children: [],
-    countPhotos: 0
+    countPhotos: 0,
+    orderId: categoriesStore.categories.length + 1,
   };
 
   if (row !== undefined) {
     newCategory.parent = { id: row.id };
+    newCategory.orderId = row.children.length + 1;
   }
 
   openEditModal(newCategory);
@@ -226,7 +232,26 @@ const pagination = reactive({
     fetchCategories(1, pageSize);
   },
 })
+let dragCategoryId: number = -1;
+const rowProps = (rowData: CategoryEntity) => {
 
+  return {
+    style: 'cursor: move;',
+    draggable: true,
+    onDragstart: () => {
+      dragCategoryId = rowData.id;
+    },
+    onDrop: (e: DragEvent) => {
+      e.preventDefault()
+
+      categoriesStore.swapCategoriesById(dragCategoryId, rowData.id);
+      swapCategories(dragCategoryId, rowData.id);
+    },
+    onDragover: (e: DragEvent) => {
+      e.preventDefault()
+    }
+  }
+}
 
 onMounted(() => {
   fetchCategories(pagination.page, pagination.pageSize);
@@ -240,6 +265,7 @@ onMounted(() => {
       :columns="columns"
       :data="categoriesStore.categories"
       :row-key="(row: CategoryEntity) => row.id"
+      :row-props="rowProps"
       bordered
     />
     <n-pagination

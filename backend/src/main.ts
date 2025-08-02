@@ -1,6 +1,6 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 void (async () => {
@@ -9,14 +9,6 @@ void (async () => {
   app.enableCors();
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
 
   const config = new DocumentBuilder().setTitle('PL PRICE API').setVersion('1.0').build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);

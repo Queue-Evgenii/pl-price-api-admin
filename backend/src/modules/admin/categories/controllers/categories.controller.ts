@@ -34,7 +34,7 @@ export class CategoriesController {
     return this.categoriesService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('id/:id')
   @UseGuards(AuthGuard)
   @ApiUpdateResponses()
   @ApiTokenResponse()

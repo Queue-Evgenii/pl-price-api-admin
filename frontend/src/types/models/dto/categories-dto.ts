@@ -15,4 +15,10 @@ export interface CreateCategoryDto {
   name: string;
   slug: string;
   parentId?: number;
+  orderId: number;
+}
+
+export interface SwapCategoryDto {
+  sourceId: number;
+  targetId: number;
 }

@@ -114,9 +114,3 @@ watch(
   </div>
   
 </template>
-
-<style>
-.page {
-  background: url('../../../assets/background.jpg') center / cover no-repeat;
-}
-</style>

@@ -39,13 +39,21 @@ export class CategoriesService implements CategoriesStrategy {
 
     const trees = await Promise.all(roots.map((root) => this.categoryRepo.findDescendantsTree(root)));
 
-    // Собираем все ID категорий из дерева
+    const sortChildren = (node: CategoryEntity): CategoryEntity => {
+      if (node.children) {
+        node.children = node.children.sort((a, b) => a.orderId - b.orderId).map(sortChildren);
+      }
+      return node;
+    };
+
+    const sortedTrees = trees.map(sortChildren);
+
     const allCategories: CategoryEntity[] = [];
     const collectIds = (node: CategoryEntity) => {
       allCategories.push(node);
       node.children?.forEach(collectIds);
     };
-    trees.forEach(collectIds);
+    sortedTrees.forEach(collectIds);
     const allIds = allCategories.map((c) => c.id);
 
     const photoCounts = await this.categoryRepo.manager
@@ -69,7 +77,7 @@ export class CategoriesService implements CategoriesStrategy {
       children: node.children?.map(attachCountPhotos) || [],
     });
 
-    const data = trees.map(attachCountPhotos);
+    const data = sortedTrees.map(attachCountPhotos);
 
     return {
       data,

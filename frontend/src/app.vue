@@ -36,3 +36,16 @@ authApi.getMe()
     </n-message-provider>
   </n-config-provider>
 </template>
+
+<style>
+#app {
+  height: 100%;
+}
+.n-config-provider {
+  height: 100%;
+}
+.page {
+  height: 100%;
+  background: url('./assets/background.jpg') center / cover no-repeat;
+}
+</style>

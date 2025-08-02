@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { inject, onMounted } from 'vue'
-import { type UploadFileInfo } from 'naive-ui'
+import { useMessage, type UploadFileInfo } from 'naive-ui'
 import type { CategoriesApi } from '@/api/modules/categories';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import { usePhotosStore } from '@/stores/photos';
 import type { UpdatePhotosDto } from '@/types/models/dto/photos-dto';
 import { DeleteFilled, AddCircleFilled, ArrowDropUpFilled, ArrowDropDownFilled } from '@vicons/material'
 
+const message = useMessage();
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photosStore = usePhotosStore();
 const props = defineProps<{ slug: string }>();
@@ -47,6 +48,14 @@ const removePhoto = async (photoId: number) => {
   }
 }
 
+const beforeUpload = (file: File) => {
+  const isLt1_5MB = file.size / 1024 / 1024 < 1
+  if (!isLt1_5MB) {
+    message.error('File size must be less than 1MB');
+  }
+  return isLt1_5MB
+}
+
 const handleUpload = async ({ file }: { file: UploadFileInfo }) => {
   if (!file.file) return;
 
@@ -85,6 +94,7 @@ onMounted(() => {
         accept="image/*"
         :show-file-list="false"
         @change="handleUpload"
+        @before-upload="beforeUpload"
         :custom-request="customRequest"
         style="margin-bottom: 16px;"
       >

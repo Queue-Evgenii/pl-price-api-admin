@@ -27,7 +27,7 @@ export const useCategoriesStore = defineStore('categories', {
                 item.children = [];
               }
 
-              item.children.unshift(category);
+              item.children.push(category);
               return true;
             }
 
@@ -44,13 +44,13 @@ export const useCategoriesStore = defineStore('categories', {
 
         if (!inserted) {
           console.warn(`Parent with id=${category.parent.id} not found. Inserted into the root.`);
-          this._categories.unshift(category);
+          this._categories.push(category);
         }
 
         return;
       }
 
-      this._categories.unshift(category);
+      this._categories.push(category);
     },
     replaceCategory(updatedCategory: CategoryEntity) {
       const replaceRecursive = (categories: CategoryEntity[]): boolean => {
@@ -93,5 +93,37 @@ export const useCategoriesStore = defineStore('categories', {
 
       deleteRecursive(this._categories);
     },
+
+    swapCategoriesById(id1: number, id2: number) {
+      const swapOnSameLevel = (categories: CategoryEntity[]): boolean => {
+        const index1 = categories.findIndex(cat => cat.id === id1);
+        const index2 = categories.findIndex(cat => cat.id === id2);
+
+        if (index1 !== -1 && index2 !== -1) {
+          [categories[index1], categories[index2]] = [categories[index2], categories[index1]];
+
+          const tempOrderId = categories[index1].orderId;
+          categories[index1].orderId = categories[index2].orderId;
+          categories[index2].orderId = tempOrderId;
+
+          return true;
+        }
+
+        for (const cat of categories) {
+          if (cat.children?.length) {
+            const swapped = swapOnSameLevel(cat.children);
+            if (swapped) return true;
+          }
+        }
+
+        return false;
+      };
+
+      const swapped = swapOnSameLevel(this._categories);
+
+      if (!swapped) {
+        console.warn(`Categories with id=${id1} and id=${id2} not found on the same level.`);
+      }
+    }
   },
 });
