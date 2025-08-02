@@ -31,6 +31,7 @@ export class PhotosAdminController {
           cb(null, `${slugified}--${timestamp}-${random}${ext}`);
         },
       }),
+      limits: { fileSize: 10 * 1024 * 1024 },
     }),
   )
   create(@Param('slug') slug: string, @UploadedFile() file: Express.Multer.File) {

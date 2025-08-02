@@ -83,8 +83,8 @@ function proxyRequest(string $url)
         if ($lname === 'host' || $lname === 'content-length') {
             continue;
         }
-        if ($lname === 'content-type' && !empty($_FILES)) {
-            continue;
+        if ($lname === 'content-type') {
+            if (!empty($_FILES)) continue;
         }
         $headers[] = "$name: $value";
     }
