@@ -1,5 +1,5 @@
 <?php
-
+phpinfo();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -79,7 +79,6 @@ function proxyRequest(string $url)
 
     echo ini_get('upload_max_filesize');
     echo ini_get('post_max_size');
-    echo json_encode($_FILES);
     $headers = [];
     foreach (getallheaders() as $name => $value) {
         $lname = strtolower($name);
