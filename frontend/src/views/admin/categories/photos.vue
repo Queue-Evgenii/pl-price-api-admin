@@ -48,13 +48,16 @@ const removePhoto = async (photoId: number) => {
   }
 }
 
-const beforeUpload = (file: File) => {
-  const isLt1_5MB = file.size / 1024 / 1024 < 1
-  if (!isLt1_5MB) {
+const beforeUpload = (uploadFile: UploadFileInfo) => {
+  const file = uploadFile.file;
+  if (!file) return false;
+
+  const isLt1MB = file.size / 1024 / 1024 < 1;
+  if (!isLt1MB) {
     message.error('File size must be less than 1MB');
   }
-  return isLt1_5MB
-}
+  return isLt1MB;
+};
 
 const handleUpload = async ({ file }: { file: UploadFileInfo }) => {
   if (!file.file) return;
