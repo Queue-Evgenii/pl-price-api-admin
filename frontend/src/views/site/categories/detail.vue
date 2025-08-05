@@ -57,17 +57,18 @@ onMounted(async () => {
   position: relative;
   height: 100%;
   overflow: hidden;
+  padding: 0;
 }
 ._sub-container {
   padding: 32px 20px;
 }
 .page {
-  padding: 40px 0;
+  padding: 0;
 }
 .content > section {
   position: absolute;
-  top: 96px;
-  padding-bottom: 96px;
+  top: 56px;
+  padding-bottom: 56px;
   max-height: 100%; overflow-y: auto;
 }
 ._sub-container {
