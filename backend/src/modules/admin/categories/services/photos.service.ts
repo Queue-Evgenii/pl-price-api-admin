@@ -22,14 +22,20 @@ export class PhotosAdminService {
 
   async create(slug: string, filename: string): Promise<PhotoEntity> {
     const category = await this.categoriesService.findOneBySlug(slug);
-    const maxOrder = await this.photosRepo.maximum('orderId', { category: { id: category.id } });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const maxOrder = (await this.photosRepo
+      .createQueryBuilder('PhotoEntity')
+      .leftJoin('PhotoEntity.category', 'category')
+      .select('MAX(PhotoEntity.orderId)', 'max')
+      .where('category.id = :categoryId', { categoryId: category.id })
+      .getRawOne()) as { max: number | null };
     const apiUrl = this.configService.get<string>('API_URL');
 
     const photo = this.photosRepo.create({
       url: `${apiUrl}/uploads/categories/photos/${filename}`,
       name: filename,
       category,
-      orderId: (maxOrder ?? 0) + 1,
+      orderId: (maxOrder?.max ?? 0) + 1,
     });
 
     return this.photosRepo.save(photo);
