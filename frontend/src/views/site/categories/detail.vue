@@ -70,7 +70,7 @@ onMounted(async () => {
 }
 ._sub-container {
   height: 100%;
-  padding: 8px 0 16px;
+  padding: 16px 0;
 }
 ._container {
   height: 100%;
