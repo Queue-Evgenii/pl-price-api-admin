@@ -59,9 +59,6 @@ onMounted(async () => {
   overflow: hidden;
   padding: 0;
 }
-._sub-container {
-  padding: 32px 20px;
-}
 .page {
   padding: 0;
 }
@@ -73,6 +70,7 @@ onMounted(async () => {
 }
 ._sub-container {
   height: 100%;
+  padding: 8px 0 16px;
 }
 ._container {
   height: 100%;
