@@ -10,6 +10,7 @@ import { useRouter } from 'vue-router';
   
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const isLoading = ref(false);
+const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
 const router = useRouter();
@@ -38,6 +39,12 @@ const setCurrentCategories = () => {
 const props = defineProps({
   slug: String,
 })
+
+const innerExpanded = ref<String[]>([]);
+
+const openInner = (item: string) => {
+  innerExpanded.value = [item];
+}
 
 onMounted(() => {
   fetchCategories();
@@ -77,7 +84,7 @@ watch(
                     </n-flex>
                   </router-link>
                 </li>
-                <template v-for="category in currentCategories" :key="category.id">
+                <li v-for="category in currentCategories" :key="category.id">
                   <router-link
                     :to="{
                       name: category.children.length > 0 ? RouteName.SITE.CATEGORIES.SLUG : RouteName.SITE.CATEGORIES.DETAIL,
@@ -87,8 +94,56 @@ watch(
                   >{{
                     category.name
                   }}</router-link>
-                </template>
+                </li>
 
+                <li class="dropdown__item">
+                  <n-collapse>
+                    <n-collapse-item>
+                      <template #arrow>
+                        <n-icon></n-icon>
+                      </template>
+                      <template #header>
+                        <a class="dropdown__button" @click="isOpen = !isOpen">
+                          Program do budowy sufitów
+                        </a>
+                      </template>
+                      <ul class="tabs">
+                        <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-1' }" @click="openInner('inner-1')">Wersja do komputera</li>
+                        <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-2' }" @click="openInner('inner-2')">Wersja Do Androida</li>
+                        <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-3' }" @click="openInner('inner-3')">Wersja do Apple</li>
+                      </ul>
+                      <div class="subtabs">
+                        <n-collapse v-model:expanded-names="innerExpanded">
+                          <n-collapse-item name="inner-1">
+                            <template #arrow>
+                              <n-icon></n-icon>
+                            </template>
+                            <template #header>
+                            </template>
+                            <div class="subtab">Aplikacja jest w fazie tworzenia i niebawem będzie dostępna</div>
+                          </n-collapse-item>
+                          <n-collapse-item name="inner-2">
+                            <template #arrow>
+                              <n-icon></n-icon>
+                            </template>
+                            <template #header>
+                            </template>
+                            <div class="subtab">Aplikacja jest w fazie tworzenia i niebawem będzie dostępna</div>
+                          </n-collapse-item>
+                          <n-collapse-item name="inner-3">
+                            <template #arrow>
+                              <n-icon></n-icon>
+                            </template>
+                            <template #header>
+                            </template>
+                            <div class="subtab">Aplikacja jest w fazie tworzenia i niebawem będzie dostępna</div>
+                          </n-collapse-item>
+                        </n-collapse>
+                      </div>
+                    </n-collapse-item>
+                  </n-collapse>
+                  
+                </li>
                 <li class="dropdown__item">
                   <a class="dropdown__button" href="https://t.me/+aSOZnoJqLyo0ODA8" target="_blank">
                     <n-flex :align="'center'" justify="center" style="position: relative;">
@@ -114,3 +169,65 @@ watch(
   </div>
   
 </template>
+
+<style>
+.n-collapse-item-arrow {
+  display: none !important;
+}
+.subtabs .n-collapse-item__header {
+  display: none !important;
+}
+.subtabs .n-collapse-item {
+  margin: 0 !important;
+  border: none !important;
+}
+.subtabs .n-collapse {
+  border: none !important;
+}
+.subtab {
+  margin-bottom: 16px;
+}
+
+.tabs {
+  display: flex;
+}
+
+.tab {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 300;
+  flex: 1 1 auto;
+  min-height: 36px;
+  margin: 16px 0 0;
+  text-align: center;
+  position: relative;
+}
+.tab::before {
+  content: '';
+  position: absolute;
+  background: rgb(239,4,4);
+  height: 1px;
+  width: 0;
+  bottom: 0;
+  transition: width .3s ease-in-out !important;
+}
+.tab:first-child::before {
+  left: 0;
+  width: 0;
+}
+
+.tab:hover::before, .tab.selected::before {
+  width: 100%;
+}
+
+.tab:last-child::before {
+  right: 0;
+}
+
+
+.tab:not(:first-child):not(:last-child)::before {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+</style>

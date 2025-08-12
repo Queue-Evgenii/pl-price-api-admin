@@ -50,6 +50,9 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.page {
+  height: 100%;
+}
 .main__header {
   top: 0;
 }

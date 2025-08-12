@@ -45,7 +45,6 @@ authApi.getMe()
   height: 100%;
 }
 .page {
-  height: 100%;
   background: url('./assets/background.jpg') center / cover no-repeat;
 }
 </style>
