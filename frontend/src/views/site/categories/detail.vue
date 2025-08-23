@@ -33,15 +33,15 @@ onMounted(async () => {
             <header class="main__header">
               <h2>{{ photos[0].category.name }}</h2>
             </header>
-            <section>
-              <n-image
-                v-for="photo in photos"
-                width="100%"
-                :key="photo.id"
-                object-fit="contain"
-                :src="photo.url"
-              />
-            </section>
+              <n-scrollbar style="max-height: 100%; padding-bottom: 56px;">
+                <n-image
+                  v-for="photo in photos"
+                  width="100%"
+                  :key="photo.id"
+                  object-fit="contain"
+                  :src="photo.url"
+                />
+              </n-scrollbar>
           </div>
         </div>
       </div>

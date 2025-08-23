@@ -14,7 +14,7 @@ const route = useRoute();
 const themeOverrides = {
   common: {
     warningColor: 'rgb(240, 160, 32)'
-  }
+  },
 }
 
 authApi.getMe()
