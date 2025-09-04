@@ -121,7 +121,9 @@ watch(
                               </template>
                               <template #header>
                               </template>
-                              <div class="subtab">Aplikacja jest w fazie tworzenia i niebawem będzie dostępna</div>
+                              <div class="subtab">
+                                <a href="NMRDealer.zip">Pobierz</a>
+                              </div>
                             </n-collapse-item>
                             <n-collapse-item name="inner-2">
                               <template #arrow>
@@ -240,6 +242,24 @@ watch(
 .tab:not(:first-child):not(:last-child)::before {
   left: 50%;
   transform: translateX(-50%);
+}
+
+.subtab a {
+  font-size: 1rem;
+  width: 33.3%;
+  display: block;
+  margin: 0 auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(221, 221, 221, .5);
+  border: 1px solid #000;
+  color: inherit;
+  transition: all 0.3s ease 0s;
+}
+
+.subtab a:hover {
+  border: 1px solid #ff0031;
+  color: #ff0031 !important;
 }
 
 </style>
