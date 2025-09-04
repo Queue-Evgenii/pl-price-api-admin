@@ -134,7 +134,7 @@ watch(
                               <template #header>
                               </template>
                               <div class="subtab">
-                                <a href="src/assets/NMRDealer.zip">Pobierz</a>
+                                <a href="web/NMRDealer.zip">Pobierz</a>
                               </div>
                             </n-collapse-item>
                             <n-collapse-item name="inner-2">
