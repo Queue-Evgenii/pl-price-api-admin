@@ -3,10 +3,12 @@ import type { CategoriesApi } from '@/api/modules/categories';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import { inject, onMounted, ref } from 'vue';
 import loader from '@/components/loader.vue';
+import { usePhotosStore } from '@/stores/photos';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photos = ref<PhotoEntity[]>([]);
-const isLoading = ref<boolean>(true);
+const isLoading = ref<boolean>(false);
+const photosStore = usePhotosStore();
 
 const props = defineProps({
   slug: {
@@ -15,9 +17,24 @@ const props = defineProps({
   },
 })
 
-onMounted(async () => {
+const bindPhotos =  () => {
+  photos.value = photosStore.getPhotosByKey(props.slug);
+}
+
+const fetchPhotos = async () => {
+  isLoading.value = true;
   photos.value = (await categoriesApi.getPhotos(props.slug)).data.filter(p => p.isActive);
+  photosStore.setPhotosByKey(props.slug, photos.value);
   isLoading.value = false;
+}
+
+onMounted(() => {
+  console.log(photosStore.getPhotosByKey(props.slug));
+  if (photosStore.getPhotosByKey(props.slug).length > 0) {
+    bindPhotos();
+    return;
+  }
+  fetchPhotos();
 })
 </script>
 

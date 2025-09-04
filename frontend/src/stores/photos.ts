@@ -3,11 +3,13 @@ import { defineStore } from 'pinia';
 
 interface PhotosState {
   _photos: PhotoEntity[];
+  _photosMap: Record<string, PhotoEntity[]>;
 }
 
 export const usePhotosStore = defineStore('photos', {
   state: (): PhotosState => ({
     _photos: [],
+    _photosMap: {},
   }),
   getters: {
     photos(): PhotoEntity[] {
@@ -20,8 +22,13 @@ export const usePhotosStore = defineStore('photos', {
     },
     addPhoto(photo: PhotoEntity) {
       if (this._photos.some(e => e.id === photo.id)) return;
-
       this._photos.push(photo);
+    },
+    setPhotosByKey(key: string, photos: PhotoEntity[]) {
+      this._photosMap[key] = photos;
+    },
+    getPhotosByKey(key: string) {
+      return this._photosMap[key] ?? [];
     },
   },
 });
