@@ -7,18 +7,26 @@ import loader from '@/components/loader.vue';
 import { RouteName } from '@/types/constants/route-name';
 import { KeyboardReturnFilled, TelegramFilled, VideoLibraryTwotone } from '@vicons/material';
 import { useRouter } from 'vue-router';
+import { useCategoriesStore } from '@/stores/categories';
   
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
+const categoriesStore = useCategoriesStore();
 const isLoading = ref(false);
 const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
 const router = useRouter();
 
+const bindCategories = async () => {
+  categories.value = categoriesStore.categories;
+  setCurrentCategories();
+}
+
 const fetchCategories = async () => {
   isLoading.value = true;
   const { data } = (await withErrorHandling(categoriesApi.getCategories()));
   categories.value = data;
+  categoriesStore.setCategories(data);
   setCurrentCategories();
 }
 
@@ -47,6 +55,10 @@ const openInner = (item: string) => {
 }
 
 onMounted(() => {
+  if (categoriesStore.categories.length > 0) {
+    bindCategories();
+    return;
+  }
   fetchCategories();
 });
 
@@ -122,7 +134,7 @@ watch(
                               <template #header>
                               </template>
                               <div class="subtab">
-                                <a href="NMRDealer.zip">Pobierz</a>
+                                <a href="src/assets/NMRDealer.zip">Pobierz</a>
                               </div>
                             </n-collapse-item>
                             <n-collapse-item name="inner-2">
