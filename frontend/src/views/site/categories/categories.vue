@@ -102,7 +102,7 @@ watch(
                       }"
                       class="dropdown__button"
                     >{{
-                      category.name + "  " + category.slug
+                      category.name
                     }}</router-link>
                   </li>
 
