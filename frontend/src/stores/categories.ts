@@ -124,6 +124,42 @@ export const useCategoriesStore = defineStore('categories', {
       if (!swapped) {
         console.warn(`Categories with id=${id1} and id=${id2} not found on the same level.`);
       }
+    },
+
+    getFirstParentSlug(slug: string): string | null {
+      const findParent = (nodes: CategoryEntity[], target: string): string | null => {
+        for (const node of nodes) {
+          if (node.children?.some(child => child.slug === target)) {
+            return node.slug;
+          }
+
+          if (node.children?.length) {
+            const found = findParent(node.children, target);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      return findParent(this._categories, slug);
+    },
+
+    findChildrenBySlug(slug: string): CategoryEntity[] {
+      const findNode = (nodes: CategoryEntity[], target: string): CategoryEntity[] => {
+        for (const node of nodes) {
+          if (node.slug === target) {
+            return node.children ?? [];
+          }
+          
+          if (node.children?.length) {
+            const found = findNode(node.children, target);
+            if (found.length) return found;
+          }
+        }
+        return [];
+      };
+
+      return findNode(this._categories, slug);
     }
   },
 });

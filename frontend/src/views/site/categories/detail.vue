@@ -4,11 +4,16 @@ import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import { inject, onMounted, ref } from 'vue';
 import loader from '@/components/loader.vue';
 import { usePhotosStore } from '@/stores/photos';
+import { ArrowBackIosFilled } from '@vicons/material';
+import { useCategoriesStore } from '@/stores/categories';
+import { RouteName } from '@/types/constants/route-name';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photos = ref<PhotoEntity[]>([]);
 const isLoading = ref<boolean>(false);
 const photosStore = usePhotosStore();
+const categoriesStore = useCategoriesStore();
+const parentSlug = ref<string | null>();
 
 const props = defineProps({
   slug: {
@@ -29,7 +34,7 @@ const fetchPhotos = async () => {
 }
 
 onMounted(() => {
-  console.log(photosStore.getPhotosByKey(props.slug));
+  parentSlug.value = categoriesStore.getFirstParentSlug(props.slug);
   if (photosStore.getPhotosByKey(props.slug).length > 0) {
     bindPhotos();
     return;
@@ -48,7 +53,12 @@ onMounted(() => {
         <div class="_sub-container">
           <div class="content"v-if="photos && photos.length > 0">
             <header class="main__header">
-              <h2>{{ photos[0].category.name }}</h2>
+              <h2>
+                <router-link :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" class="icon">
+                  <ArrowBackIosFilled  />
+                </router-link>
+                <span>{{ photos[0].category.name }}</span>
+              </h2>
             </header>
               <n-scrollbar style="max-height: 100%; padding-bottom: 56px;">
                 <n-image
@@ -72,6 +82,20 @@ onMounted(() => {
 }
 .main__header {
   top: 0;
+}
+.main__header h2 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main__header .icon {
+  position: absolute;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  font-size: 0;
+  cursor: pointer;
 }
 .content {
   position: relative;

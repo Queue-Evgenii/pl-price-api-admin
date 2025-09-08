@@ -5,7 +5,7 @@ import type { CategoryEntity } from '@/types/models/entities/category.entity';
 import { inject, onMounted, ref, watch } from 'vue';
 import loader from '@/components/loader.vue';
 import { RouteName } from '@/types/constants/route-name';
-import { KeyboardReturnFilled, TelegramFilled, VideoLibraryTwotone } from '@vicons/material';
+import { ArrowBackIosFilled, TelegramFilled, VideoLibraryTwotone } from '@vicons/material';
 import { useRouter } from 'vue-router';
 import { useCategoriesStore } from '@/stores/categories';
   
@@ -15,6 +15,7 @@ const isLoading = ref(false);
 const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
+const parentSlug = ref<string | null>(null);
 const router = useRouter();
 
 const bindCategories = async () => {
@@ -37,10 +38,8 @@ const setCurrentCategories = () => {
       isLoading.value = false;
       return;
   }
-  currentCategories.value = currentCategories.value.find(c => c.slug === props.slug)?.children ?? [];
-  if (currentCategories.value.length === 0) {
-    router.push({ name: RouteName.SITE.CATEGORIES.ROOT });
-  }
+  parentSlug.value = categoriesStore.getFirstParentSlug(props.slug);
+  currentCategories.value = categoriesStore.findChildrenBySlug(props.slug);
   isLoading.value = false;
 }
 
@@ -89,10 +88,10 @@ watch(
             <section class="main__dropdown dropdown" v-if="currentCategories">
               <n-scrollbar style="max-height: 100%">
                 <ul class="dropdown__list">
-                  <li v-if="props.slug !== undefined" class="dropdown__item">
-                    <router-link class="dropdown__button" :to="{ name: RouteName.SITE.CATEGORIES.ROOT }">
+                  <li v-if="slug !== undefined" class="dropdown__item">
+                    <router-link class="dropdown__button" :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" >
                       <n-flex :align="'center'" justify="center" style="position: relative;">
-                        <KeyboardReturnFilled width="32px" style="position: absolute; left: 8px;" />
+                        <ArrowBackIosFilled width="32px" style="position: absolute; left: 8px;" />
                         <span>Back</span>
                       </n-flex>
                     </router-link>
@@ -105,7 +104,7 @@ watch(
                       }"
                       class="dropdown__button"
                     >{{
-                      category.name
+                      category.name + "  " + category.slug
                     }}</router-link>
                   </li>
 
