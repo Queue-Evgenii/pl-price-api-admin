@@ -6,7 +6,6 @@ import { inject, onMounted, ref, watch } from 'vue';
 import loader from '@/components/loader.vue';
 import { RouteName } from '@/types/constants/route-name';
 import { ArrowBackIosFilled, TelegramFilled, VideoLibraryTwotone } from '@vicons/material';
-import { useRouter } from 'vue-router';
 import { useCategoriesStore } from '@/stores/categories';
   
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
@@ -16,7 +15,6 @@ const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
 const parentSlug = ref<string | null>(null);
-const router = useRouter();
 
 const bindCategories = async () => {
   categories.value = categoriesStore.categories;
