@@ -4,7 +4,7 @@ import type { DataTableColumns } from 'naive-ui'
 import { DeleteFilled, EditFilled, AddCircleFilled, FolderOpenRound } from '@vicons/material'
 import { NPagination, NDataTable, NInput, NButton, useMessage, NIcon, NTooltip, NTag } from 'naive-ui'
 import type { CategoryEntity } from '@/types/models/entities/category.entity'
-import type { CategoriesApi } from '@/api/modules/categories'
+import type { CategoriesAdminApi } from '@/api/modules/categories'
 import { useCategoriesStore } from '@/stores/categories'
 import type { CategoriesMetaDto, CreateCategoryDto } from '@/types/models/dto/categories-dto'
 import { RouterLink, useRoute } from 'vue-router'
@@ -14,7 +14,7 @@ import { Slug } from '@/types/models/utils/slug'
 import { withErrorHandling } from '@/api/api-error-handler'
 
 const message = useMessage();
-const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
+const categoriesAdminApi = inject<CategoriesAdminApi>('CategoriesAdminApi')!;
 const categoriesStore = useCategoriesStore();
 const categoriesMeta = ref<CategoriesMetaDto | null>(null);
 const editingCategory = ref<CategoryEntity | null>(null);
@@ -32,11 +32,11 @@ const saveChanges = async () => {
   try {
     if (editingCategory.value.id === -1) {
       const payload: CreateCategoryDto = { name: editingCategory.value.name, slug: editingCategory.value.slug, parentId: editingCategory.value.parent ? editingCategory.value.parent.id : undefined, orderId: editingCategory.value.orderId };
-      const createdCategory = await withErrorHandling(categoriesApi.createCategory(payload));
+      const createdCategory = await withErrorHandling(categoriesAdminApi.createCategory(payload));
       categoriesStore.addCategory(createdCategory);
       message.success("Category successfully added!");
     } else {
-      const updatedCategory = await withErrorHandling(categoriesApi.updateCategory(editingCategory.value.id, editingCategory.value));
+      const updatedCategory = await withErrorHandling(categoriesAdminApi.updateCategory(editingCategory.value.id, editingCategory.value));
       categoriesStore.replaceCategory(updatedCategory);
       message.success("Category successfully changed!");
     }
@@ -52,7 +52,7 @@ const saveChanges = async () => {
 
 const deleteCategory = async (id: number) => {
   try {
-    await withErrorHandling(categoriesApi.deleteCategory(id));
+    await withErrorHandling(categoriesAdminApi.deleteCategory(id));
     categoriesStore.deleteCategoryWithId(id);
     
     message.success("Category successfully deleted!");
@@ -67,7 +67,7 @@ const deleteCategory = async (id: number) => {
 }
 
 const fetchCategories = async (page = 1, pageSize = 10) => {
-  const { data, meta } = (await withErrorHandling(categoriesApi.getCategories({ page, limit: pageSize })));
+  const { data, meta } = (await withErrorHandling(categoriesAdminApi.getCategories({ page, limit: pageSize })));
   categoriesMeta.value = meta;
   categoriesStore.setCategories(data);
 
@@ -77,7 +77,7 @@ const fetchCategories = async (page = 1, pageSize = 10) => {
 }
 
 const swapCategories = async (sourceId: number, targetId: number) => {
-  await withErrorHandling(categoriesApi.swapCategory({ sourceId, targetId }));
+  await withErrorHandling(categoriesAdminApi.swapCategory({ sourceId, targetId }));
 }
 
 // ===== UI =====

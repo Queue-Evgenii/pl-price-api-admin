@@ -16,6 +16,34 @@ export const adminRoutes = [
         redirect: { name: RouteName.ADMIN.CATEGORIES.ROOT },
       },
       {
+          path: "sites",
+          component: () => import("@/views/admin/sites/index.vue"),
+          meta: {
+            breadcrumb: 'Sites',
+          },
+          children: [
+            {
+              path: '',
+              name: RouteName.ADMIN.SITES.ROOT,
+              component: () => import('@/views/admin/sites/sites.vue'),
+            }
+          ],
+      },
+      {
+          path: "settings",
+          component: () => import("@/views/admin/settings/index.vue"),
+          meta: {
+            breadcrumb: 'General',
+          },
+          children: [
+            {
+              path: '',
+              name: RouteName.ADMIN.SETTINGS.ROOT,
+              component: () => import('@/views/admin/settings/settings.vue'),
+            }
+          ],
+      },
+      {
         path: 'categories',
         component: () => import('@/views/admin/categories/index.vue'),
         meta: {

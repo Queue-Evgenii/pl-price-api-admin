@@ -6,7 +6,7 @@ import type { _DeepPartial } from "pinia";
 import type { PhotosDto, UpdatePhotosDto } from "@/types/models/dto/photos-dto";
 import type { PhotoEntity } from "@/types/models/entities/photo.entity";
 
-export class CategoriesApi extends Api {
+export class CategoriesAdminApi extends Api {
   constructor(apiClient: AxiosInstance) {
     super(apiClient, '/admin');
   }
@@ -48,5 +48,19 @@ export class CategoriesApi extends Api {
   
   deletePhoto = (id: number) => {
     return this.deleteRequest<PhotosDto>(`/photos/${id}`);
+  };
+}
+
+export class CategoriesApi extends Api {
+  constructor(apiClient: AxiosInstance) {
+    super(apiClient, '');
+  }
+  
+  getCategories = (params?: { page: number, limit: number }) => {
+    return this.getRequest<CategoriesDto>('/categories', params);
+  };
+
+  getPhotos = (slug: string) => {
+    return this.getRequest<PhotosDto>(`/categories/${slug}/photos`);
   };
 }

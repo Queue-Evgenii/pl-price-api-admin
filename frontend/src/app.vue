@@ -26,7 +26,6 @@ authApi.getMe()
       router.push({ name: RouteName.ADMIN.ROOT });
     }
   })
-
 </script>
 
 <template>

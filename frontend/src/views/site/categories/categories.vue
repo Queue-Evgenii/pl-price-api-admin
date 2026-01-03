@@ -7,6 +7,8 @@ import loader from '@/components/loader.vue';
 import { RouteName } from '@/types/constants/route-name';
 import { ArrowBackIosFilled, TelegramFilled, VideoLibraryTwotone } from '@vicons/material';
 import { useCategoriesStore } from '@/stores/categories';
+import { useSitesStore } from '@/stores/sites';
+import { useRoute, useRouter } from 'vue-router';
   
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const categoriesStore = useCategoriesStore();
@@ -15,6 +17,8 @@ const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
 const parentSlug = ref<string | null>(null);
+const router = useRouter(); 
+const route = useRoute(); 
 
 const bindCategories = async () => {
   categories.value = categoriesStore.categories;
@@ -51,12 +55,24 @@ const openInner = (item: string) => {
   innerExpanded.value = [item];
 }
 
+const sitesStore = useSitesStore();
+
+const langOpts = ref(sitesStore.opts);
+const curOpt = ref('pl');
+
+const changeSite = async (newOptValue: string) => {
+  await router.push({ name: RouteName.SITE.ROOT, params: { lang: newOptValue } })
+  curOpt.value = newOptValue;
+  fetchCategories();
+}
+
 onMounted(() => {
   if (categoriesStore.categories.length > 0) {
     bindCategories();
     return;
   }
   fetchCategories();
+  curOpt.value = langOpts.value.find(el => el.value === route.params['lang'])?.value ?? 'pl'
 });
 
 watch(
@@ -180,6 +196,11 @@ watch(
         </div>
       </div>
     </div>
+    <div class="site-switcher">
+      <div class="dropdown__button">
+        <n-select :value="curOpt" :options="langOpts" @update:value="changeSite" />
+      </div>
+    </div>
   </div>
   
 </template>
@@ -269,6 +290,32 @@ watch(
 .subtab a:hover {
   border: 1px solid #ff0031;
   color: #ff0031 !important;
+}
+.site-switcher {
+  padding-top: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+}
+.site-switcher .dropdown__button {
+  border-radius: 0 0 8px 8px;
+}
+.site-switcher .n-base-selection > * {
+  background: transparent !important;
+  font-size: 24px !important;
+}
+.site-switcher .n-select {
+  display: flex;
+}
+
+.site-switcher .n-base-selection__state-border,
+.site-switcher .n-base-selection__border {
+  display: none !important;
+}
+.site-switcher img {
+  width: 24px !important;
+  height: 18px !important;
 }
 
 </style>

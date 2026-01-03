@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { inject, onMounted } from 'vue'
 import { useMessage, type UploadFileInfo } from 'naive-ui'
-import type { CategoriesApi } from '@/api/modules/categories';
+import type { CategoriesAdminApi } from '@/api/modules/categories';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import { usePhotosStore } from '@/stores/photos';
 import type { UpdatePhotosDto } from '@/types/models/dto/photos-dto';
 import { DeleteFilled, AddCircleFilled, ArrowDropUpFilled, ArrowDropDownFilled } from '@vicons/material'
 
 const message = useMessage();
-const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
+const categoriesAdminApi = inject<CategoriesAdminApi>('CategoriesAdminApi')!;
 const photosStore = usePhotosStore();
 const props = defineProps<{ slug: string }>();
 
 const fetchPhotos = async () => {
   try {
-    const { data } = await categoriesApi.getPhotos(props.slug);
+    const { data } = await categoriesAdminApi.getPhotos(props.slug);
     photosStore.setPhotos(data);
   } catch (error) {
     console.error('Photo fetch error:', error);
@@ -23,7 +23,7 @@ const fetchPhotos = async () => {
 
 const createPhotos = async (file: File) => {
   try {
-    const createdPhoto = await categoriesApi.addPhoto(props.slug, file);
+    const createdPhoto = await categoriesAdminApi.addPhoto(props.slug, file);
     photosStore.addPhoto(createdPhoto);
   } catch (error) {
     console.error('Photo creating error:', error);
@@ -32,7 +32,7 @@ const createPhotos = async (file: File) => {
 
 const updatePhoto = async (photoId: number, dto: UpdatePhotosDto) => {
   try {
-    const { data } = await categoriesApi.updatePhoto(photoId, dto);
+    const { data } = await categoriesAdminApi.updatePhoto(photoId, dto);
     photosStore.setPhotos(data);
   } catch (error) {
     console.error('Photo updating error:', error);
@@ -41,7 +41,7 @@ const updatePhoto = async (photoId: number, dto: UpdatePhotosDto) => {
 
 const removePhoto = async (photoId: number) => {
   try {
-    const { data } = await categoriesApi.deletePhoto(photoId);
+    const { data } = await categoriesAdminApi.deletePhoto(photoId);
     photosStore.setPhotos(data);
   } catch (error) {
     console.error('Photo deleting error:', error);

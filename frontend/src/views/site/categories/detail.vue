@@ -7,6 +7,7 @@ import { usePhotosStore } from '@/stores/photos';
 import { ArrowBackIosFilled } from '@vicons/material';
 import { useCategoriesStore } from '@/stores/categories';
 import { RouteName } from '@/types/constants/route-name';
+import { withErrorHandling } from '@/api/api-error-handler';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photos = ref<PhotoEntity[]>([]);
@@ -28,7 +29,7 @@ const bindPhotos =  () => {
 
 const fetchPhotos = async () => {
   isLoading.value = true;
-  photos.value = (await categoriesApi.getPhotos(props.slug)).data.filter(p => p.isActive);
+  photos.value = (await withErrorHandling(categoriesApi.getPhotos(props.slug))).data.filter(p => p.isActive);
   photosStore.setPhotosByKey(props.slug, photos.value);
   isLoading.value = false;
 }

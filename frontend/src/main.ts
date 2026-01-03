@@ -14,6 +14,6 @@ instance.use(router);
 instance.use(pinia as any);
 instance.use(naive);
 
-useApiProvider(instance);
+useApiProvider(instance, router);
 
 instance.mount('#app');

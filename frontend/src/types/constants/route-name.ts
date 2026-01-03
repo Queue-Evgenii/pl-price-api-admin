@@ -5,6 +5,12 @@ export const RouteName = {
     CATEGORIES: {
       ROOT: "admin-categories",
       PHOTOS: "admin-category-photos"
+    },
+    SITES: {
+      ROOT: "admin-sites"
+    },
+    SETTINGS: {
+      ROOT: "admin-settings"
     }
   },
 

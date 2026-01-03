@@ -16,6 +16,9 @@ export const withErrorHandling = <T>(apiCall: Promise<T>): Promise<T> => {
       case 403:
         router.push({ name: RouteName.FORBIDDEN });
         break;
+      case 404:
+        router.push({ name: RouteName.NOT_FOUND });
+        break;
       default:
         break;
     }

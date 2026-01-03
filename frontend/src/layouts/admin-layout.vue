@@ -1,17 +1,28 @@
 <script  setup lang="ts">
-import { ref } from 'vue';
+import { computed, h, inject, nextTick, onMounted, ref, watch } from 'vue';
 import breadcrumbs from '../components/breadcrumbs.vue';
 import { Token } from '@/types/models/utils/browser/token';
 import { useUserStore } from '@/stores/user';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { RouteName } from '@/types/constants/route-name';
-import { HomeFilled, LogOutFilled, WarningFilled } from '@vicons/material'
+import { CategoryFilled, HomeFilled, LanguageFilled, LogOutFilled, SettingsApplicationsOutlined, WarningFilled } from '@vicons/material'
 import { useThemeVars } from 'naive-ui';
+import { useSitesStore, type SiteOpt } from '@/stores/sites';
+import { Site } from '@/types/models/utils/browser/site';
+import type { CategoriesAdminApi } from '@/api/modules/categories';
+import { useCategoriesStore } from '@/stores/categories';
+import { withErrorHandling } from '@/api/api-error-handler';
 
 const isConfirmationVisible = ref(false);
 const store = useUserStore();
+const sitesStore = useSitesStore();
+const CategoriesAdminApi = inject<CategoriesAdminApi>('CategoriesAdminApi')!;
+const categoriesStore = useCategoriesStore();
 const router = useRouter();
+const route = useRoute();
 const themeVars = useThemeVars();
+
+const curSiteOpt = ref<string>();
 
 const logout = () => {
   store.clearState();
@@ -25,6 +36,40 @@ const logout = () => {
 const openLogoutDialog = () => {
   isConfirmationVisible.value = true;
 }
+
+const fetchCategories = async () => {
+  const { data } = (await withErrorHandling(CategoriesAdminApi.getCategories({ page: 1, limit: 10 })));
+  categoriesStore.setCategories(data);
+}
+
+const changeSite = (newOptValue: string) => {
+  sitesStore.setSite(newOptValue);
+  fetchCategories();
+}
+
+const menuItems = [
+    {
+        label: "Categories",
+        key: RouteName.ADMIN.CATEGORIES.ROOT,
+        icon: CategoryFilled,
+    },
+    {
+        label: "General",
+        key: RouteName.ADMIN.SETTINGS.ROOT,
+        icon: SettingsApplicationsOutlined,
+    },
+    {
+        label: "Sites",
+        key: RouteName.ADMIN.SITES.ROOT,
+        icon: LanguageFilled,
+    },
+];
+
+const handleMenuSelect = (key: string) => {
+    router.push({ name: key });
+};
+
+const selectedKey = computed(() => route.name);
 </script>
 
 <template>
@@ -38,15 +83,18 @@ const openLogoutDialog = () => {
           />
           <breadcrumbs />
         </n-flex>
-        <n-flex :align="'center'" >
-          <router-link :to="{ name: RouteName.SITE.ROOT }">
+        <n-flex :align="'center'" :justify="'end'" style="flex: 1 0 auto; flex-flow: nowrap;">
+          <router-link :to="{ name: RouteName.SITE.ROOT, params: { lang: 'pl' } }">
             <n-button>
               <template #icon>
                 <HomeFilled style="vertical-align: middle; transform: translateY(1px);" />
               </template>
-              Home
+              Site
             </n-button>
           </router-link>
+          <div style="flex: 0 0 130px;">
+            <n-select :value="sitesStore.curOpt.value" :options="sitesStore.opts" @update:value="changeSite" />
+          </div>
           <n-button @click="openLogoutDialog">
             <template #icon>
               <LogOutFilled style="vertical-align: middle; transform: translateY(1px);" />
@@ -56,7 +104,27 @@ const openLogoutDialog = () => {
         </n-flex>
       </n-flex>
     </n-space>
-    <slot></slot>
+    <n-layout has-sider style="flex:1 1 100%; position: relative;">
+      <n-layout-sider
+          bordered
+          width="220"
+      >
+          <n-menu
+              :options="menuItems.map(i => ({
+                  label: i.label,
+                  key: i.key,
+                  icon: () => h(i.icon),
+              }))"
+              :value="selectedKey"
+              @update:value="handleMenuSelect"
+              :collapsed-width="64"
+          />
+      </n-layout-sider>
+
+        <n-layout-content class="_container">
+            <slot></slot>
+        </n-layout-content>
+    </n-layout>
   </div>
   
   <n-modal v-model:show="isConfirmationVisible" title="Log Out" preset="dialog">
