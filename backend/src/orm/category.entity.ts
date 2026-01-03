@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { PhotoEntity } from './photo.entity';
 import { Expose } from 'class-transformer';
+import { SiteEntity } from './site.entity';
 
 @Entity()
 @Tree('closure-table')
@@ -37,4 +38,8 @@ export class CategoryEntity extends BaseEntity {
 
   @Expose()
   countPhotos: number = 0;
+
+  @ManyToOne(() => SiteEntity, (site) => site.categories, { onDelete: 'SET NULL' })
+  @ApiProperty({ type: () => SiteEntity })
+  site: SiteEntity;
 }

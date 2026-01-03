@@ -1,22 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PhotoEntity } from 'src/orm/photo.entity';
-import { CategoriesStrategy } from 'src/modules/categories/services/categories.strategy';
-import { PhotosService } from 'src/modules/categories/services/photos.service';
 import { ConfigService } from '@nestjs/config';
 import { FindAllPhotosDto, UpdatePhotoRequestDto } from 'src/models/http/photos-dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
+import { CategoriesAdminStrategy } from './categories.strategy';
 
 @Injectable()
 export class PhotosAdminService {
   constructor(
     @InjectRepository(PhotoEntity)
     private readonly photosRepo: Repository<PhotoEntity>,
-    @Inject('CategoriesService') private categoriesService: CategoriesStrategy,
-    private photosService: PhotosService,
+    @Inject('CategoriesAdminService') private categoriesService: CategoriesAdminStrategy,
     private readonly configService: ConfigService,
   ) {}
 
@@ -42,7 +40,7 @@ export class PhotosAdminService {
   }
 
   async update(id: number, dto: UpdatePhotoRequestDto): Promise<FindAllPhotosDto> {
-    const photo = await this.photosService.findOne(id, true);
+    const photo = await this.findOne(id, true);
 
     if (dto.orderId !== undefined) {
       const needsToUpdate = await this.photosRepo.findOne({ where: { category: { id: photo.category.id }, orderId: dto.orderId }, relations: ['category'] });
@@ -61,11 +59,11 @@ export class PhotosAdminService {
 
     const slug = photo.category.slug;
     await this.photosRepo.save(photo);
-    return this.photosService.findAll(slug);
+    return this.findAll(slug);
   }
 
   async remove(id: number): Promise<FindAllPhotosDto> {
-    const photo = await this.photosService.findOne(id, true);
+    const photo = await this.findOne(id, true);
     const slug = photo.category.slug;
     const orderId = photo.orderId;
     const unlinkAsync = promisify(fs.unlink);
@@ -86,8 +84,21 @@ export class PhotosAdminService {
 
     await this.photosRepo.remove(photo);
 
-    const needsToUpdate = await this.photosService.findAll(slug);
+    const needsToUpdate = await this.findAll(slug);
     await Promise.all(needsToUpdate.data.filter((el) => el.orderId > orderId).map((el) => this.update(el.id, { orderId: el.orderId - 1 })));
-    return this.photosService.findAll(slug);
+    return this.findAll(slug);
+  }
+
+  async findAll(slug: string): Promise<FindAllPhotosDto> {
+    const data = await this.photosRepo.find({ where: { category: { slug } }, relations: ['category'], order: { orderId: 'ASC' } });
+    return { data };
+  }
+
+  async findOne(id: number, relations: boolean = false): Promise<PhotoEntity> {
+    const photo = await (relations ? this.photosRepo.findOne({ where: { id }, relations: ['category'] }) : this.photosRepo.findOne({ where: { id } }));
+
+    if (photo === null) throw new HttpException(`Photo with id=${id} not found`, HttpStatus.NOT_FOUND);
+
+    return photo;
   }
 }

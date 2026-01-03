@@ -2,11 +2,7 @@ import { FindAllCategoriesDto, FindAllCategoriesOptionsDto } from 'src/models/ht
 import { CategoryEntity } from 'src/orm/category.entity';
 
 export interface CategoriesStrategy {
-  findAll(query: FindAllCategoriesOptionsDto): Promise<FindAllCategoriesDto>;
+  findAll(query: FindAllCategoriesOptionsDto, lang: string): Promise<FindAllCategoriesDto>;
 
-  findOne(id: number): Promise<CategoryEntity>;
-
-  findRootById(id: number): Promise<CategoryEntity>;
-
-  findOneBySlug(slug: string): Promise<CategoryEntity>;
+  findOne(id: number, lang: string): Promise<CategoryEntity>;
 }

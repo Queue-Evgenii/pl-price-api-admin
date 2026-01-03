@@ -7,9 +7,10 @@ import { PhotosAdminController } from './controllers/photos.controller';
 import { PhotoEntity } from 'src/orm/photo.entity';
 import { PhotosAdminService } from './services/photos.service';
 import { CategoriesModule } from 'src/modules/categories/categories.module';
+import { SiteEntity } from 'src/orm/site.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CategoryEntity, PhotoEntity]), CategoriesModule],
+  imports: [TypeOrmModule.forFeature([CategoryEntity, PhotoEntity, SiteEntity]), CategoriesModule],
   controllers: [CategoriesController, PhotosAdminController],
   providers: [
     {

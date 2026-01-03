@@ -12,11 +12,11 @@ export class CategoriesService implements CategoriesStrategy {
     private readonly categoryRepo: TreeRepository<CategoryEntity>,
   ) {}
 
-  async findAll(params: FindAllCategoriesOptionsDto): Promise<FindAllCategoriesDto> {
-    const query = this.categoryRepo.createQueryBuilder('category');
+  async findAll(params: FindAllCategoriesOptionsDto, lang: string = 'pl'): Promise<FindAllCategoriesDto> {
+    const query = this.categoryRepo.createQueryBuilder('category').leftJoin('category.site', 'site').where('site.code = :lang AND site.active = true', { lang });
 
     if (params.root) {
-      query.where('category.parentId IS NULL');
+      query.andWhere('category.parentId IS NULL');
     }
 
     query.orderBy('category.orderId', 'ASC');
@@ -89,30 +89,8 @@ export class CategoriesService implements CategoriesStrategy {
     };
   }
 
-  async findOne(id: number): Promise<CategoryEntity> {
-    const category = await this.categoryRepo.findOne({ where: { id }, relations: ['parent'] });
-
-    if (!category) {
-      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
-    }
-
-    const fullTree = await this.categoryRepo.findDescendantsTree(category);
-
-    return fullTree;
-  }
-
-  async findRootById(id: number): Promise<CategoryEntity> {
-    const category = await this.categoryRepo.findOne({ where: { id } });
-
-    if (!category) {
-      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
-    }
-
-    return category;
-  }
-
-  async findOneBySlug(slug: string): Promise<CategoryEntity> {
-    const category = await this.categoryRepo.findOne({ where: { slug }, relations: ['parent'] });
+  async findOne(id: number, lang: string = 'pl'): Promise<CategoryEntity> {
+    const category = await this.categoryRepo.findOne({ where: { id, site: { code: lang, active: true } }, relations: ['parent'] });
 
     if (!category) {
       throw new HttpException('Category not found', HttpStatus.NOT_FOUND);

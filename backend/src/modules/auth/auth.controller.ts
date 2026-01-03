@@ -4,6 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiSignInResponses, ApiSignUpResponses } from '../../decorators/auth.decorator';
 import { AuthStrategy } from './auth.strategy';
 import { TokenStrategy } from '../token/token.strategy';
+import { Request } from 'express';
 
 @ApiTags('Auth')
 @Controller()
@@ -22,6 +23,7 @@ export class AuthController {
   @Post('sign-up')
   @ApiSignUpResponses()
   signUp(@Body() user: UserRequestDto): Promise<UserResponseDto> {
+    console.log(user);
     return this.authService.signUp(user);
   }
 
