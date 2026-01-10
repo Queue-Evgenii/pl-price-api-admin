@@ -41,7 +41,7 @@ services:
     image: nginx:alpine
     container_name: price-nginx
     ports:
-      - "80:80"
+      - "8081:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - uploads:/uploads
