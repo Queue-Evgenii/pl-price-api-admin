@@ -7,6 +7,8 @@ import { withErrorHandling } from '@/api/api-error-handler';
 import type { SitesApi } from '@/api/modules/sites';
 import { inject } from 'vue';
 
+const DEFAULT_LANG = 'pl';
+
 async function langGuard(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const { lang } = to.params
   const sitesStore = useSitesStore();
@@ -25,8 +27,17 @@ async function langGuard(to: RouteLocationNormalized, from: RouteLocationNormali
   next()
 }
 
+function redirectToDefaultLang(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+  const path = to.path.startsWith('/') ? to.path : `/${to.path}`;
+  next(`/${DEFAULT_LANG}${path}`);
+}
+
 export const siteRoutes = [
   ...commonRoutes,
+  {
+    path: '/categories/:catchAll(.*)*',
+    beforeEnter: redirectToDefaultLang,
+  },
   {
     path: '/:lang',
     beforeEnter: langGuard,
@@ -72,7 +83,6 @@ export const siteRoutes = [
           },
         ]
       },
-      
     ],
   },
 ];
