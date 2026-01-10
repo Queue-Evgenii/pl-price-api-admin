@@ -21,7 +21,7 @@ async function langGuard(to: RouteLocationNormalized, from: RouteLocationNormali
     })
 
   if (!sitesStore.sites.find((el: SiteEntity) => el.code === lang)) {
-    if (lang === 'categories') return next({ path: `${DEFAULT_LANG}/categories` })
+    if (lang === 'categories' || lang === '') return next({ path: `${DEFAULT_LANG}/categories` })
     return next({ name: RouteName.NOT_FOUND })
   }
 
@@ -29,6 +29,10 @@ async function langGuard(to: RouteLocationNormalized, from: RouteLocationNormali
 }
 
 export const siteRoutes = [
+  {
+    path: '',
+    redirect: { path: `${DEFAULT_LANG}/categories`  },
+  },
   ...commonRoutes,
   {
     path: '/:lang',
