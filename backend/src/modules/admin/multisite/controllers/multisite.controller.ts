@@ -36,7 +36,6 @@ export class MultisiteController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   async getAll(): Promise<SiteEntity[]> {
     return this.multisiteAdminService.findAll();
   }

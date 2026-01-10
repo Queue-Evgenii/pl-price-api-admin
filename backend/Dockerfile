@@ -1,15 +1,16 @@
-FROM node:22.11-alpine AS builder
+FROM node:22.11-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm install
+RUN npm install --production
 
 COPY . .
 
 RUN npm run build
 
+RUN mkdir -p /app/uploads
+
 EXPOSE 3000
 
-CMD ["node"]
+CMD ["node", "dist/main.js"]

@@ -5,7 +5,7 @@ import { categoriesRoutes } from './categories.routes';
 
 export const routes = [
   {
-    path: 'api',
+    path: process.env.PROD ? '' : 'api',
     module: AppModule,
     children: [...adminRoutes, ...authRoutes, ...categoriesRoutes],
   },

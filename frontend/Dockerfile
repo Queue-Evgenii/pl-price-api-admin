@@ -1,4 +1,3 @@
-# Используем образ с Node.js
 FROM node:22.11-alpine AS builder
 
 WORKDIR /app

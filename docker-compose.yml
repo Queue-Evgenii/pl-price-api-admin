@@ -1,49 +1,59 @@
 services:
-  pl-price-api-backend:
+  price-backend:
     build: ./backend
-    container_name: pl-price-api-backend
-    command: node dist/main
+    container_name: price-backend
     environment:
-      API_PORT: ${API_PORT}
-      DATABASE_HOST: ${DATABASE_HOST}
-      DATABASE_PORT: ${DATABASE_PORT}
+      PROD: ${PROD}
+      API_PORT: 3000
+      API_URL: http://localhost
+      DATABASE_HOST: price-db
+      DATABASE_PORT: 5432
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_NAME: ${DATABASE_NAME}
       JWT_SECRET: ${JWT_SECRET}
-    ports:
-      - "${API_PORT}:${API_PORT}"
+    volumes:
+      - uploads:/app/uploads
     depends_on:
-      - pl-price-api-db
+      - price-db
     networks:
       - backend
 
-  pl-price-api-db:
+  price-db:
     image: postgres:13
-    container_name: ${DATABASE_HOST}
+    container_name: price-db
     environment:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
-    ports:
-      - "5432:5432"
+    volumes:
+      - price_db_data:/var/lib/postgresql/data
     networks:
       - backend
-    volumes:
-      - pl_price_api_db_data:/var/lib/postgresql/data
 
-  pl-price-api-frontend:
+  frontend:
     build: ./frontend
+    container_name: price-frontend
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: price-nginx
     ports:
       - "80:80"
-    restart: always
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - uploads:/uploads
     depends_on:
-      - pl-price-api-backend
+      - frontend
+      - price-backend
+    networks:
+      - backend
 
 networks:
   backend:
-    driver: bridge
 
 volumes:
-  pl_price_api_db_data:
-    driver: local
+  price_db_data:
+  uploads:

@@ -1,5 +1,5 @@
 <script  setup lang="ts">
-import { computed, h, inject, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, h, inject, ref } from 'vue';
 import breadcrumbs from '../components/breadcrumbs.vue';
 import { Token } from '@/types/models/utils/browser/token';
 import { useUserStore } from '@/stores/user';
@@ -7,8 +7,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { RouteName } from '@/types/constants/route-name';
 import { CategoryFilled, HomeFilled, LanguageFilled, LogOutFilled, SettingsApplicationsOutlined, WarningFilled } from '@vicons/material'
 import { useThemeVars } from 'naive-ui';
-import { useSitesStore, type SiteOpt } from '@/stores/sites';
-import { Site } from '@/types/models/utils/browser/site';
+import { useSitesStore } from '@/stores/sites';
 import type { CategoriesAdminApi } from '@/api/modules/categories';
 import { useCategoriesStore } from '@/stores/categories';
 import { withErrorHandling } from '@/api/api-error-handler';
@@ -16,13 +15,11 @@ import { withErrorHandling } from '@/api/api-error-handler';
 const isConfirmationVisible = ref(false);
 const store = useUserStore();
 const sitesStore = useSitesStore();
-const CategoriesAdminApi = inject<CategoriesAdminApi>('CategoriesAdminApi')!;
+const categoriesApi = inject<CategoriesAdminApi>('CategoriesAdminApi')!;
 const categoriesStore = useCategoriesStore();
 const router = useRouter();
 const route = useRoute();
 const themeVars = useThemeVars();
-
-const curSiteOpt = ref<string>();
 
 const logout = () => {
   store.clearState();
@@ -38,7 +35,7 @@ const openLogoutDialog = () => {
 }
 
 const fetchCategories = async () => {
-  const { data } = (await withErrorHandling(CategoriesAdminApi.getCategories({ page: 1, limit: 10 })));
+  const { data } = (await withErrorHandling(categoriesApi.getCategories({ page: 1, limit: 10 })));
   categoriesStore.setCategories(data);
 }
 
