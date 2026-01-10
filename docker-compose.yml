@@ -5,7 +5,7 @@ services:
     environment:
       PROD: ${PROD}
       API_PORT: 3000
-      API_URL: http://localhost
+      API_URL: ${API_URL}
       DATABASE_HOST: price-db
       DATABASE_PORT: 5432
       DATABASE_USER: ${DATABASE_USER}
