@@ -11,12 +11,16 @@ import { useSitesStore } from '@/stores/sites';
 import type { CategoriesAdminApi } from '@/api/modules/categories';
 import { useCategoriesStore } from '@/stores/categories';
 import { withErrorHandling } from '@/api/api-error-handler';
+import type { SettingsAdminApi } from '@/api/modules/settings';
+import { useSettingsStore } from '@/stores/settings';
 
 const isConfirmationVisible = ref(false);
 const store = useUserStore();
 const sitesStore = useSitesStore();
 const categoriesApi = inject<CategoriesAdminApi>('CategoriesAdminApi')!;
+const settingsAdminApi = inject<SettingsAdminApi>("SettingsAdminApi")!;
 const categoriesStore = useCategoriesStore();
+const settingsStore = useSettingsStore();
 const router = useRouter();
 const route = useRoute();
 const themeVars = useThemeVars();
@@ -35,13 +39,21 @@ const openLogoutDialog = () => {
 }
 
 const fetchCategories = async () => {
+  if (!categoriesStore.categories || categoriesStore.categories.length === 0) return;
   const { data } = (await withErrorHandling(categoriesApi.getCategories({ page: 1, limit: 10 })));
   categoriesStore.setCategories(data);
+}
+
+const fetchSettings = async () => {
+  if (settingsStore.settings === undefined) return;
+  const data = (await withErrorHandling(settingsAdminApi.getSettings()));
+  settingsStore.setSettings(data);
 }
 
 const changeSite = (newOptValue: string) => {
   sitesStore.setSite(newOptValue);
   fetchCategories();
+  fetchSettings();
 }
 
 const menuItems = [
@@ -118,7 +130,7 @@ const selectedKey = computed(() => route.name);
           />
       </n-layout-sider>
 
-        <n-layout-content class="_container">
+        <n-layout-content class="_container" style="padding-bottom: 20px;">
             <slot></slot>
         </n-layout-content>
     </n-layout>

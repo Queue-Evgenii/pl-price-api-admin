@@ -2,11 +2,20 @@ import { AppModule } from 'src/app.module';
 import { adminRoutes } from './admin.routes';
 import { authRoutes } from './auth.routes';
 import { categoriesRoutes } from './categories.routes';
+import { SettingsModule } from 'src/modules/settings/settings.module';
 
 export const routes = [
   {
     path: process.env.PROD ? '' : 'api',
     module: AppModule,
-    children: [...adminRoutes, ...authRoutes, ...categoriesRoutes],
+    children: [
+      ...adminRoutes,
+      ...authRoutes,
+      ...categoriesRoutes,
+      {
+        path: '/',
+        module: SettingsModule,
+      },
+    ],
   },
 ];

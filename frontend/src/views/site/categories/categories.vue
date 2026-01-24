@@ -9,9 +9,14 @@ import { ArrowBackIosFilled, TelegramFilled, VideoLibraryTwotone } from '@vicons
 import { useCategoriesStore } from '@/stores/categories';
 import { useSitesStore } from '@/stores/sites';
 import { useRoute, useRouter } from 'vue-router';
+import type { SettingsApi } from '@/api/modules/settings';
+import type { SettingsEntity } from '@/types/models/entities/settings.entity';
+import { useSettingsStore } from '@/stores/settings';
   
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
+const settingsApi = inject<SettingsApi>('SettingsApi')!;
 const categoriesStore = useCategoriesStore();
+const settingsStore = useSettingsStore();
 const isLoading = ref(false);
 const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
@@ -31,6 +36,11 @@ const fetchCategories = async () => {
   categories.value = data;
   categoriesStore.setCategories(data);
   setCurrentCategories();
+}
+
+const fetchSettings = async () => {
+  const data = (await withErrorHandling(settingsApi.getSettings()));
+  settingsStore.setSettings(data);
 }
 
 const setCurrentCategories = () => {
@@ -64,6 +74,7 @@ const changeSite = async (newOptValue: string) => {
   await router.push({ name: RouteName.SITE.ROOT, params: { lang: newOptValue } })
   curOpt.value = newOptValue;
   fetchCategories();
+  fetchSettings();
 }
 
 onMounted(() => {
@@ -72,6 +83,7 @@ onMounted(() => {
     return;
   }
   fetchCategories();
+  fetchSettings();
   curOpt.value = langOpts.value.find(el => el.value === route.params['lang'])?.value ?? 'pl'
 });
 
@@ -97,10 +109,11 @@ watch(
         <div class="_sub-container">
           <div class="content">
             <header class="main__header">
-              <h2>Sufity Poland Group doskonałość stylu</h2>
+              <h2>{{ settingsStore.settings?.title ?? 'Sufity Poland Group doskonałość stylu' }}</h2>
             </header>
             <section class="main__dropdown dropdown" v-if="currentCategories">
               <n-scrollbar style="max-height: 100%">
+                <img v-if="settingsStore.settings?.banner" :src="settingsStore.settings?.banner.url" alt="Banner" class="dropdown__list" style="padding-bottom: 0;">
                 <ul class="dropdown__list">
                   <li v-if="slug !== undefined" class="dropdown__item">
                     <router-link class="dropdown__button" :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" >
@@ -130,13 +143,13 @@ watch(
                         </template>
                         <template #header>
                           <a class="dropdown__button" @click="isOpen = !isOpen">
-                            Program do budowy sufitów
+                            {{ settingsStore.settings?.downloadSectionButtonText ?? 'Program do budowy sufitów' }}
                           </a>
                         </template>
                         <ul class="tabs">
-                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-1' }" @click="openInner('inner-1')">Wersja do komputera</li>
-                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-2' }" @click="openInner('inner-2')">Wersja Do Androida</li>
-                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-3' }" @click="openInner('inner-3')">Wersja do Apple</li>
+                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-1' }" @click="openInner('inner-1')">{{ settingsStore.settings?.downloadTabPcTitle ?? 'Wersja do komputera' }}</li>
+                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-2' }" @click="openInner('inner-2')">{{ settingsStore.settings?.downloadTabAndroidTitle ?? 'Wersja Do Androida' }}</li>
+                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-3' }" @click="openInner('inner-3')">{{ settingsStore.settings?.downloadTabIosTitle ?? 'Wersja do Apple' }}</li>
                         </ul>
                         <div class="subtabs">
                           <n-collapse v-model:expanded-names="innerExpanded">
@@ -147,7 +160,7 @@ watch(
                               <template #header>
                               </template>
                               <div class="subtab">
-                                <a href="web/NMRDealer.zip">Pobierz</a>
+                                <a href="/NMRDealer.zip">{{ settingsStore.settings?.downloadTabPcButtonText ?? 'Pobierz' }}</a>
                               </div>
                             </n-collapse-item>
                             <n-collapse-item name="inner-2">
@@ -156,7 +169,7 @@ watch(
                               </template>
                               <template #header>
                               </template>
-                              <div class="subtab">Aplikacja jest w fazie tworzenia i niebawem będzie dostępna</div>
+                              <div class="subtab">{{ settingsStore.settings?.downloadTabAndroidEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
                             </n-collapse-item>
                             <n-collapse-item name="inner-3">
                               <template #arrow>
@@ -164,7 +177,7 @@ watch(
                               </template>
                               <template #header>
                               </template>
-                              <div class="subtab">Aplikacja jest w fazie tworzenia i niebawem będzie dostępna</div>
+                              <div class="subtab">{{ settingsStore.settings?.downloadTabIosEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
                             </n-collapse-item>
                           </n-collapse>
                         </div>

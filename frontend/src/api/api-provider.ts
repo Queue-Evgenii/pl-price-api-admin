@@ -6,6 +6,7 @@ import { Token } from '@/types/models/utils/browser/token';
 import { SitesApi } from './modules/sites';
 import { Site } from '@/types/models/utils/browser/site';
 import { type Router } from 'vue-router';
+import { SettingsAdminApi, SettingsApi } from './modules/settings';
 
 export function useApiProvider(app: App, router: Router) {
   const apiClient = axios.create({
@@ -26,6 +27,8 @@ export function useApiProvider(app: App, router: Router) {
   });
 
   app.provide('AuthApi', new AuthApi(apiClient));
+  app.provide('SettingsAdminApi', new SettingsAdminApi(apiClient));
+  app.provide('SettingsApi', new SettingsApi(apiClient));
   app.provide('CategoriesAdminApi', new CategoriesAdminApi(apiClient));
   app.provide('CategoriesApi', new CategoriesApi(apiClient));
   app.provide('SitesApi', new SitesApi(apiClient));

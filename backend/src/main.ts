@@ -14,7 +14,7 @@ void (async () => {
   app.use(
     ['/swagger'],
     basicAuth({
-      users: { [process.env.SWAGGER_USER as string]: process.env.SWAGGER_PASS as string },
+      users: { [process.env.SWAGGER_USER ?? 'admin']: process.env.SWAGGER_PASS ?? '1111' },
       challenge: true,
     }),
   );
