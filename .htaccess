@@ -1,8 +1,7 @@
 RewriteEngine On
 
-# Redirect from old URL to new URL
-RewriteCond %{HTTP_HOST} ^polandgroups\.pl$ [NC]
-RewriteRule ^price/?$ https://polandgroup.pl/ [R=301,L]
+# Redirect from old URL to new URL using RedirectMatch
+RedirectMatch 301 ^/price/?$ https://polandgroup.pl/#/pl/categories
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
