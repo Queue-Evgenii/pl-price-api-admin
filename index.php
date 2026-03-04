@@ -4,24 +4,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Redirect from old URL to new URL
-if ($_SERVER['HTTP_HOST'] === 'polandgroups.pl' && $_SERVER['REQUEST_URI'] === '/pl-price-api-admin/price/') {
-    echo '<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        window.location.replace("https://polandgroup.pl/?redirect=pl-categories");
-    </script>
-</head>
-<body>
-    <p>Redirecting...</p>
-</body>
-</html>';
-    exit;
-}
-
 $nestUrl = 'http://localhost:3000';
 $basePath = '/pl-price-api-admin';
 
