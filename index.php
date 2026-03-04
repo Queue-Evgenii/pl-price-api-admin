@@ -6,7 +6,19 @@ error_reporting(E_ALL);
 
 // Redirect from old URL to new URL
 if ($_SERVER['HTTP_HOST'] === 'polandgroups.pl' && $_SERVER['REQUEST_URI'] === '/pl-price-api-admin/price/') {
-    header('Location: https://polandgroup.pl/#/pl/categories', true, 301);
+    echo '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        window.location.replace("https://polandgroup.pl/#/pl/categories");
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>';
     exit;
 }
 
