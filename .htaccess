@@ -1,7 +1,8 @@
 RewriteEngine On
 
-# Redirect from old URL to new URL using RedirectMatch
-RedirectMatch 301 ^/price/?$ https://polandgroup.pl/#/pl/categories
+# Redirect from old URL to new URL using PHP
+RewriteCond %{HTTP_HOST} ^polandgroups\.pl$ [NC]
+RewriteRule ^price/?$ /redirect.php [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
