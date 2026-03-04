@@ -1,4 +1,4 @@
 <?php
-header("Location: https://polandgroup.pl/#/pl/categories", true, 301);
+header("Location: https://polandgroup.pl/", true, 301);
 exit();
 ?>
