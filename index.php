@@ -12,7 +12,7 @@ if ($_SERVER['HTTP_HOST'] === 'polandgroups.pl' && $_SERVER['REQUEST_URI'] === '
     <meta charset="UTF-8">
     <title>Redirecting...</title>
     <script>
-        window.location.replace("https://polandgroup.pl/#/pl/categories");
+        window.location.replace("https://polandgroup.pl/?redirect=pl-categories");
     </script>
 </head>
 <body>
