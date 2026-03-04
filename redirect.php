@@ -6,11 +6,8 @@
     <meta charset="UTF-8">
     <title>Redirecting...</title>
     <script>
-        // Clear the hash first, then redirect
-        window.location.hash = '';
-        setTimeout(function() {
-            window.location.href = 'https://polandgroup.pl/#/pl/categories';
-        }, 100);
+        // Use replace to prevent hash preservation
+        window.location.replace('https://polandgroup.pl/#/pl/categories');
     </script>
 </head>
 <body>
