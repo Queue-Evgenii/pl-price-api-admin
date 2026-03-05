@@ -87,9 +87,14 @@ onMounted(() => {
   curOpt.value = langOpts.value.find(el => el.value === route.params['lang'])?.value ?? 'pl'
 });
 
+const mountData = () => {
+  setCurrentCategories();
+  curOpt.value = langOpts.value.find(el => el.value === route.params['lang'])?.value ?? 'pl';
+}
+
 watch(
   () => props.slug,
-  setCurrentCategories,
+  mountData,
   { immediate: true }
 );
 </script>

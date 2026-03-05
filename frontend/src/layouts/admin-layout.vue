@@ -39,7 +39,7 @@ const openLogoutDialog = () => {
 }
 
 const fetchCategories = async () => {
-  if (!categoriesStore.categories || categoriesStore.categories.length === 0) return;
+  if (!categoriesStore.categories) return;
   const { data } = (await withErrorHandling(categoriesApi.getCategories({ page: 1, limit: 10 })));
   categoriesStore.setCategories(data);
 }
