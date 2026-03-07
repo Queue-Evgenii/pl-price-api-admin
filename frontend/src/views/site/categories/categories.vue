@@ -118,7 +118,7 @@ watch(
             </header>
             <section class="main__dropdown dropdown" v-if="currentCategories">
               <n-scrollbar style="max-height: 100%">
-                <img v-if="settingsStore.settings?.banner" :src="settingsStore.settings?.banner.url" alt="Banner" class="dropdown__list" style="padding-bottom: 0;">
+                <img v-if="settingsStore.settings?.banner" :src="settingsStore.settings?.banner.url" alt="Banner" class="dropdown__list" style="padding-bottom: 0; width: 100%; object-fit: contain;">
                 <ul class="dropdown__list">
                   <li v-if="slug !== undefined" class="dropdown__item">
                     <router-link class="dropdown__button" :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" >
