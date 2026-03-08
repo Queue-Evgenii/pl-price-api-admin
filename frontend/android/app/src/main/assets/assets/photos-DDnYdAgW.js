@@ -1,0 +1,1 @@
+import{_ as s}from"./index-DN4NL3QH.js";const e=s("photos",{state:()=>({_photos:[],_photosMap:{}}),getters:{photos(){return this._photos}},actions:{setPhotos(o){this._photos=o},addPhoto(o){this._photos.some(t=>t.id===o.id)||this._photos.push(o)},setPhotosByKey(o,t){this._photosMap[o]=t},getPhotosByKey(o){return this._photosMap[o]??[]}}});export{e as u};

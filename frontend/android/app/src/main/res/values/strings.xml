@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Price API Admin</string>
-    <string name="title_activity_main">Price API Admin</string>
+    <string name="app_name">PL Price</string>
+    <string name="title_activity_main">PL Price</string>
     <string name="package_name">com.priceapi.admin</string>
     <string name="custom_url_scheme">com.priceapi.admin</string>
 </resources>
