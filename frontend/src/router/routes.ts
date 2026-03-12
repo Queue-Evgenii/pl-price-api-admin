@@ -1,9 +1,10 @@
+import { Capacitor } from '@capacitor/core';
 import { adminRoutes } from './routes/admin.routes';
 import { authRoutes } from './routes/auth.routes';
 import { siteRoutes } from './routes/site.routes';
 
 export const routes = [
-  ...adminRoutes,
+  ...(Capacitor.isNativePlatform() ? [] : adminRoutes),
   ...siteRoutes,
-  ...authRoutes,
+  ...(Capacitor.isNativePlatform() ? [] : authRoutes),
 ]

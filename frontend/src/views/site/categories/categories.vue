@@ -45,6 +45,7 @@ const fetchSettings = async () => {
 
 const setCurrentCategories = () => {
   isLoading.value = true;
+  curOpt.value = langOpts.value.find(el => el.value === route.params['lang'])?.value ?? 'pl';
   if (props.slug === undefined) {
       currentCategories.value = categories.value;
       isLoading.value = false;

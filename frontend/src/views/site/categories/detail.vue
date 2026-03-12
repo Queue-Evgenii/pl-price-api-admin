@@ -52,24 +52,24 @@ onMounted(() => {
     <div class="flex flex-center main">
       <div class="_container">
         <div class="_sub-container">
-          <div class="content"v-if="photos && photos.length > 0">
+          <div class="content">
             <header class="main__header">
               <h2>
                 <router-link :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" class="icon">
                   <ArrowBackIosFilled  />
                 </router-link>
-                <span>{{ photos[0].category.name }}</span>
+                <span>{{ photos && photos.length > 0 ? photos[0].category.name : "Oops! Nothing here :(" }}</span>
               </h2>
             </header>
-              <n-scrollbar style="max-height: 100%; padding-bottom: 56px;">
-                <n-image
-                  v-for="photo in photos"
-                  width="100%"
-                  :key="photo.id"
-                  object-fit="contain"
-                  :src="photo.url"
-                />
-              </n-scrollbar>
+            <n-scrollbar style="max-height: 100%; padding-bottom: 56px;" v-if="photos && photos.length > 0">
+              <n-image
+                v-for="photo in photos"
+                width="100%"
+                :key="photo.id"
+                object-fit="contain"
+                :src="photo.url"
+              />
+            </n-scrollbar>
           </div>
         </div>
       </div>
