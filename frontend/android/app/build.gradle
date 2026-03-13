@@ -7,8 +7,11 @@ android {
         applicationId "com.priceapi.admin"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode (project.findProperty("APP_VERSION_CODE") ?: System.getenv("APP_VERSION_CODE") ?: "1").toInteger()
-        versionName (project.findProperty("APP_VERSION_NAME") ?: System.getenv("APP_VERSION_NAME") ?: "1.0").toString()
+        def appVersionCode = project.findProperty("APP_VERSION_CODE") ?: System.getenv("APP_VERSION_CODE") ?: "1"
+        def appVersionName = project.findProperty("APP_VERSION_NAME") ?: System.getenv("APP_VERSION_NAME") ?: "1.0"
+
+        versionCode appVersionCode.toString().toInteger()
+        versionName appVersionName.toString()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
