@@ -5,6 +5,7 @@ import type { AuthApi } from './api/modules/auth';
 import { useUserStore } from './stores/user';
 import { RouteName } from './types/constants/route-name';
 import { Token } from './types/models/utils/browser/token';
+import { Capacitor } from '@capacitor/core';
 
 const userStore = useUserStore();
 const authApi = inject<AuthApi>('AuthApi')!;
@@ -17,15 +18,17 @@ const themeOverrides = {
   },
 }
 
-authApi.getMe()
-  .then(res => {
-    Token.set(res.token);
-    userStore.setUser(res.user);
+if (!Capacitor.isNativePlatform()) {
+  authApi.getMe()
+    .then(res => {
+      Token.set(res.token);
+      userStore.setUser(res.user);
 
-    if (route.path.startsWith('/auth') && !route.path.startsWith('path')) {
-      router.push({ name: RouteName.ADMIN.ROOT });
-    }
-  })
+      if (route.path.startsWith('/auth') && !route.path.startsWith('path')) {
+        router.push({ name: RouteName.ADMIN.ROOT });
+      }
+    })
+}
 </script>
 
 <template>

@@ -2,6 +2,7 @@ services:
   price-backend:
     build: ./backend
     container_name: price-backend
+    restart: always
     environment:
       PROD: ${PROD}
       API_PORT: 3000
@@ -22,6 +23,7 @@ services:
   price-db:
     image: postgres:13
     container_name: price-db
+    restart: always
     environment:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
@@ -34,12 +36,14 @@ services:
   frontend:
     build: ./frontend
     container_name: price-frontend
+    restart: always
     networks:
       - backend
 
   nginx:
     image: nginx:alpine
     container_name: price-nginx
+    restart: always
     ports:
       - "8081:80"
     volumes:

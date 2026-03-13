@@ -9,6 +9,24 @@ $basePath = '/pl-price-api-admin';
 
 $uri = $_SERVER['REQUEST_URI'];
 
+// Handle URLs without /pl-price-api-admin prefix
+if ($_SERVER['HTTP_HOST'] === 'polandgroups.pl' && str_starts_with($uri, '/price/')) {
+    echo '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        window.location.replace("https://polandgroup.pl/");
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>';
+    exit;
+}
+
 // Убираем базовый префикс
 if (str_starts_with($uri, $basePath)) {
     $cleanPath = substr($uri, strlen($basePath));
