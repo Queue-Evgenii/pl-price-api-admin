@@ -73,13 +73,30 @@ function calculateVersionCode(version) {
 
 function setEnvironmentVariables(version) {
   const versionCode = calculateVersionCode(version);
+  const envPath = path.join(__dirname, '.env');
   
-  // Create .env file with version info
-  const envContent = `APP_VERSION_NAME=${version}
-APP_VERSION_CODE=${versionCode}
-`;
+  // Read existing .env content if file exists
+  let existingEnv = {};
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const match = line.match(/^([^=]+)=(.*)$/);
+      if (match) {
+        existingEnv[match[1]] = match[2];
+      }
+    });
+  }
   
-  fs.writeFileSync(path.join(__dirname, '.env'), envContent);
+  // Update only version variables, preserve all others
+  existingEnv['APP_VERSION_NAME'] = version;
+  existingEnv['APP_VERSION_CODE'] = versionCode.toString();
+  
+  // Write back all variables
+  const newEnvContent = Object.entries(existingEnv)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('\n') + '\n';
+  
+  fs.writeFileSync(envPath, newEnvContent);
   console.log(`✓ Set environment variables: APP_VERSION_NAME=${version}, APP_VERSION_CODE=${versionCode}`);
   
   return { version, versionCode };
