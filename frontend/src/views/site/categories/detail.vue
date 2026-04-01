@@ -68,6 +68,13 @@ onMounted(() => {
                 :key="photo.id"
                 object-fit="contain"
                 :src="photo.url"
+                :preview-props="{
+                  gesture: {
+                    scale: true,
+                    pan: true,
+                    pinch: true
+                  }
+                }"
               />
             </n-scrollbar>
           </div>
