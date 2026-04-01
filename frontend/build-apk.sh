@@ -38,6 +38,16 @@ if ! java -version >/dev/null 2>&1; then
     exit 1
 fi
 
+# Load environment variables from .env file
+if [ -f "$ROOT_DIR/.env" ]; then
+    echo "📋 Loading environment variables from .env..."
+    export $(grep -v '^#' "$ROOT_DIR/.env" | xargs)
+    echo "📋 Loaded APP_VERSION_NAME=${APP_VERSION_NAME:-1.0}"
+    echo "📋 Loaded APP_VERSION_CODE=${APP_VERSION_CODE:-1}"
+else
+    echo "⚠️ .env file not found, using default version 1.0"
+fi
+
 echo "🔨 Building frontend assets..."
 cd "$ROOT_DIR"
 npm run build

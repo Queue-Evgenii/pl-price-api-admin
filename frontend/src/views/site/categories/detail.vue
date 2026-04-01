@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CategoriesApi } from '@/api/modules/categories';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted, ref, nextTick } from 'vue';
 import loader from '@/components/loader.vue';
 import { usePhotosStore } from '@/stores/photos';
 import { ArrowBackIosFilled } from '@vicons/material';
@@ -34,13 +34,23 @@ const fetchPhotos = async () => {
   isLoading.value = false;
 }
 
+const enableZoom = () => {
+  nextTick(() => {
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');
+    }
+  });
+}
+
 onMounted(() => {
   parentSlug.value = categoriesStore.getFirstParentSlug(props.slug);
   if (photosStore.getPhotosByKey(props.slug).length > 0) {
     bindPhotos();
-    return;
+  } else {
+    fetchPhotos();
   }
-  fetchPhotos();
+  enableZoom();
 })
 </script>
 
@@ -132,6 +142,19 @@ onMounted(() => {
 }
 div.n-image {
   width: 100%;
+}
+
+/* Enable zoom for mobile devices */
+@media (max-width: 768px) {
+  .page {
+    zoom: 1;
+    transform-origin: 0 0;
+  }
+  
+  .content {
+    zoom: 1;
+    transform-origin: 0 0;
+  }
 }
 
 </style>
