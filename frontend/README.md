@@ -45,3 +45,31 @@ What this script does:
 2. Enable USB Debugging
 3. Transfer the APK file to your phone and install it
 4. Or use ADB: `adb install android/app/build/outputs/apk/debug/*.apk`
+
+## Automated Version Management & Build
+
+For automatic version bumping and APK building in one command:
+
+```bash
+npm run build-auto          # Auto-bump patch version + build APK
+npm run build-auto patch    # Auto-bump patch version + build APK
+npm run build-auto minor    # Auto-bump minor version + build APK
+npm run build-auto major    # Auto-bump major version + build APK
+npm run build-auto 1.2.3    # Set specific version + build APK
+```
+
+**Version Management Commands:**
+```bash
+npm run version:current     # Show current version
+npm run version:bump:patch  # Bump patch version (1.0.1 -> 1.0.2)
+npm run version:bump:minor  # Bump minor version (1.0.1 -> 1.1.0)
+npm run version:bump:major  # Bump major version (1.0.1 -> 2.0.0)
+npm run version:set 1.2.3   # Set specific version
+```
+
+**What `build-auto` does automatically:**
+1. Bumps version according to specified type
+2. Updates package.json and .env files
+3. Shows new version information
+4. Builds APK with new version
+5. Shows APK location and installation info
