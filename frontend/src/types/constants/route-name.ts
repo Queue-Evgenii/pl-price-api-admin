@@ -30,4 +30,5 @@ export const RouteName = {
 
   NOT_FOUND: "not-found",
   FORBIDDEN: "forbidden",
+  PRIVACY_POLICY: "privacy-policy",
 } as const;

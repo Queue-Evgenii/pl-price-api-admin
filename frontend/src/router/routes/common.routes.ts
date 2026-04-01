@@ -21,4 +21,12 @@ export const commonRoutes = [
       breadcrumb: 'Forbidden',
     },
   },
+  {
+    path: '/privacy-policy',
+    name: RouteName.PRIVACY_POLICY,
+    component: () => import('@/views/common/privacy-policy.vue'),
+    meta: {
+      breadcrumb: 'Privacy Policy',
+    },
+  },
 ];

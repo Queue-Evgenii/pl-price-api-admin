@@ -12,7 +12,7 @@ import { useRoute, useRouter } from 'vue-router';
 import type { SettingsApi } from '@/api/modules/settings';
 import type { SettingsEntity } from '@/types/models/entities/settings.entity';
 import { useSettingsStore } from '@/stores/settings';
-  
+
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const settingsApi = inject<SettingsApi>('SettingsApi')!;
 const categoriesStore = useCategoriesStore();
@@ -22,8 +22,8 @@ const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
 const parentSlug = ref<string | null>(null);
-const router = useRouter(); 
-const route = useRoute(); 
+const router = useRouter();
+const route = useRoute();
 
 const bindCategories = async () => {
   categories.value = categoriesStore.categories;
@@ -189,7 +189,7 @@ watch(
                         </div>
                       </n-collapse-item>
                     </n-collapse>
-                    
+
                   </li>
                   <li class="dropdown__item">
                     <a class="dropdown__button" href="https://t.me/+aSOZnoJqLyo0ODA8" target="_blank">
@@ -207,9 +207,16 @@ watch(
                       </n-flex>
                     </a>
                   </li>
+                  <li class="dropdown__item">
+                    <router-link class="dropdown__button" to="/privacy-policy">
+                      <n-flex :align="'center'" justify="center" style="position: relative;">
+                        <span>Privacy Policy</span>
+                      </n-flex>
+                    </router-link>
+                  </li>
                 </ul>
               </n-scrollbar>
-              
+
             </section>
           </div>
         </div>
@@ -221,7 +228,7 @@ watch(
       </div>
     </div>
   </div>
-  
+
 </template>
 
 <style>
