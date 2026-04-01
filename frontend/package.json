@@ -1,13 +1,22 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "android": "./android-deploy-clean.sh"
+    "android": "./android-deploy-clean.sh",
+    "build-apk": "./build-apk.sh",
+    "version:bump": "node version-manager.js bump",
+    "version:bump:patch": "node version-manager.js bump patch",
+    "version:bump:minor": "node version-manager.js bump minor",
+    "version:bump:major": "node version-manager.js bump major",
+    "version:set": "node version-manager.js set",
+    "version:current": "node version-manager.js current",
+    "version:env": "node version-manager.js env",
+    "build-auto": "./build-and-bump.sh"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.1",
