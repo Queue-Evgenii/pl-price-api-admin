@@ -22,3 +22,26 @@ What this script does:
 If you need to inspect/debug layout in the running app, open:
 
 `chrome://inspect/#devices`
+
+## Build APK for Manual Testing
+
+For creating a debug APK file that can be manually installed on an Android device:
+
+```bash
+npm run build-apk
+```
+
+What this script does:
+- builds frontend assets
+- syncs Capacitor Android project
+- creates debug APK for manual installation
+- provides installation instructions
+- optionally installs via ADB if device is connected
+
+**APK File Location:** `android/app/build/outputs/apk/debug/pl-price-[version]-[timestamp].apk`
+
+**Installation:**
+1. Enable Developer Options on your Android device
+2. Enable USB Debugging
+3. Transfer the APK file to your phone and install it
+4. Or use ADB: `adb install android/app/build/outputs/apk/debug/*.apk`
