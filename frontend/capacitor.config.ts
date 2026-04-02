@@ -11,6 +11,12 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: true
     }
+  },
+  ios: {
+    scheme: 'PL Price'
+  },
+  android: {
+    webContentsDebuggingEnabled: true
   }
 };
 
