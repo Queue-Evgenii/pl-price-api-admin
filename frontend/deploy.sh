@@ -61,6 +61,11 @@ fi
 
 echo "Сборка фронта..."
 cd "$ROOT_DIR"
+
+# Sync version from package.json to environment
+echo "🔄 Syncing version from package.json..."
+npm run version:env
+
 npm run build
 
 echo "Синхронизация Capacitor с Android..."

@@ -1,11 +1,12 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "2.0.47",
+  "version": "2.0.11",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node version-manager.js bump patch && vite build",
+    "build": "vite build",
+    "build:bump": "./build-with-version-bump.sh",
     "preview": "vite preview",
     "android": "./android-deploy-clean.sh",
     "android:deploy": "./android-deploy-clean.sh",

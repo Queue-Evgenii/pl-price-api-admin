@@ -48,6 +48,22 @@ else
     echo "⚠️ .env file not found, using default version 1.0"
 fi
 
+# Auto-bump version before build
+echo "📦 Auto-bumping patch version..."
+npm run version:bump:patch
+
+# Sync version from package.json to environment
+echo "🔄 Syncing version from package.json..."
+npm run version:env
+
+# Load updated environment variables
+if [ -f "$ROOT_DIR/.env" ]; then
+    echo "📋 Loading updated environment variables from .env..."
+    export $(grep -v '^#' "$ROOT_DIR/.env" | xargs)
+    echo "📋 Loaded APP_VERSION_NAME=${APP_VERSION_NAME:-1.0}"
+    echo "📋 Loaded APP_VERSION_CODE=${APP_VERSION_CODE:-1}"
+fi
+
 echo "🔨 Building frontend assets..."
 cd "$ROOT_DIR"
 npm run build

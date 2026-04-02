@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Auto-build script with version bumping
-# Usage: ./build-and-bump.sh [patch|minor|major|version_number]
+# Build script with version bump
+# This script bumps version and then builds APK
+# Usage: ./build-with-version-bump.sh [patch|minor|major|version_number]
 
 set -e
 
 TYPE=${1:-patch}
 
-echo "🚀 Starting build process..."
+echo "🚀 Starting build process with version bump..."
 
 # Bump version
 if [[ $TYPE =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -21,10 +22,6 @@ fi
 # Show new version
 echo "📋 Current version info:"
 npm run version:current
-
-# Sync version to environment variables
-echo "🔄 Syncing version to environment..."
-npm run version:env
 
 # Build APK
 echo "🔨 Building APK..."
