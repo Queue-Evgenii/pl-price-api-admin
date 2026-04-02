@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CategoriesApi } from '@/api/modules/categories';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
-import { inject, onMounted, ref, nextTick } from 'vue';
+import { inject, onMounted, ref, nextTick, onUnmounted } from 'vue';
 import loader from '@/components/loader.vue';
 import { usePhotosStore } from '@/stores/photos';
 import { ArrowBackIosFilled } from '@vicons/material';
@@ -36,12 +36,85 @@ const fetchPhotos = async () => {
 
 const enableZoom = () => {
   nextTick(() => {
-    const viewport = document.querySelector('meta[name="viewport"]');
-    if (viewport) {
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0');
-    }
+    const images = document.querySelectorAll('.n-image img');
+    images.forEach(img => {
+      let scale = 1;
+      let initialDistance = 0;
+      
+      img.addEventListener('touchstart', (e: TouchEvent) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          initialDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+        }
+      });
+      
+      img.addEventListener('touchmove', (e: TouchEvent) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const currentDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+          scale = Math.min(Math.max(1, currentDistance / initialDistance), 3);
+          (img as HTMLElement).style.transform = `scale(${scale})`;
+        }
+      });
+    });
   });
 }
+
+const enableModalZoom = () => {
+  const checkModal = setInterval(() => {
+    const modalImage = document.querySelector('.n-image-preview img') as HTMLElement;
+    if (modalImage && !modalImage.dataset.zoomEnabled) {
+      modalImage.dataset.zoomEnabled = 'true';
+      let scale = 1;
+      let initialDistance = 0;
+      let translateX = 0;
+      let translateY = 0;
+      let startX = 0;
+      let startY = 0;
+      
+      modalImage.addEventListener('touchstart', (e: TouchEvent) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          initialDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+        } else if (e.touches.length === 1 && scale > 1) {
+          e.preventDefault();
+          startX = e.touches[0].pageX - translateX;
+          startY = e.touches[0].pageY - translateY;
+        }
+      });
+      
+      modalImage.addEventListener('touchmove', (e: TouchEvent) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const currentDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+          scale = Math.min(Math.max(1, currentDistance / initialDistance), 4);
+          modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        } else if (e.touches.length === 1 && scale > 1) {
+          e.preventDefault();
+          translateX = e.touches[0].pageX - startX;
+          translateY = e.touches[0].pageY - startY;
+          modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        }
+      });
+    }
+  }, 100);
+  
+  return () => clearInterval(checkModal);
+}
+
+const cleanupModalZoom = ref<(() => void) | null>(null);
 
 onMounted(() => {
   parentSlug.value = categoriesStore.getFirstParentSlug(props.slug);
@@ -50,7 +123,13 @@ onMounted(() => {
   } else {
     fetchPhotos();
   }
-  enableZoom();
+  cleanupModalZoom.value = enableModalZoom();
+})
+
+onUnmounted(() => {
+  if (cleanupModalZoom.value) {
+    cleanupModalZoom.value();
+  }
 })
 </script>
 
@@ -71,7 +150,7 @@ onMounted(() => {
                 <span>{{ photos && photos.length > 0 ? photos[0].category.name : "Oops! Nothing here :(" }}</span>
               </h2>
             </header>
-            <n-scrollbar style="max-height: 100%; padding-bottom: 56px;" v-if="photos && photos.length > 0">
+            <div v-if="photos && photos.length > 0" style="max-height: 100%; padding-bottom: 56px; overflow-y: auto;">
               <n-image
                 v-for="photo in photos"
                 width="100%"
@@ -85,8 +164,10 @@ onMounted(() => {
                     pinch: true
                   }
                 }"
+                :show-toolbar="true"
+                :show-toolbar-tooltip="true"
               />
-            </n-scrollbar>
+            </div>
           </div>
         </div>
       </div>
@@ -118,7 +199,6 @@ onMounted(() => {
 .content {
   position: relative;
   height: 100%;
-  overflow: hidden;
   padding: 0;
 }
 .page {
@@ -142,19 +222,7 @@ onMounted(() => {
 }
 div.n-image {
   width: 100%;
-}
-
-/* Enable zoom for mobile devices */
-@media (max-width: 768px) {
-  .page {
-    zoom: 1;
-    transform-origin: 0 0;
-  }
-  
-  .content {
-    zoom: 1;
-    transform-origin: 0 0;
-  }
+  touch-action: auto;
 }
 
 </style>
