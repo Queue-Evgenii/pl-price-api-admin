@@ -2,111 +2,13 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}"
-
-export ANDROID_SDK_ROOT="$SDK_ROOT"
-export ANDROID_HOME="$SDK_ROOT"
-
-if ! java -version >/dev/null 2>&1; then
-    CANDIDATE_JAVA_HOMES=(
-        "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-        "/Applications/Android Studio.app/Contents/jre/Contents/Home"
-        "$HOME/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-        "$HOME/Applications/Android Studio.app/Contents/jre/Contents/Home"
-        "/Applications/Android Studio Preview.app/Contents/jbr/Contents/Home"
-    )
-
-    for CANDIDATE in "${CANDIDATE_JAVA_HOMES[@]}"; do
-        if [ -x "$CANDIDATE/bin/java" ]; then
-            export JAVA_HOME="$CANDIDATE"
-            export PATH="$JAVA_HOME/bin:$PATH"
-            break
-        fi
-    done
-fi
-
-if ! java -version >/dev/null 2>&1 && command -v /usr/libexec/java_home >/dev/null 2>&1; then
-    JAVA_HOME_FROM_SYSTEM="$(/usr/libexec/java_home 2>/dev/null || true)"
-    if [ -n "$JAVA_HOME_FROM_SYSTEM" ] && [ -x "$JAVA_HOME_FROM_SYSTEM/bin/java" ]; then
-        export JAVA_HOME="$JAVA_HOME_FROM_SYSTEM"
-        export PATH="$JAVA_HOME/bin:$PATH"
-    fi
-fi
-
-if ! java -version >/dev/null 2>&1; then
-    echo "Java (JDK) не найден. Установите JDK или Android Studio (встроенный JBR)."
-    exit 1
-fi
-
-# Load environment variables from .env file
-if [ -f "$ROOT_DIR/.env" ]; then
-    echo "📋 Loading environment variables from .env..."
-    export $(grep -v '^#' "$ROOT_DIR/.env" | xargs)
-    echo "📋 Loaded APP_VERSION_NAME=${APP_VERSION_NAME:-1.0}"
-    echo "📋 Loaded APP_VERSION_CODE=${APP_VERSION_CODE:-1}"
-else
-    echo "⚠️ .env file not found, using default version 1.0"
-fi
-
-# Auto-bump version before build
-echo "📦 Auto-bumping patch version..."
-npm run version:bump:patch
-
-# Sync version from package.json to environment
-echo "🔄 Syncing version from package.json..."
-npm run version:env
-
-# Load updated environment variables
-if [ -f "$ROOT_DIR/.env" ]; then
-    echo "📋 Loading updated environment variables from .env..."
-    export $(grep -v '^#' "$ROOT_DIR/.env" | xargs)
-    echo "📋 Loaded APP_VERSION_NAME=${APP_VERSION_NAME:-1.0}"
-    echo "📋 Loaded APP_VERSION_CODE=${APP_VERSION_CODE:-1}"
-fi
-
-echo "🔨 Building frontend assets..."
 cd "$ROOT_DIR"
-npm run build
 
-if [ $? -ne 0 ]; then
-    echo "❌ Frontend build failed!"
-    exit 1
-fi
+# Setup version (bump patch + sync)
+./version-setup.sh bump
 
-echo "📦 Syncing Capacitor with Android..."
-npx cap sync android
-
-if [ $? -ne 0 ]; then
-    echo "❌ Capacitor sync failed!"
-    exit 1
-fi
-
-echo "🏗️ Building debug APK..."
-cd "$ROOT_DIR/android"
-if [ ! -f "$ROOT_DIR/android/local.properties" ]; then
-    echo "sdk.dir=$SDK_ROOT" > "$ROOT_DIR/android/local.properties"
-fi
-rm -f "$ROOT_DIR"/android/app/build/outputs/apk/debug/pl-price-*.apk
-EXPECTED_TS="$(date +'%y%m%d-%H%M')"
-echo "Expected APK name pattern: pl-price-<version>-${EXPECTED_TS}.apk"
-./gradlew assembleDebug
-
-if [ $? -ne 0 ]; then
-    echo "❌ APK build failed!"
-    exit 1
-fi
-
-APK_FILE="$(ls -t "$ROOT_DIR"/android/app/build/outputs/apk/debug/*.apk | head -n 1)"
-if [ -z "${APK_FILE:-}" ]; then
-    echo "❌ Could not find debug APK after build."
-    exit 1
-fi
-
-echo ""
-echo "✅ APK build completed successfully!"
-echo "📱 APK location: $(basename "$APK_FILE")"
-echo "📁 Full path: $APK_FILE"
-echo ""
+# Build APK using common build script
+source ./build-common.sh
 
 if command -v adb >/dev/null 2>&1 && adb devices | awk 'NR>1 {print $2}' | grep -q '^device$'; then
     echo "📲 Android device detected. You can install with:"

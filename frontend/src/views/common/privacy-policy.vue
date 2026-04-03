@@ -12,7 +12,7 @@
 
       <div class="privacy-policy__content">
         <div class="privacy-policy__updated">
-          <strong>Last updated:</strong> {{ new Date().toLocaleDateString() }}
+          <strong>Last updated:</strong> 03.04.2026
         </div>
 
         <section class="privacy-policy__section">

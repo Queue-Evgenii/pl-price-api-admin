@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT_DIR"
 SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}"
 ADB="$SDK_ROOT/platform-tools/adb"
 EMULATOR_BIN="$SDK_ROOT/emulator/emulator"
@@ -9,6 +10,12 @@ AVD_NAME="${1:-Medium_Phone_API_36.1}"
 
 export ANDROID_SDK_ROOT="$SDK_ROOT"
 export ANDROID_HOME="$SDK_ROOT"
+
+# Setup version (bump patch + sync)
+./version-setup.sh bump
+
+# Build APK using common build script
+source ./build-common.sh
 
 find_aapt() {
     local aapt_path
@@ -27,65 +34,6 @@ read_package_from_apk() {
 
     echo ""
 }
-
-if ! java -version >/dev/null 2>&1; then
-    CANDIDATE_JAVA_HOMES=(
-        "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-        "/Applications/Android Studio.app/Contents/jre/Contents/Home"
-        "$HOME/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-        "$HOME/Applications/Android Studio.app/Contents/jre/Contents/Home"
-        "/Applications/Android Studio Preview.app/Contents/jbr/Contents/Home"
-    )
-
-    for CANDIDATE in "${CANDIDATE_JAVA_HOMES[@]}"; do
-        if [ -x "$CANDIDATE/bin/java" ]; then
-            export JAVA_HOME="$CANDIDATE"
-            export PATH="$JAVA_HOME/bin:$PATH"
-            break
-        fi
-    done
-fi
-
-if ! java -version >/dev/null 2>&1 && command -v /usr/libexec/java_home >/dev/null 2>&1; then
-    JAVA_HOME_FROM_SYSTEM="$(/usr/libexec/java_home 2>/dev/null || true)"
-    if [ -n "$JAVA_HOME_FROM_SYSTEM" ] && [ -x "$JAVA_HOME_FROM_SYSTEM/bin/java" ]; then
-        export JAVA_HOME="$JAVA_HOME_FROM_SYSTEM"
-        export PATH="$JAVA_HOME/bin:$PATH"
-    fi
-fi
-
-if ! java -version >/dev/null 2>&1; then
-    echo "Java (JDK) не найден. Установите JDK или Android Studio (встроенный JBR)."
-    exit 1
-fi
-
-echo "Сборка фронта..."
-cd "$ROOT_DIR"
-
-# Sync version from package.json to environment
-echo "🔄 Syncing version from package.json..."
-npm run version:env
-
-npm run build
-
-echo "Синхронизация Capacitor с Android..."
-npx cap sync android
-
-echo "Сборка debug APK..."
-cd "$ROOT_DIR/android"
-if [ ! -f "$ROOT_DIR/android/local.properties" ]; then
-    echo "sdk.dir=$SDK_ROOT" > "$ROOT_DIR/android/local.properties"
-fi
-rm -f "$ROOT_DIR"/android/app/build/outputs/apk/debug/pl-price-*.apk
-EXPECTED_TS="$(date +'%y%m%d-%H%M')"
-echo "Ожидаемый шаблон имени APK: pl-price-<version>-${EXPECTED_TS}.apk"
-./gradlew assembleDebug
-
-APK_FILE="$(ls -t "$ROOT_DIR"/android/app/build/outputs/apk/debug/*.apk | head -n 1)"
-if [ -z "${APK_FILE:-}" ]; then
-    echo "Не удалось найти debug APK после сборки."
-    exit 1
-fi
 
 echo "APK готов: $(basename "$APK_FILE")"
 
