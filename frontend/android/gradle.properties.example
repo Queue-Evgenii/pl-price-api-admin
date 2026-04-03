@@ -24,10 +24,9 @@ android.useAndroidX=true
 # Signing configuration
 # Release signing configuration for PL Price App
 MYAPP_RELEASE_STORE_FILE=../pl-price-release.keystore
-
-MYAPP_RELEASE_STORE_PASSWORD=${SIGNING_STORE_PASSWORD}
-MYAPP_RELEASE_KEY_ALIAS=${SIGNING_KEY_ALIAS}
-MYAPP_RELEASE_KEY_PASSWORD=${SIGNING_KEY_PASSWORD}
+MYAPP_RELEASE_STORE_PASSWORD=your_store_password_here
+MYAPP_RELEASE_KEY_ALIAS=your_key_alias_here
+MYAPP_RELEASE_KEY_PASSWORD=your_key_password_here
 
 # Version management
 APP_VERSION_CODE=23

@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "2.0.23",
+  "version": "2.0.24",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,8 @@
     "android": "./android-deploy-clean.sh",
     "android:deploy": "./android-deploy-clean.sh",
     "build-apk": "./build-apk.sh",
+    "build-aab": "./build-aab.sh",
+    "android:prod": "./build-aab.sh",
     "version:bump": "node version-manager.js bump",
     "version:bump:patch": "node version-manager.js bump patch",
     "version:bump:minor": "node version-manager.js bump minor",

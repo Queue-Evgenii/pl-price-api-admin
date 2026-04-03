@@ -31,3 +31,15 @@ coverage
 *.env
 
 *.tsbuildinfo
+
+# Mobile signing keys
+*.keystore
+*.jks
+android/signing.properties
+android/local.properties
+
+
+# Android gradle properties with secrets
+frontend/android/gradle.properties
+android/gradle.properties
+*/gradle.properties

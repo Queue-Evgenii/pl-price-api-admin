@@ -46,6 +46,60 @@ What this script does:
 3. Transfer the APK file to your phone and install it
 4. Or use ADB: `adb install android/app/build/outputs/apk/debug/*.apk`
 
+## Build Production AAB for Google Play Store
+
+For creating a signed Android App Bundle (AAB) ready for Google Play Console:
+
+```bash
+npm run build-aab
+```
+
+```bash
+npm run android:prod
+```
+
+**Prerequisites:**
+1. Java 17+ installed
+2. Keystore file created (`android/pl-price-release.keystore`)
+3. Environment variables set in `.env` file:
+   ```bash
+   # Add to your .env file:
+   SIGNING_STORE_PASSWORD=your_keystore_password
+   SIGNING_KEY_ALIAS=pl-price
+   SIGNING_KEY_PASSWORD=your_key_password
+   ```
+
+   **Or export manually:**
+   ```bash
+   export SIGNING_STORE_PASSWORD=your_keystore_password
+   export SIGNING_KEY_ALIAS=pl-price
+   export SIGNING_KEY_PASSWORD=your_key_password
+   ```
+
+**What this script does:**
+- builds production web assets
+- syncs Capacitor Android project
+- creates signed AAB for Google Play
+- renames file with version and timestamp
+- verifies AAB signature
+- shows file information and next steps
+
+**AAB File Location:** `android/pl-price-[version]-[timestamp].aab`
+
+**Google Play Store Upload:**
+1. Go to [Google Play Console](https://play.google.com/console)
+2. Create new app or select existing
+3. Go to "Release" → "Create new release"
+4. Upload the AAB file
+5. Fill release notes and store listing
+6. Submit for review
+
+**Why AAB instead of APK:**
+- Smaller download size for users
+- Optimized for each device architecture
+- Required by Google Play for new apps
+- Supports Play Feature Delivery
+
 ## Automated Version Management & Build
 
 For automatic version bumping and APK building in one command:

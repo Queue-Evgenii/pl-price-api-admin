@@ -21,13 +21,13 @@ android {
     }
     signingConfigs {
         release {
-            if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-                storeFile file(MYAPP_RELEASE_STORE_FILE)
-                storePassword MYAPP_RELEASE_STORE_PASSWORD
-                keyAlias MYAPP_RELEASE_KEY_ALIAS
-                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+                if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
+                    storeFile file(MYAPP_RELEASE_STORE_FILE)
+                    storePassword System.getenv("SIGNING_STORE_PASSWORD")
+                    keyAlias System.getenv("SIGNING_KEY_ALIAS")
+                    keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+                }
             }
-        }
     }
     buildTypes {
         release {
@@ -39,13 +39,44 @@ android {
             applicationIdSuffix ".debug"
         }
     }
-    
+
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def formattedDate = new Date().format('yyMMdd-HHmm')
             def versionName = variant.versionName.replace('-debug-' + formattedDate, '') // Remove debug suffix
             def buildType = variant.buildType.name
-            outputFileName = "pl-price-${versionName}-${formattedDate}.apk"
+            
+            if (output.outputFile.name.endsWith('.apk')) {
+                outputFileName = "pl-price-${versionName}-${formattedDate}.apk"
+            }
+        }
+    }
+}
+
+// Rename AAB files after build
+task renameAabFiles {
+    doLast {
+        def releaseAab = file("app/build/outputs/bundle/release/app-release.aab")
+        def debugAab = file("app/build/outputs/bundle/debug/app-debug.aab")
+        
+        if (releaseAab.exists()) {
+            def formattedDate = new Date().format('yyMMdd-HHmm')
+            def versionName = project.hasProperty('APP_VERSION_NAME') ? 
+                project.property('APP_VERSION_NAME') : "2.0.23"
+            def newName = "pl-price-${versionName}-${formattedDate}.aab"
+            def renamedFile = new File(releaseAab.parent, newName)
+            releaseAab.renameTo(renamedFile)
+            println "Renamed release AAB to: ${renamedFile.name}"
+        }
+        
+        if (debugAab.exists()) {
+            def formattedDate = new Date().format('yyMMdd-HHmm')
+            def versionName = project.hasProperty('APP_VERSION_NAME') ? 
+                project.property('APP_VERSION_NAME') : "2.0.23"
+            def newName = "pl-price-${versionName}-${formattedDate}-debug.aab"
+            def renamedFile = new File(debugAab.parent, newName)
+            debugAab.renameTo(renamedFile)
+            println "Renamed debug AAB to: ${renamedFile.name}"
         }
     }
 }
