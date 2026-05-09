@@ -78,7 +78,13 @@ npx cap sync android
 echo -e "${BLUE}🔨 Building AAB...${NC}"
 cd android
 
-./gradlew bundle
+# Calculate version code from version name
+VERSION_CODE=$(echo "$VERSION" | tr -d '.')
+echo -e "${BLUE}📦 Version Name: $VERSION${NC}"
+echo -e "${BLUE}🔢 Version Code: $VERSION_CODE${NC}"
+
+# Pass version to Gradle via -P parameters
+./gradlew -PAPP_VERSION_NAME="$VERSION" -PAPP_VERSION_CODE="$VERSION_CODE" bundle
 if [[ $? -ne 0 ]]; then
     echo -e "${RED}❌ AAB build failed${NC}"
     exit 1

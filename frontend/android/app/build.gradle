@@ -59,10 +59,10 @@ task renameAabFiles {
         def releaseAab = file("app/build/outputs/bundle/release/app-release.aab")
         def debugAab = file("app/build/outputs/bundle/debug/app-debug.aab")
         
+        def formattedDate = new Date().format('yyMMdd-HHmm')
+        def versionName = System.getenv("APP_VERSION_NAME") ?: "2.0.23"
+        
         if (releaseAab.exists()) {
-            def formattedDate = new Date().format('yyMMdd-HHmm')
-            def versionName = project.hasProperty('APP_VERSION_NAME') ? 
-                project.property('APP_VERSION_NAME') : "2.0.23"
             def newName = "pl-price-${versionName}-${formattedDate}.aab"
             def renamedFile = new File(releaseAab.parent, newName)
             releaseAab.renameTo(renamedFile)
@@ -70,9 +70,6 @@ task renameAabFiles {
         }
         
         if (debugAab.exists()) {
-            def formattedDate = new Date().format('yyMMdd-HHmm')
-            def versionName = project.hasProperty('APP_VERSION_NAME') ? 
-                project.property('APP_VERSION_NAME') : "2.0.23"
             def newName = "pl-price-${versionName}-${formattedDate}-debug.aab"
             def renamedFile = new File(debugAab.parent, newName)
             debugAab.renameTo(renamedFile)
