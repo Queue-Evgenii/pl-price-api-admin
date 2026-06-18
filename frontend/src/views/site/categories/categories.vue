@@ -177,79 +177,81 @@ watch(
                     }}</router-link>
                   </li>
 
-                  <li class="dropdown__item">
-                    <n-collapse>
-                      <n-collapse-item>
-                        <template #arrow>
-                          <n-icon></n-icon>
-                        </template>
-                        <template #header>
-                          <a class="dropdown__button" @click="isOpen = !isOpen">
-                            {{ settingsStore.settings?.downloadSectionButtonText ?? 'Program do budowy sufitów' }}
-                          </a>
-                        </template>
-                        <ul class="tabs">
-                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-1' }" @click="openInner('inner-1')">{{ settingsStore.settings?.downloadTabPcTitle ?? 'Wersja do komputera' }}</li>
-                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-2' }" @click="openInner('inner-2')">{{ settingsStore.settings?.downloadTabAndroidTitle ?? 'Wersja Do Androida' }}</li>
-                          <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-3' }" @click="openInner('inner-3')">{{ settingsStore.settings?.downloadTabIosTitle ?? 'Wersja do Apple' }}</li>
-                        </ul>
-                        <div class="subtabs">
-                          <n-collapse v-model:expanded-names="innerExpanded">
-                            <n-collapse-item name="inner-1">
-                              <template #arrow>
-                                <n-icon></n-icon>
-                              </template>
-                              <template #header>
-                              </template>
-                              <div class="subtab">
-                                <a href="/NMRDealer.zip">{{ settingsStore.settings?.downloadTabPcButtonText ?? 'Pobierz' }}</a>
-                              </div>
-                            </n-collapse-item>
-                            <n-collapse-item name="inner-2">
-                              <template #arrow>
-                                <n-icon></n-icon>
-                              </template>
-                              <template #header>
-                              </template>
-                              <div class="subtab">{{ settingsStore.settings?.downloadTabAndroidEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
-                            </n-collapse-item>
-                            <n-collapse-item name="inner-3">
-                              <template #arrow>
-                                <n-icon></n-icon>
-                              </template>
-                              <template #header>
-                              </template>
-                              <div class="subtab">{{ settingsStore.settings?.downloadTabIosEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
-                            </n-collapse-item>
-                          </n-collapse>
-                        </div>
-                      </n-collapse-item>
-                    </n-collapse>
+                  <template v-if="slug === undefined">
+                    <li class="dropdown__item">
+                      <n-collapse>
+                        <n-collapse-item>
+                          <template #arrow>
+                            <n-icon></n-icon>
+                          </template>
+                          <template #header>
+                            <a class="dropdown__button" @click="isOpen = !isOpen">
+                              {{ settingsStore.settings?.downloadSectionButtonText ?? 'Program do budowy sufitów' }}
+                            </a>
+                          </template>
+                          <ul class="tabs">
+                            <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-1' }" @click="openInner('inner-1')">{{ settingsStore.settings?.downloadTabPcTitle ?? 'Wersja do komputera' }}</li>
+                            <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-2' }" @click="openInner('inner-2')">{{ settingsStore.settings?.downloadTabAndroidTitle ?? 'Wersja Do Androida' }}</li>
+                            <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-3' }" @click="openInner('inner-3')">{{ settingsStore.settings?.downloadTabIosTitle ?? 'Wersja do Apple' }}</li>
+                          </ul>
+                          <div class="subtabs">
+                            <n-collapse v-model:expanded-names="innerExpanded">
+                              <n-collapse-item name="inner-1">
+                                <template #arrow>
+                                  <n-icon></n-icon>
+                                </template>
+                                <template #header>
+                                </template>
+                                <div class="subtab">
+                                  <a href="/NMRDealer.zip">{{ settingsStore.settings?.downloadTabPcButtonText ?? 'Pobierz' }}</a>
+                                </div>
+                              </n-collapse-item>
+                              <n-collapse-item name="inner-2">
+                                <template #arrow>
+                                  <n-icon></n-icon>
+                                </template>
+                                <template #header>
+                                </template>
+                                <div class="subtab">{{ settingsStore.settings?.downloadTabAndroidEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
+                              </n-collapse-item>
+                              <n-collapse-item name="inner-3">
+                                <template #arrow>
+                                  <n-icon></n-icon>
+                                </template>
+                                <template #header>
+                                </template>
+                                <div class="subtab">{{ settingsStore.settings?.downloadTabIosEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
+                              </n-collapse-item>
+                            </n-collapse>
+                          </div>
+                        </n-collapse-item>
+                      </n-collapse>
 
-                  </li>
-                  <li class="dropdown__item">
-                    <a class="dropdown__button" href="https://t.me/+aSOZnoJqLyo0ODA8" target="_blank">
-                      <n-flex :align="'center'" justify="center" style="position: relative;">
-                        <TelegramFilled width="32px" style="position: absolute; left: 8px;" />
-                        <span>Telegram</span>
-                      </n-flex>
-                    </a>
-                  </li>
-                  <li class="dropdown__item">
-                    <a class="dropdown__button" href="https://www.youtube.com/@sufitynapinane8596" target="_blank">
-                      <n-flex :align="'center'" justify="center" style="position: relative;">
-                        <VideoLibraryTwotone width="32px" style="position: absolute; left: 8px;" />
-                        <span>YouTube</span>
-                      </n-flex>
-                    </a>
-                  </li>
-                  <li class="dropdown__item">
-                    <router-link class="dropdown__button" to="/privacy-policy">
-                      <n-flex :align="'center'" justify="center" style="position: relative;">
-                        <span>Privacy Policy</span>
-                      </n-flex>
-                    </router-link>
-                  </li>
+                    </li>
+                    <li class="dropdown__item">
+                      <a class="dropdown__button" href="https://t.me/+aSOZnoJqLyo0ODA8" target="_blank">
+                        <n-flex :align="'center'" justify="center" style="position: relative;">
+                          <TelegramFilled width="32px" style="position: absolute; left: 8px;" />
+                          <span>Telegram</span>
+                        </n-flex>
+                      </a>
+                    </li>
+                    <li class="dropdown__item">
+                      <a class="dropdown__button" href="https://www.youtube.com/@sufitynapinane8596" target="_blank">
+                        <n-flex :align="'center'" justify="center" style="position: relative;">
+                          <VideoLibraryTwotone width="32px" style="position: absolute; left: 8px;" />
+                          <span>YouTube</span>
+                        </n-flex>
+                      </a>
+                    </li>
+                    <li class="dropdown__item">
+                      <router-link class="dropdown__button" to="/privacy-policy">
+                        <n-flex :align="'center'" justify="center" style="position: relative;">
+                          <span>Privacy Policy</span>
+                        </n-flex>
+                      </router-link>
+                    </li>
+                  </template>
                 </ul>
               </n-scrollbar>
 
