@@ -12,15 +12,19 @@ import { useRoute, useRouter } from 'vue-router';
 import type { SettingsApi } from '@/api/modules/settings';
 import type { SettingsEntity } from '@/types/models/entities/settings.entity';
 import { useSettingsStore } from '@/stores/settings';
+import { usePhotosStore } from '@/stores/photos';
+import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const settingsApi = inject<SettingsApi>('SettingsApi')!;
 const categoriesStore = useCategoriesStore();
 const settingsStore = useSettingsStore();
+const photosStore = usePhotosStore();
 const isLoading = ref(false);
 const isOpen = ref(false);
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
+const photos = ref<PhotoEntity[]>([]);
 const parentSlug = ref<string | null>(null);
 const router = useRouter();
 const route = useRoute();
@@ -48,12 +52,26 @@ const setCurrentCategories = () => {
   curOpt.value = langOpts.value.find(el => el.value === route.params['lang'])?.value ?? 'pl';
   if (props.slug === undefined) {
       currentCategories.value = categories.value;
+      photos.value = [];
       isLoading.value = false;
       return;
   }
   parentSlug.value = categoriesStore.getFirstParentSlug(props.slug);
   currentCategories.value = categoriesStore.findChildrenBySlug(props.slug);
+  fetchPhotos(props.slug);
   isLoading.value = false;
+}
+
+const fetchPhotos = async (slug: string) => {
+  const cached = photosStore.getPhotosByKey(slug);
+  if (cached.length > 0) {
+    photos.value = cached;
+    return;
+  }
+  photos.value = [];
+  const data = (await withErrorHandling(categoriesApi.getPhotos(slug))).data.filter(p => p.isActive);
+  photos.value = data;
+  photosStore.setPhotosByKey(slug, data);
 }
 
 const props = defineProps({
@@ -128,6 +146,24 @@ watch(
                         <span>Back</span>
                       </n-flex>
                     </router-link>
+                  </li>
+                  <li v-if="photos.length > 0" class="dropdown__item">
+                    <n-image
+                      v-for="photo in photos"
+                      width="100%"
+                      :key="photo.id"
+                      object-fit="contain"
+                      :src="photo.url"
+                      :preview-props="{
+                        gesture: {
+                          scale: true,
+                          pan: true,
+                          pinch: true
+                        }
+                      }"
+                      :show-toolbar="true"
+                      :show-toolbar-tooltip="true"
+                    />
                   </li>
                   <li v-for="category in currentCategories" :key="category.id">
                     <router-link
