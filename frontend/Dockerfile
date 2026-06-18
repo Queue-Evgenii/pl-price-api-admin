@@ -4,7 +4,9 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --no-audit --no-fund --maxsockets 1
+RUN npm install -g npm@11 \
+ && npm cache clean --force \
+ && npm ci --no-audit --no-fund
 
 COPY . .
 

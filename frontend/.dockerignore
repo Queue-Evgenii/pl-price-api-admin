@@ -1,0 +1,11 @@
+node_modules
+dist
+android
+ios
+.git
+.gitignore
+*.log
+.env
+.env.*
+.vscode
+.idea
