@@ -5,7 +5,5 @@ ios
 .git
 .gitignore
 *.log
-.env
-.env.*
 .vscode
 .idea
