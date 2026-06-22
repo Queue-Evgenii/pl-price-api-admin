@@ -6,7 +6,7 @@ import { PhotosAdminService } from '../services/photos.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { PhotosService } from 'src/modules/categories/services/photos.service';
-import { UpdatePhotoRequestDto } from 'src/models/http/photos-dto';
+import { CreateVideoRequestDto, UpdatePhotoRequestDto } from 'src/models/http/photos-dto';
 
 @Controller()
 @UseGuards(AuthGuard)
@@ -33,6 +33,13 @@ export class PhotosAdminController {
   )
   create(@Param('slug') slug: string, @UploadedFile() file: Express.Multer.File) {
     return this.photosAdminService.create(slug, file.filename);
+  }
+
+  @Post('categories/:slug/videos')
+  @ApiTokenResponse()
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  createVideo(@Param('slug') slug: string, @Body() dto: CreateVideoRequestDto) {
+    return this.photosAdminService.createVideo(slug, dto.url);
   }
 
   @Get('categories/:slug/photos')

@@ -20,23 +20,43 @@ export class PhotosAdminService {
 
   async create(slug: string, filename: string): Promise<PhotoEntity> {
     const category = await this.categoriesService.findOneBySlug(slug);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const maxOrder = (await this.photosRepo
-      .createQueryBuilder('PhotoEntity')
-      .leftJoin('PhotoEntity.category', 'category')
-      .select('MAX(PhotoEntity.orderId)', 'max')
-      .where('category.id = :categoryId', { categoryId: category.id })
-      .getRawOne()) as { max: number | null };
     const apiUrl = this.configService.get<string>('API_URL');
 
     const photo = this.photosRepo.create({
       url: `${apiUrl}/uploads/categories/photos/${filename}`,
       name: filename,
+      type: 'image',
       category,
-      orderId: (maxOrder?.max ?? 0) + 1,
+      orderId: (await this.getMaxOrderId(category.id)) + 1,
     });
 
     return this.photosRepo.save(photo);
+  }
+
+  async createVideo(slug: string, url: string): Promise<PhotoEntity> {
+    const category = await this.categoriesService.findOneBySlug(slug);
+
+    const photo = this.photosRepo.create({
+      url,
+      name: url,
+      type: 'video',
+      category,
+      orderId: (await this.getMaxOrderId(category.id)) + 1,
+    });
+
+    return this.photosRepo.save(photo);
+  }
+
+  private async getMaxOrderId(categoryId: number): Promise<number> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const maxOrder = (await this.photosRepo
+      .createQueryBuilder('PhotoEntity')
+      .leftJoin('PhotoEntity.category', 'category')
+      .select('MAX(PhotoEntity.orderId)', 'max')
+      .where('category.id = :categoryId', { categoryId })
+      .getRawOne()) as { max: number | null };
+
+    return maxOrder?.max ?? 0;
   }
 
   async update(id: number, dto: UpdatePhotoRequestDto): Promise<FindAllPhotosDto> {

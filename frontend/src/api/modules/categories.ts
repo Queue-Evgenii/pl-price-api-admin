@@ -3,7 +3,7 @@ import { Api } from "../api";
 import type { CategoriesDto, CreateCategoryDto, SwapCategoryDto } from "@/types/models/dto/categories-dto";
 import type { CategoryEntity } from "@/types/models/entities/category.entity";
 import type { _DeepPartial } from "pinia";
-import type { PhotosDto, UpdatePhotosDto } from "@/types/models/dto/photos-dto";
+import type { CreateVideoDto, PhotosDto, UpdatePhotosDto } from "@/types/models/dto/photos-dto";
 import type { PhotoEntity } from "@/types/models/entities/photo.entity";
 
 export class CategoriesAdminApi extends Api {
@@ -41,7 +41,11 @@ export class CategoriesAdminApi extends Api {
 
     return this.postRequest<PhotoEntity, FormData>(`/categories/${slug}/photos`, formData);
   };
-  
+
+  addVideo = (slug: string, url: string) => {
+    return this.postRequest<PhotoEntity, CreateVideoDto>(`/categories/${slug}/videos`, { url });
+  };
+
   updatePhoto = (id: number, payload: UpdatePhotosDto) => {
     return this.patchRequest<PhotosDto, UpdatePhotosDto>(`/photos/${id}`, payload);
   };

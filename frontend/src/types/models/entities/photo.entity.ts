@@ -5,6 +5,8 @@ export interface PhotoEntity {
 
   url: string;
 
+  type: 'image' | 'video';
+
   category: CategoryEntity;
 
   orderId: number;

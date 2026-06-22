@@ -8,6 +8,7 @@ import { ArrowBackIosFilled } from '@vicons/material';
 import { useCategoriesStore } from '@/stores/categories';
 import { RouteName } from '@/types/constants/route-name';
 import { withErrorHandling } from '@/api/api-error-handler';
+import CategoryMedia from '@/components/category-media.vue';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photos = ref<PhotoEntity[]>([]);
@@ -151,21 +152,10 @@ onUnmounted(() => {
               </h2>
             </header>
             <div v-if="photos && photos.length > 0" style="max-height: 100%; padding-bottom: 56px; overflow-y: auto;">
-              <n-image
+              <CategoryMedia
                 v-for="photo in photos"
-                width="100%"
                 :key="photo.id"
-                object-fit="contain"
-                :src="photo.url"
-                :preview-props="{
-                  gesture: {
-                    scale: true,
-                    pan: true,
-                    pinch: true
-                  }
-                }"
-                :show-toolbar="true"
-                :show-toolbar-tooltip="true"
+                :media="photo"
               />
             </div>
           </div>

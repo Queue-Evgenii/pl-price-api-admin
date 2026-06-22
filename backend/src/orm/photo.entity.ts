@@ -18,6 +18,10 @@ export class PhotoEntity extends BaseEntity {
   @ApiProperty()
   name?: string;
 
+  @Column({ type: 'varchar', length: 16, default: 'image' })
+  @ApiProperty({ enum: ['image', 'video'] })
+  type: 'image' | 'video';
+
   @ManyToOne(() => CategoryEntity, (category) => category.photos, { onDelete: 'CASCADE' })
   @ApiProperty({ type: () => CategoryEntity })
   category: CategoryEntity;

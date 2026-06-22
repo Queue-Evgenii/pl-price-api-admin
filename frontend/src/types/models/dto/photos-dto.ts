@@ -9,3 +9,7 @@ export interface UpdatePhotosDto {
 
   isActive?: boolean;
 }
+
+export interface CreateVideoDto {
+  url: string;
+}

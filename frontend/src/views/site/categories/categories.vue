@@ -14,6 +14,7 @@ import type { SettingsEntity } from '@/types/models/entities/settings.entity';
 import { useSettingsStore } from '@/stores/settings';
 import { usePhotosStore } from '@/stores/photos';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
+import CategoryMedia from '@/components/category-media.vue';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const settingsApi = inject<SettingsApi>('SettingsApi')!;
@@ -148,21 +149,10 @@ watch(
                     </router-link>
                   </li>
                   <li v-if="photos.length > 0" class="dropdown__item">
-                    <n-image
+                    <CategoryMedia
                       v-for="photo in photos"
-                      width="100%"
                       :key="photo.id"
-                      object-fit="contain"
-                      :src="photo.url"
-                      :preview-props="{
-                        gesture: {
-                          scale: true,
-                          pan: true,
-                          pinch: true
-                        }
-                      }"
-                      :show-toolbar="true"
-                      :show-toolbar-tooltip="true"
+                      :media="photo"
                     />
                   </li>
                   <li v-for="category in currentCategories" :key="category.id">

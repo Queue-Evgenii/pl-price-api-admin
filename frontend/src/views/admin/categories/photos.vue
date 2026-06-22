@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { inject, onMounted } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import { useMessage, type UploadFileInfo } from 'naive-ui'
 import type { CategoriesAdminApi } from '@/api/modules/categories';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import { usePhotosStore } from '@/stores/photos';
 import type { UpdatePhotosDto } from '@/types/models/dto/photos-dto';
 import { DeleteFilled, AddCircleFilled, ArrowDropUpFilled, ArrowDropDownFilled } from '@vicons/material'
+import CategoryMedia from '@/components/category-media.vue';
 
 const message = useMessage();
 const categoriesAdminApi = inject<CategoriesAdminApi>('CategoriesAdminApi')!;
 const photosStore = usePhotosStore();
 const props = defineProps<{ slug: string }>();
+const videoUrl = ref('');
 
 const fetchPhotos = async () => {
   try {
@@ -27,6 +29,22 @@ const createPhotos = async (file: File) => {
     photosStore.addPhoto(createdPhoto);
   } catch (error) {
     console.error('Photo creating error:', error);
+  }
+}
+
+const createVideo = async () => {
+  const url = videoUrl.value.trim();
+  if (!url) {
+    message.error('Enter a video URL');
+    return;
+  }
+  try {
+    const createdVideo = await categoriesAdminApi.addVideo(props.slug, url);
+    photosStore.addPhoto(createdVideo);
+    videoUrl.value = '';
+  } catch (error) {
+    message.error('Could not add video. Check the URL.');
+    console.error('Video creating error:', error);
   }
 }
 
@@ -93,21 +111,39 @@ onMounted(() => {
 <template>
   <n-card title="Photos management" class="max-w-2xl mx-auto mt-8">
     <div class="space-y-4">
-      <n-upload
-        accept="image/*"
-        :show-file-list="false"
-        @change="handleUpload"
-        @before-upload="beforeUpload"
-        :custom-request="customRequest"
-        style="margin-bottom: 16px;"
-      >
-        <n-button type="primary">
-          <template #icon>
-            <AddCircleFilled />
-          </template>
-          Add image
-        </n-button>
-      </n-upload>
+      <div class="add-media">
+        <n-upload
+          class="add-media__field"
+          accept="image/*"
+          :show-file-list="false"
+          @change="handleUpload"
+          @before-upload="beforeUpload"
+          :custom-request="customRequest"
+        >
+          <n-button type="primary" block>
+            <template #icon>
+              <AddCircleFilled />
+            </template>
+            Add image
+          </n-button>
+        </n-upload>
+
+        <div class="add-media__or">or</div>
+
+        <n-input-group class="add-media__field">
+          <n-input
+            v-model:value="videoUrl"
+            placeholder="Video URL (YouTube, Vimeo or direct .mp4)"
+            @keyup.enter="createVideo"
+          />
+          <n-button type="primary" @click="createVideo">
+            <template #icon>
+              <AddCircleFilled />
+            </template>
+            Add video
+          </n-button>
+        </n-input-group>
+      </div>
 
       <n-list bordered id="image-scroll-container" style="width: fit-content;">
         <n-list-item v-for="image in photosStore.photos" :key="image.id">
@@ -135,7 +171,11 @@ onMounted(() => {
             <div>
               <n-flex :align="'center'" :size="32">
               <n-card hoverable style="flex: 0 0 auto; width: min-content; margin-right: 24px;">
+                <div v-if="image.type === 'video'" style="width: 280px;">
+                  <CategoryMedia :media="image" />
+                </div>
                 <n-image
+                  v-else
                   object-fit="contain"
                   width="200"
                   height="200"
@@ -158,7 +198,8 @@ onMounted(() => {
                 Delete
               </n-button>
             </n-flex>
-            <span v-if="image.name">{{ image.name.split('--')[0] + '.' + image.name.split('.')[1] }}</span>
+            <span v-if="image.type === 'video'" style="word-break: break-all;">{{ image.url }}</span>
+            <span v-else-if="image.name">{{ image.name.split('--')[0] + '.' + image.name.split('.')[1] }}</span>
             </div>
           </n-flex>
         </n-list-item>
@@ -170,5 +211,27 @@ onMounted(() => {
 <style scoped>
 img {
   transition: transform 0.2s ease;
+}
+
+.add-media {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  max-width: 420px;
+  margin-bottom: 16px;
+}
+.add-media__field {
+  width: 100%;
+}
+.add-media__field:deep(.n-upload-trigger) {
+  display: block;
+  width: 100%;
+}
+.add-media__or {
+  text-align: center;
+  color: var(--n-text-color-3, #999);
+  text-transform: uppercase;
+  font-size: 12px;
 }
 </style>
