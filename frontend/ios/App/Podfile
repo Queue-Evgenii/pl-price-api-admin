@@ -1,12 +1,12 @@
 require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
 
-platform :ios, '13.0'
+platform :ios, '15.0'
 use_frameworks!
 
 # workaround to avoid Xcode caching of Pods that requires
 # Product -> Clean Build Folder after new Cordova plugins installed
 # Requires CocoaPods 1.6 or newer
-install! 'cocoapods', :disable_input_output_paths => true
+# install! 'cocoapods', :disable_input_output_paths => true
 
 def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
@@ -21,4 +21,39 @@ end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
+
+  # Apply recommended Xcode settings to eliminate "Update to recommended settings" warning
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # Apply the exact settings Xcode recommends
+      config.build_settings['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = 'YES'
+      config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
+      config.build_settings['ENABLE_STRICT_OBJC_MSGSEND'] = 'YES'
+      config.build_settings['GCC_NO_COMMON_BLOCKS'] = 'YES'
+      config.build_settings['GCC_WARN_ABOUT_RETURN_TYPE'] = 'YES_ERROR'
+      config.build_settings['GCC_WARN_UNDECLARED_SELECTOR'] = 'YES'
+      config.build_settings['GCC_WARN_UNINITIALIZED_AUTOS'] = 'YES_AGGRESSIVE'
+      config.build_settings['CLANG_WARN_OBJC_ROOT_CLASS'] = 'YES_ERROR'
+      config.build_settings['CLANG_WARN_QUIET_EXTERN_VARS'] = 'YES'
+      config.build_settings['CLANG_WARN_RANGE_LOOP_ANALYSIS'] = 'YES'
+      config.build_settings['CLANG_WARN_STRICT_PROTOTYPES'] = 'YES'
+      config.build_settings['ENABLE_TESTABILITY'] = 'YES'
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+
+      # Suppress the quoted include warning specifically
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+
+      # Additional recommended settings
+      config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES'] = 'YES'
+      config.build_settings['CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED'] = 'YES'
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+
+      # Suppress deprecation warnings for Capacitor
+      config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+      config.build_settings['CLANG_WARN_DEPRECATED_DECLARATIONS'] = 'NO'
+    end
+  end
 end

@@ -1,12 +1,6 @@
 {
   "images" : [
     {
-      "filename" : "AppIcon-20@1x.png",
-      "idiom" : "iphone",
-      "scale" : "1x",
-      "size" : "20x20"
-    },
-    {
       "filename" : "AppIcon-20@2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
@@ -37,12 +31,6 @@
       "size" : "29x29"
     },
     {
-      "filename" : "AppIcon-40@1x.png",
-      "idiom" : "iphone",
-      "scale" : "1x",
-      "size" : "40x40"
-    },
-    {
       "filename" : "AppIcon-40@2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
@@ -55,22 +43,10 @@
       "size" : "40x40"
     },
     {
-      "filename" : "AppIcon-57@1x.png",
-      "idiom" : "iphone",
-      "scale" : "1x",
-      "size" : "57x57"
-    },
-    {
       "filename" : "AppIcon-57@2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "57x57"
-    },
-    {
-      "filename" : "AppIcon-60@1x.png",
-      "idiom" : "iphone",
-      "scale" : "1x",
-      "size" : "60x60"
     },
     {
       "filename" : "AppIcon-60@2x.png",
@@ -85,16 +61,40 @@
       "size" : "60x60"
     },
     {
-      "filename" : "AppIcon-72@1x.png",
+      "filename" : "AppIcon-20@1x-ipad.png",
       "idiom" : "ipad",
       "scale" : "1x",
-      "size" : "72x72"
+      "size" : "20x20"
     },
     {
-      "filename" : "AppIcon-72@2x.png",
+      "filename" : "AppIcon-20@2x-ipad.png",
       "idiom" : "ipad",
       "scale" : "2x",
-      "size" : "72x72"
+      "size" : "20x20"
+    },
+    {
+      "filename" : "AppIcon-29@1x-ipad.png",
+      "idiom" : "ipad",
+      "scale" : "1x",
+      "size" : "29x29"
+    },
+    {
+      "filename" : "AppIcon-29@2x-ipad.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "29x29"
+    },
+    {
+      "filename" : "AppIcon-40@1x-ipad.png",
+      "idiom" : "ipad",
+      "scale" : "1x",
+      "size" : "40x40"
+    },
+    {
+      "filename" : "AppIcon-40@2x-ipad.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "40x40"
     },
     {
       "filename" : "AppIcon-76@1x.png",

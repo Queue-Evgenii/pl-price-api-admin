@@ -81,7 +81,7 @@ const deleteCategory = async (id: number) => {
   try {
     await withErrorHandling(sitesApi.delete(id));
     sitesStore.deleteSiteWithId(id);
-    
+
     message.success("Site successfully deleted!");
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
@@ -114,7 +114,7 @@ const columns: DataTableColumns<SiteEntity> = [
     render(row) {
       const renderIcon = (iconComponent: any) =>
         h(NIcon, null, { default: () => h(iconComponent) });
-      
+
       return h('div', { style: 'display: flex; gap: 8px; align-items: center' }, [
         h('img', {
             src: `${import.meta.env.VITE_API_URL}/static/flags/${row.code}.svg`,
@@ -189,7 +189,7 @@ const columns: DataTableColumns<SiteEntity> = [
         v-model:show="isSiteAdding"
         :title="`${editingSite.id !== -1 ? 'Edit' : 'Create'} category`"
         preset="dialog"
-        v-model:on-after-leave="closeEditModal"
+        @after-leave="closeEditModal"
     >
         <div
             style="
@@ -219,7 +219,7 @@ const columns: DataTableColumns<SiteEntity> = [
         v-model:show="isDeleteConfirmation"
         :title="`Sure you want to delete category ${editingSite.id}`"
         preset="dialog"
-        v-model:on-after-leave="closeDeleteModal"
+        @after-leave="closeDeleteModal"
     >
         <div
             style="

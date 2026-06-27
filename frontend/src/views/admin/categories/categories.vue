@@ -54,7 +54,7 @@ const deleteCategory = async (id: number) => {
   try {
     await withErrorHandling(categoriesAdminApi.deleteCategory(id));
     categoriesStore.deleteCategoryWithId(id);
-    
+
     message.success("Category successfully deleted!");
   } catch (e: unknown) {
     if (e instanceof AxiosError) {
@@ -143,7 +143,7 @@ const columns: DataTableColumns<CategoryEntity> = [
     render(row) {
       const renderIcon = (iconComponent: any) =>
         h(NIcon, null, { default: () => h(iconComponent) });
-      
+
       return h('div', { style: 'display: flex; gap: 8px;' }, [
         h(
           NTag,
@@ -283,7 +283,7 @@ onMounted(() => {
     <n-button type="primary" size="large" circle @click="() => addCategory(undefined)">+</n-button>
   </div>
 
-  <n-modal v-if="editingCategory" v-model:show="isCategoryAdding" :title="`${editingCategory.id !== -1 ? 'Edit' : 'Create'} category`" preset="dialog" v-model:on-after-leave="closeEditModal">
+  <n-modal v-if="editingCategory" v-model:show="isCategoryAdding" :title="`${editingCategory.id !== -1 ? 'Edit' : 'Create'} category`" preset="dialog" @after-leave="closeEditModal">
     <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 16px;">
       <n-input
         v-model:value="editingCategory.name"
@@ -301,8 +301,8 @@ onMounted(() => {
       </div>
     </div>
   </n-modal>
-  
-  <n-modal v-if="editingCategory" v-model:show="isDeleteConfirmation" :title="`Sure you want to delete category ${editingCategory.id}`" preset="dialog" v-model:on-after-leave="closeDeleteModal">
+
+  <n-modal v-if="editingCategory" v-model:show="isDeleteConfirmation" :title="`Sure you want to delete category ${editingCategory.id}`" preset="dialog" @after-leave="closeDeleteModal">
     <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 16px;">
       <n-input
         v-model:value="editingCategory.name"

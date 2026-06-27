@@ -1,0 +1,191 @@
+#!/bin/bash
+
+# iOS deployment with full simulator restart
+# Use this when changes don't appear due to caching
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT_DIR"
+SIMULATOR_NAME="${1:-iPhone 15 Pro}"
+
+echo "🔄 Full iOS deployment with simulator restart..."
+
+# Close Xcode and simulators first
+close_xcode() {
+    if pgrep -f "Xcode" >/dev/null 2>&1; then
+        echo "🔄 Closing Xcode..."
+        osascript -e 'tell application "Xcode" to quit'
+        sleep 3
+    else
+        echo "✅ Xcode is not running"
+    fi
+}
+
+close_simulators() {
+    echo "🔄 Closing all simulators..."
+    pkill -f "Simulator" 2>/dev/null || true
+    sleep 2
+    xcrun simctl list devices | grep "Booted" | grep -oE "\([A-F0-9\-]+\)" | tr -d "()" | while read -r udid; do
+        xcrun simctl shutdown "$udid" || true
+    done
+    sleep 2
+}
+
+# Setup version (bump patch + sync)
+./version-setup.sh bump
+
+# Close simulators but keep Xcode open for error monitoring
+close_simulators
+
+# Open Xcode first for error monitoring
+echo "🔄 Opening Xcode for build monitoring..."
+open_xcode() {
+    echo "🔄 Opening Xcode workspace..."
+    open "$ROOT_DIR/ios/App/App.xcworkspace"
+    sleep 5
+}
+open_xcode
+
+# Build using common build script
+source ./ios-common.sh
+
+# Function to get simulator UDID by name
+get_simulator_udid() {
+    local name="$1"
+    xcrun simctl list devices | grep "$name" | grep -E "Booted|Shutdown" | head -1 | grep -oE "\([A-F0-9\-]+\)" | tr -d "()"
+}
+
+# Function to check if simulator is running
+is_simulator_running() {
+    local udid="$1"
+    xcrun simctl list devices | grep "$udid" | grep -q "Booted"
+}
+
+# Function to wait for simulator to boot
+wait_for_simulator() {
+    local udid="$1"
+    echo "⏳ Waiting for simulator to boot..."
+
+    # Wait up to 60 seconds for simulator to boot
+    for i in {1..60}; do
+        if is_simulator_running "$udid"; then
+            echo "✅ Simulator is ready!"
+            return 0
+        fi
+        sleep 1
+    done
+
+    echo "❌ Simulator failed to boot within 60 seconds"
+    return 1
+}
+
+# Get simulator UDID
+SIMULATOR_UDID=$(get_simulator_udid "$SIMULATOR_NAME")
+
+if [ -z "$SIMULATOR_UDID" ]; then
+    echo "❌ Simulator '$SIMULATOR_NAME' not found. Available simulators:"
+    xcrun simctl list devices | grep -E "iPhone|iPad" | grep -v "unavailable"
+    echo ""
+    echo "💡 You can specify a different simulator:"
+    echo "   ./ios-deploy-clean.sh \"iPhone 14 Pro\""
+    echo "   ./ios-deploy-clean.sh \"iPad Pro (12.9-inch)\""
+    exit 1
+fi
+
+# Check if simulator is already running
+if is_simulator_running "$SIMULATOR_UDID"; then
+    echo "📱 Simulator '$SIMULATOR_NAME' is already running. Restarting..."
+    xcrun simctl shutdown "$SIMULATOR_UDID"
+    sleep 2
+fi
+
+# Start simulator
+echo "📱 Starting simulator: $SIMULATOR_NAME ($SIMULATOR_UDID)"
+
+# Try to boot simulator with error handling
+if ! xcrun simctl boot "$SIMULATOR_UDID" 2>/dev/null; then
+    echo "⚠️ Could not boot simulator directly, trying alternative method..."
+    # Open Simulator app first, then boot
+    open -a Simulator
+    sleep 3
+    xcrun simctl boot "$SIMULATOR_UDID" 2>/dev/null || true
+else
+    # Open Simulator app after booting
+    open -a Simulator
+fi
+
+# Wait for simulator to boot
+wait_for_simulator "$SIMULATOR_UDID"
+
+# Wait a bit more for the app to fully load
+sleep 3
+
+# Build and install the app
+echo "🏗️ Building and installing iOS app..."
+cd "$ROOT_DIR/ios/App"
+
+# Build the app
+xcodebuild -workspace App.xcworkspace \
+           -scheme App \
+           -configuration Debug \
+           -destination "id=$SIMULATOR_UDID" \
+           -derivedDataPath "$ROOT_DIR/ios/DerivedData" \
+           build
+
+if [ $? -ne 0 ]; then
+    echo "❌ iOS build failed!"
+    exit 1
+fi
+
+# Install and launch the app
+echo "📦 Installing app on simulator..."
+APP_PATH="$ROOT_DIR/ios/DerivedData/Build/Products/Debug-iphonesimulator/App.app"
+
+if [ ! -d "$APP_PATH" ]; then
+    echo "❌ Built app not found at: $APP_PATH"
+    exit 1
+fi
+
+xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
+
+if [ $? -ne 0 ]; then
+    echo "❌ App installation failed!"
+    exit 1
+fi
+
+echo "✅ App installed successfully"
+
+# Wait a moment for installation to complete
+sleep 2
+
+# Get bundle identifier from Info.plist
+BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist")
+
+echo "🚀 Launching application: $BUNDLE_ID"
+xcrun simctl launch "$SIMULATOR_UDID" "$BUNDLE_ID"
+
+if [ $? -ne 0 ]; then
+    echo "❌ App launch failed!"
+    echo "💡 Trying alternative launch method..."
+
+    # Alternative: open simulator and wait for manual launch
+    open -a Simulator
+    sleep 3
+
+    # Try launch again
+    xcrun simctl launch "$SIMULATOR_UDID" "$BUNDLE_ID" || echo "⚠️ Please launch the app manually from the simulator"
+else
+    echo "✅ App launched successfully!"
+fi
+
+echo "🎉 Deployment completed! App is now running on the simulator."
+echo ""
+echo "📱 Simulator: $SIMULATOR_NAME"
+echo "📦 Bundle ID: $BUNDLE_ID"
+
+# Xcode is already open for monitoring
+echo "✅ Xcode is open and ready for debugging"
+
+echo ""
+echo "💡 Tips:"
+echo "   - Use Safari → Develop → [Simulator Name] for web debugging"
+echo "   - Use Xcode → Debug Area for native debugging"

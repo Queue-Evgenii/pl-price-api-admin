@@ -348,7 +348,7 @@ watch(
 .site-switcher {
   padding-top: 0;
   position: absolute;
-  top: 30px;
+  top: max(30px, calc(env(safe-area-inset-top, 0px) + 64px));
   right: 0;
   width: 200px;
 }
@@ -370,6 +370,12 @@ watch(
 .site-switcher img {
   width: 24px !important;
   height: 18px !important;
+}
+
+@media (max-width: 600px) {
+  .site-switcher {
+    width: min(180px, 48vw);
+  }
 }
 
 </style>

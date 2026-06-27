@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "2.0.26",
+  "version": "2.0.90",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "android": "./android-deploy-clean.sh",
     "android:deploy": "./android-deploy-clean.sh",
+    "ios": "./ios-deploy-clean.sh",
+    "ios:deploy": "./ios-deploy-clean.sh",
     "build-apk": "./build-apk.sh",
     "build-aab": "./build-aab.sh",
     "android:prod": "./build-aab.sh",
@@ -20,13 +22,14 @@
     "version:set": "node version-manager.js set",
     "version:current": "node version-manager.js current",
     "version:env": "node version-manager.js env",
-    "build-auto": "./build-and-bump.sh"
+    "build-auto": "./build-and-bump.sh",
+    "postinstall": "node fix-wkprocesspool-warning.cjs"
   },
   "dependencies": {
-    "@capacitor/android": "^6.2.1",
-    "@capacitor/cli": "^6.2.1",
-    "@capacitor/core": "^6.2.1",
-    "@capacitor/ios": "^6.2.1",
+    "@capacitor/android": "^8.3.3",
+    "@capacitor/cli": "^8.3.3",
+    "@capacitor/core": "^8.3.3",
+    "@capacitor/ios": "^8.3.3",
     "axios": "^1.10.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.13",
