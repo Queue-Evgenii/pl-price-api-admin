@@ -1,0 +1,20 @@
+{
+	"appId": "com.priceapi.admin",
+	"appName": "PL Price",
+	"webDir": "dist",
+	"server": {
+		"androidScheme": "https"
+	},
+	"plugins": {
+		"CapacitorHttp": {
+			"enabled": true
+		}
+	},
+	"ios": {
+		"scheme": "PL Price"
+	},
+	"android": {
+		"webContentsDebuggingEnabled": true
+	},
+	"packageClassList": []
+}
