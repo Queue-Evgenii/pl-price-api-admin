@@ -9,13 +9,22 @@ import { useCategoriesStore } from '@/stores/categories';
 import { RouteName } from '@/types/constants/route-name';
 import { withErrorHandling } from '@/api/api-error-handler';
 import CategoryMedia from '@/components/category-media.vue';
+import EstimateButton from '@/components/estimate-button.vue';
+import EstimateDrawer from '@/components/estimate-drawer.vue';
+import { useEstimateStore } from '@/stores/estimate';
+import { Capacitor } from '@capacitor/core';
+import { useRoute } from 'vue-router';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photos = ref<PhotoEntity[]>([]);
 const isLoading = ref<boolean>(false);
 const photosStore = usePhotosStore();
 const categoriesStore = useCategoriesStore();
+const estimateStore = useEstimateStore();
 const parentSlug = ref<string | null>();
+const isEstimateOpen = ref(false);
+const isIos = Capacitor.getPlatform() === 'ios';
+const route = useRoute();
 
 const props = defineProps({
   slug: {
@@ -117,6 +126,17 @@ const enableModalZoom = () => {
 
 const cleanupModalZoom = ref<(() => void) | null>(null);
 
+const addPhotoToEstimate = (photo: PhotoEntity) => {
+  estimateStore.addItem({
+    title: photo.name || photo.category?.name || props.slug || 'Material',
+    categorySlug: photo.category?.slug || props.slug,
+    photoId: photo.id,
+    photoUrl: photo.url,
+    lang: String(route.params['lang'] ?? 'pl'),
+  });
+  isEstimateOpen.value = true;
+}
+
 onMounted(() => {
   parentSlug.value = categoriesStore.getFirstParentSlug(props.slug);
   if (photosStore.getPhotosByKey(props.slug).length > 0) {
@@ -137,7 +157,7 @@ onUnmounted(() => {
 <template>
   <div style="position: relative;">
   </div>
-  <div class="page" position="absolute">
+  <div class="page" :class="{ 'page--ios': isIos }" position="absolute">
     <loader v-if="isLoading" />
     <div class="flex flex-center main">
       <div class="_container">
@@ -150,18 +170,21 @@ onUnmounted(() => {
                 </router-link>
                 <span>{{ photos && photos.length > 0 ? photos[0].category.name : "Oops! Nothing here :(" }}</span>
               </h2>
+              <EstimateButton v-if="isIos" @open="isEstimateOpen = true" />
             </header>
             <div v-if="photos && photos.length > 0" style="max-height: 100%; padding-bottom: 56px; overflow-y: auto;">
-              <CategoryMedia
-                v-for="photo in photos"
-                :key="photo.id"
-                :media="photo"
-              />
+              <div v-for="photo in photos" :key="photo.id" class="estimate-media">
+                <CategoryMedia :media="photo" />
+                <n-button v-if="isIos" size="small" secondary class="estimate-media__add" @click="addPhotoToEstimate(photo)">
+                  Add to estimate
+                </n-button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <EstimateDrawer v-if="isIos" v-model:show="isEstimateOpen" />
   </div>
 </template>
 
@@ -171,20 +194,34 @@ onUnmounted(() => {
 }
 .main__header {
   top: 0;
+  padding: 0 12px;
 }
 .main__header h2 {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
+  margin-top: 0;
+  margin-bottom: 8px;
+  padding: 0 44px;
 }
 .main__header .icon {
   position: absolute;
   left: 0;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.main__header .icon svg {
   width: 24px;
   height: 24px;
-  font-size: 0;
-  cursor: pointer;
 }
 .content {
   position: relative;
@@ -204,6 +241,9 @@ onUnmounted(() => {
   height: 100%;
   padding: 16px 0;
 }
+.page--ios ._sub-container {
+  padding-top: max(60px, calc(env(safe-area-inset-top, 0px) + 12px));
+}
 ._container {
   height: 100%;
 }
@@ -213,6 +253,17 @@ onUnmounted(() => {
 div.n-image {
   width: 100%;
   touch-action: auto;
+}
+.estimate-media {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.estimate-media + .estimate-media {
+  margin-top: 18px;
+}
+.estimate-media__add {
+  align-self: center;
 }
 
 </style>

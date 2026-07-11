@@ -15,14 +15,21 @@ import { useSettingsStore } from '@/stores/settings';
 import { usePhotosStore } from '@/stores/photos';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import CategoryMedia from '@/components/category-media.vue';
+import EstimateButton from '@/components/estimate-button.vue';
+import EstimateDrawer from '@/components/estimate-drawer.vue';
+import { useEstimateStore } from '@/stores/estimate';
+import { Capacitor } from '@capacitor/core';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const settingsApi = inject<SettingsApi>('SettingsApi')!;
 const categoriesStore = useCategoriesStore();
 const settingsStore = useSettingsStore();
 const photosStore = usePhotosStore();
+const estimateStore = useEstimateStore();
 const isLoading = ref(false);
 const isOpen = ref(false);
+const isEstimateOpen = ref(false);
+const isIos = Capacitor.getPlatform() === 'ios';
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
 const photos = ref<PhotoEntity[]>([]);
@@ -97,6 +104,19 @@ const changeSite = async (newOptValue: string) => {
   fetchSettings();
 }
 
+const getCurrentCategory = () => categories.value.find(category => category.slug === props.slug);
+
+const addPhotoToEstimate = (photo: PhotoEntity) => {
+  estimateStore.addItem({
+    title: photo.name || photo.category?.name || getCurrentCategory()?.name || props.slug || 'Material',
+    categorySlug: photo.category?.slug || props.slug || '',
+    photoId: photo.id,
+    photoUrl: photo.url,
+    lang: curOpt.value,
+  });
+  isEstimateOpen.value = true;
+}
+
 onMounted(() => {
   if (categoriesStore.categories.length > 0) {
     bindCategories();
@@ -134,7 +154,10 @@ watch(
         <div class="_sub-container">
           <div class="content">
             <header class="main__header">
-              <h2>{{ settingsStore.settings?.title ?? 'Sufity Poland Group doskonałość stylu' }}</h2>
+              <div class="main__header-row">
+                <h2>{{ settingsStore.settings?.title ?? 'Sufity Poland Group doskonałość stylu' }}</h2>
+                <EstimateButton v-if="isIos" @open="isEstimateOpen = true" />
+              </div>
             </header>
             <section class="main__dropdown dropdown" v-if="currentCategories">
               <n-scrollbar style="max-height: 100%">
@@ -149,11 +172,12 @@ watch(
                     </router-link>
                   </li>
                   <li v-if="photos.length > 0" class="dropdown__item">
-                    <CategoryMedia
-                      v-for="photo in photos"
-                      :key="photo.id"
-                      :media="photo"
-                    />
+                    <div v-for="photo in photos" :key="photo.id" class="estimate-media">
+                      <CategoryMedia :media="photo" />
+                      <n-button v-if="isIos" size="small" secondary class="estimate-media__add" @click="addPhotoToEstimate(photo)">
+                        Add to estimate
+                      </n-button>
+                    </div>
                   </li>
                   <li v-for="category in currentCategories" :key="category.id">
                     <router-link
@@ -255,9 +279,40 @@ watch(
         <n-select :value="curOpt" :options="langOpts" @update:value="changeSite" />
       </div>
     </div>
+    <EstimateDrawer v-if="isIos" v-model:show="isEstimateOpen" />
   </div>
 
 </template>
+
+<style scoped>
+.main__header-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 8px 8px;
+}
+.main__header-row h2 {
+  margin: 0;
+}
+.estimate-media {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.estimate-media + .estimate-media {
+  margin-top: 18px;
+}
+.estimate-media__add {
+  align-self: center;
+}
+@media (max-width: 600px) {
+  .main__header-row {
+    flex-wrap: wrap;
+  }
+}
+</style>
 
 <style>
 
