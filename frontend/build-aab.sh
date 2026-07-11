@@ -38,7 +38,7 @@ fi
 
 # Set Java Home (macOS with Homebrew)
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    export JAVA_HOME=/opt/homebrew/opt/openjdk@17
+    export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
     echo -e "${YELLOW}📍 Java Home: $JAVA_HOME${NC}"
 fi
 
