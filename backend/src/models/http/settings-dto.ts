@@ -64,4 +64,25 @@ export class UpdateSettingRequestDto {
   @IsOptional()
   @IsString()
   downloadTabIosEmptyText?: string;
+
+  /** Cookies */
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  cookieText?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  cookieAcceptText?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  cookieLinkText?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  cookieLinkUrl?: string;
 }

@@ -62,6 +62,23 @@ export class SettingsEntity extends BaseEntity {
   @ApiProperty()
   downloadTabIosEmptyText: string;
 
+  /** Cookies */
+  @Column({ nullable: true, type: 'text' })
+  @ApiProperty()
+  cookieText: string;
+
+  @Column({ nullable: true })
+  @ApiProperty()
+  cookieAcceptText: string;
+
+  @Column({ nullable: true })
+  @ApiProperty()
+  cookieLinkText: string;
+
+  @Column({ nullable: true })
+  @ApiProperty()
+  cookieLinkUrl: string;
+
   @OneToOne(() => SiteEntity, (site) => site.settings, { onDelete: 'SET NULL' })
   @ApiProperty({ type: () => SiteEntity })
   @JoinColumn({ name: 'site_code', referencedColumnName: 'code' })

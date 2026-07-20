@@ -30,6 +30,7 @@ const isLoading = ref(false);
 const isOpen = ref(false);
 const isEstimateOpen = ref(false);
 const isIos = Capacitor.getPlatform() === 'ios';
+const isNative = Capacitor.isNativePlatform();
 const categories = ref<CategoryEntity[]>([]);
 const currentCategories = ref<CategoryEntity[]>([]);
 const photos = ref<PhotoEntity[]>([]);
@@ -123,7 +124,6 @@ onMounted(() => {
     return;
   }
   fetchCategories();
-  fetchSettings();
   curOpt.value = langOpts.value.find(el => el.value === route.params['lang'])?.value ?? 'pl'
 });
 
@@ -274,7 +274,7 @@ watch(
         </div>
       </div>
     </div>
-    <div class="site-switcher">
+    <div class="site-switcher" :class="{ 'site-switcher--native': isNative }">
       <div class="dropdown__button">
         <n-select :value="curOpt" :options="langOpts" @update:value="changeSite" />
       </div>
@@ -403,7 +403,7 @@ watch(
 .site-switcher {
   padding-top: 0;
   position: absolute;
-  top: max(30px, calc(env(safe-area-inset-top, 0px) + 64px));
+  top: 0;
   right: 0;
   width: 200px;
 }
@@ -431,6 +431,10 @@ watch(
   .site-switcher {
     width: min(180px, 48vw);
   }
+}
+
+.site-switcher--native {
+  top: max(30px, calc(env(safe-area-inset-top, 0px) + 64px));
 }
 
 </style>

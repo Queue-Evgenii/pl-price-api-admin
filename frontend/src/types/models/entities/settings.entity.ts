@@ -25,6 +25,14 @@ export interface SettingsEntity {
 
   downloadTabIosEmptyText: string;
 
+  cookieText: string;
+
+  cookieAcceptText: string;
+
+  cookieLinkText: string;
+
+  cookieLinkUrl: string;
+
   banner: PhotoEntity;
 
   site: string;

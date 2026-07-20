@@ -146,6 +146,28 @@ watch(
                     <n-input v-model:value="form.downloadTabIosEmptyText" />
                 </n-form-item>
 
+                <!-- Cookies -->
+                <n-form-item label="Cookies - Текст">
+                    <n-input
+                        v-model:value="form.cookieText"
+                        type="textarea"
+                        :autosize="{ minRows: 3 }"
+                        placeholder="Если пусто - баннер не показывается"
+                    />
+                </n-form-item>
+                <n-form-item label="Cookies - Кнопка">
+                    <n-input v-model:value="form.cookieAcceptText" />
+                </n-form-item>
+                <n-form-item label="Cookies - Текст ссылки">
+                    <n-input v-model:value="form.cookieLinkText" />
+                </n-form-item>
+                <n-form-item label="Cookies - Ссылка">
+                    <n-input
+                        v-model:value="form.cookieLinkUrl"
+                        placeholder="Если пусто - ссылка не показывается"
+                    />
+                </n-form-item>
+
                 <n-form-item label="Баннер">
                     <n-upload
                         accept="image/*"
