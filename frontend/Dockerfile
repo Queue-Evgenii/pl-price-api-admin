@@ -2,7 +2,7 @@ FROM node:22.11-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json fix-wkprocesspool-warning.cjs ./
 
 RUN npm install -g npm@11 \
  && npm cache clean --force \
