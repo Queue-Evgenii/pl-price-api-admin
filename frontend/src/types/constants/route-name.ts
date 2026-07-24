@@ -16,6 +16,7 @@ export const RouteName = {
 
   SITE: {
     ROOT: "root",
+    PLANNER: "planner",
     CATEGORIES: {
       ROOT: "categories",
       DETAIL: "categories-detail",

@@ -8,8 +8,7 @@ export const beforeEach = ((to: RouteLocationNormalized, from: RouteLocationNorm
   const userStore = useUserStore();
 
   if (to.name === RouteName.AUTH.SIGN_IN && userStore.user !== undefined) {
-    console.log(from.name)
-    return next({ name: from.name });
+    return next(from.name ? { name: from.name } : { name: RouteName.ADMIN.ROOT });
   }
 
   if (to.meta.requiresAuth && userStore.user === undefined) {

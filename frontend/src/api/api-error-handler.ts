@@ -22,7 +22,6 @@ export const withErrorHandling = <T>(apiCall: Promise<T>): Promise<T> => {
       default:
         break;
     }
-    console.log('API Error', err);
     throw err;
   });
 };

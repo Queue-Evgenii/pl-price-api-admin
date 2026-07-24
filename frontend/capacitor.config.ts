@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.priceapi.admin',
-  appName: 'PL Price',
+  appName: 'Poland Group Materials',
   webDir: 'dist',
   server: {
     androidScheme: 'https'
@@ -13,10 +13,10 @@ const config: CapacitorConfig = {
     }
   },
   ios: {
-    scheme: 'PL Price'
+    scheme: 'Poland Group Materials'
   },
   android: {
-    webContentsDebuggingEnabled: true
+    webContentsDebuggingEnabled: false
   }
 };
 
