@@ -6,7 +6,7 @@ import { useSitesStore } from '@/stores/sites';
 import { useCeilingProjectsStore, type Ceiling, type ColorPreset, type Project, type Variant } from '@/stores/ceiling-projects';
 import { Site } from '@/types/models/utils/browser/site';
 import logoUrl from '@/assets/logo.png';
-import { AddRound, AllInclusiveRound, CheckRound, CloseRound, DomainAddRound, HouseRound, RemoveRound, StarBorderRound, StarRound } from '@vicons/material';
+import { AddRound, AllInclusiveRound, CheckRound, CloseRound, DomainAddRound, EditRound, HouseRound, RemoveRound, StarBorderRound, StarRound } from '@vicons/material';
 
 type ViewMode = 'project-create' | 'project-summary' | 'ceiling-edit' | 'ceiling-view';
 type Notification = { id: string; type: 'success' | 'error'; text: string };
@@ -34,6 +34,8 @@ const activeCeilingId = ref<string | null>(null);
 const viewMode = ref<ViewMode>('project-create');
 const projectSummaryView = ref<'numbers' | 'visuals'>('numbers');
 const projectNameDraft = ref('');
+const editingProjectId = ref<string | null>(null);
+const projectRenameDraft = ref('');
 const notifications = ref<Notification[]>([]);
 const isProjectsDrawerOpen = ref(false);
 const isCeilingsDrawerOpen = ref(false);
@@ -90,6 +92,7 @@ const messages = {
       edit: 'Edit',
       full: 'Full',
       projects: 'Projects',
+      rename: 'Rename',
       save: 'Save',
     },
     aria: {
@@ -99,6 +102,8 @@ const messages = {
       decreaseLength: 'Decrease length',
       increaseLength: 'Increase length',
       preview: 'Ceiling plan preview',
+      renameProject: 'Rename project',
+      saveProjectName: 'Save project name',
     },
     colors: {
       'Warm white': 'Warm white',
@@ -181,6 +186,7 @@ const messages = {
       keepVariant: 'Keep at least one variant',
       projectCreated: 'Project created',
       projectDeleted: 'Project deleted',
+      projectRenamed: 'Project renamed',
       variantAdded: 'Variant added',
     },
   },
@@ -195,6 +201,7 @@ const messages = {
       edit: 'Edytuj',
       full: 'Pełny',
       projects: 'Projekty',
+      rename: 'Zmień nazwę',
       save: 'Zapisz',
     },
     aria: {
@@ -204,6 +211,8 @@ const messages = {
       decreaseLength: 'Zmniejsz długość',
       increaseLength: 'Zwiększ długość',
       preview: 'Podgląd planu sufitu',
+      renameProject: 'Zmień nazwę projektu',
+      saveProjectName: 'Zapisz nazwę projektu',
     },
     colors: {
       'Warm white': 'Ciepła biel',
@@ -286,6 +295,7 @@ const messages = {
       keepVariant: 'Zostaw co najmniej jeden wariant',
       projectCreated: 'Projekt utworzony',
       projectDeleted: 'Projekt usunięty',
+      projectRenamed: 'Nazwa projektu zapisana',
       variantAdded: 'Wariant dodany',
     },
   },
@@ -480,6 +490,29 @@ const createProject = () => {
   notify('success', t.value.toasts.projectCreated);
 };
 
+const startProjectRename = (project: Project) => {
+  editingProjectId.value = project.id;
+  projectRenameDraft.value = project.name;
+};
+
+const cancelProjectRename = () => {
+  editingProjectId.value = null;
+  projectRenameDraft.value = '';
+};
+
+const saveProjectRename = (projectId = editingProjectId.value) => {
+  if (!projectId) return;
+  const fallbackName = projects.value.find(project => project.id === projectId)?.name || t.value.placeholders.projectName;
+  const name = projectRenameDraft.value.trim() || fallbackName;
+  projects.value = projects.value.map(project => project.id === projectId
+    ? { ...project, name, updatedAt: new Date().toISOString() }
+    : project);
+  editingProjectId.value = null;
+  projectRenameDraft.value = '';
+  persistProjects();
+  notify('success', t.value.toasts.projectRenamed);
+};
+
 const requestNavigation = (navigation: PendingNavigation) => {
   if (viewMode.value === 'ceiling-edit' && (isDirty.value || isNewCeilingPendingSave.value)) {
     pendingNavigation.value = navigation;
@@ -493,6 +526,7 @@ const runNavigation = (navigation: PendingNavigation) => {
     activeProjectId.value = null;
     activeCeilingId.value = null;
     projectNameDraft.value = '';
+    cancelProjectRename();
     viewMode.value = 'project-create';
     isProjectsDrawerOpen.value = false;
     isCeilingsDrawerOpen.value = false;
@@ -501,6 +535,7 @@ const runNavigation = (navigation: PendingNavigation) => {
   if (navigation.type === 'project' && navigation.projectId) {
     activeProjectId.value = navigation.projectId;
     activeCeilingId.value = null;
+    cancelProjectRename();
     viewMode.value = 'project-summary';
     isProjectsDrawerOpen.value = false;
     isCeilingsDrawerOpen.value = false;
@@ -787,8 +822,27 @@ onMounted(() => {
 
       <template v-else>
         <section class="project-bar">
-          <div>
-            <h1>{{ activeProject?.name }}</h1>
+          <div class="project-title-block">
+            <div v-if="activeProject && editingProjectId === activeProject.id" class="project-rename">
+              <n-input
+                v-model:value="projectRenameDraft"
+                :placeholder="t.placeholders.projectName"
+                @keydown.enter="saveProjectRename(activeProject.id)"
+                @keydown.esc="cancelProjectRename"
+              />
+              <button type="button" :aria-label="t.aria.saveProjectName" @click="saveProjectRename(activeProject.id)">
+                <n-icon :component="CheckRound" />
+              </button>
+              <button type="button" :aria-label="t.aria.close" @click="cancelProjectRename">
+                <n-icon :component="CloseRound" />
+              </button>
+            </div>
+            <div v-else class="project-title-row">
+              <h1>{{ activeProject?.name }}</h1>
+              <button v-if="activeProject" type="button" class="project-rename-button" :aria-label="t.aria.renameProject" @click="startProjectRename(activeProject)">
+                <n-icon :component="EditRound" />
+              </button>
+            </div>
             <p>{{ projectTotals.count }} {{ t.labels.ceilings.toLowerCase() }} · {{ formatCurrency(projectTotals.price) }}</p>
           </div>
         </section>
@@ -1002,10 +1056,25 @@ onMounted(() => {
       <n-drawer-content :title="t.actions.projects" closable>
         <div class="projects-drawer">
           <div v-for="project in sortedProjects" :key="project.id" class="project-drawer-item">
-            <button class="project-drawer-row" :class="{ active: project.id === activeProjectId }" type="button" @click="requestNavigation({ type: 'project', projectId: project.id })">
+            <div v-if="editingProjectId === project.id" class="project-drawer-rename">
+              <n-input
+                v-model:value="projectRenameDraft"
+                :placeholder="t.placeholders.projectName"
+                @keydown.enter="saveProjectRename(project.id)"
+                @keydown.esc="cancelProjectRename"
+              />
+              <button type="button" :aria-label="t.aria.saveProjectName" @click="saveProjectRename(project.id)">
+                <n-icon :component="CheckRound" />
+              </button>
+              <button type="button" :aria-label="t.aria.close" @click="cancelProjectRename">
+                <n-icon :component="CloseRound" />
+              </button>
+            </div>
+            <button v-else class="project-drawer-row" :class="{ active: project.id === activeProjectId }" type="button" @click="requestNavigation({ type: 'project', projectId: project.id })">
               <span>{{ project.name }}</span>
               <small>{{ project.ceilings.length }} {{ t.labels.ceilings.toLowerCase() }} · {{ formatDate(project.createdAt) }}</small>
             </button>
+            <button v-if="editingProjectId !== project.id" class="project-icon-button" type="button" :aria-label="t.aria.renameProject" @click="startProjectRename(project)"><n-icon :component="EditRound" /></button>
             <button class="ceiling-delete" type="button" :aria-label="t.aria.deleteProject" @click="projectToDelete = project"><n-icon :component="CloseRound" /></button>
           </div>
           <p v-if="sortedProjects.length === 0" class="empty-text">{{ t.empty.projects }}</p>
@@ -1343,6 +1412,62 @@ p { color: #5c6370; }
   font-size: 13px;
 }
 
+.project-title-block {
+  min-width: 0;
+}
+
+.project-title-row,
+.project-rename,
+.project-drawer-rename {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.project-title-row h1 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.project-rename {
+  width: min(520px, calc(100vw - 28px));
+}
+
+.project-drawer-rename {
+  min-width: 0;
+}
+
+.project-rename :deep(.n-input),
+.project-drawer-rename :deep(.n-input) {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.project-rename button,
+.project-drawer-rename button,
+.project-rename-button,
+.project-icon-button {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #cfd5df;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #ffffff, #f2f5f9);
+  color: #384150;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: 0 7px 15px rgba(30, 34, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.project-rename button .n-icon,
+.project-drawer-rename button .n-icon,
+.project-rename-button .n-icon,
+.project-icon-button .n-icon {
+  font-size: 20px;
+}
+
 .bar-actions {
   display: flex;
   gap: 8px;
@@ -1510,7 +1635,7 @@ p { color: #5c6370; }
 
 .project-drawer-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 34px;
+  grid-template-columns: minmax(0, 1fr) 34px 34px;
   align-items: center;
   gap: 8px;
 }
