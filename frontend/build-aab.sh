@@ -78,8 +78,8 @@ npx cap sync android
 echo -e "${BLUE}🔨 Building AAB...${NC}"
 cd android
 
-# Calculate version code from version name
-VERSION_CODE=$(echo "$VERSION" | tr -d '.')
+# Use explicit release versionCode when provided; otherwise derive it from versionName.
+VERSION_CODE=${APP_VERSION_CODE:-$(echo "$VERSION" | tr -d '.')}
 echo -e "${BLUE}📦 Version Name: $VERSION${NC}"
 echo -e "${BLUE}🔢 Version Code: $VERSION_CODE${NC}"
 

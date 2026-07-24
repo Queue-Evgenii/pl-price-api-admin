@@ -225,7 +225,6 @@ const pagination = reactive({
   pageSizes: [5, 10, 15],
   itemCount: 0,
   onChange: (page: number) => {
-    console.log(page)
     fetchCategories(page, pagination.pageSize);
   },
   onUpdatePageSize: (pageSize: number) => {
@@ -322,4 +321,3 @@ onMounted(() => {
   </n-modal>
 
 </template>
-

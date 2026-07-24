@@ -104,6 +104,10 @@ const changeSite = async (newOptValue: string) => {
   fetchSettings();
 }
 
+const openPlanner = async () => {
+  await router.push({ name: RouteName.SITE.PLANNER, params: { lang: curOpt.value } });
+}
+
 const getCurrentCategory = () => categories.value.find(category => category.slug === props.slug);
 
 const addPhotoToEstimate = (photo: PhotoEntity) => {
@@ -155,8 +159,13 @@ watch(
           <div class="content">
             <header class="main__header">
               <div class="main__header-row">
-                <h2>{{ settingsStore.settings?.title ?? 'Sufity Poland Group doskonałość stylu' }}</h2>
-                <EstimateButton v-if="isIos" @open="isEstimateOpen = true" />
+                <h2 data-tour="site-title">{{ settingsStore.settings?.title ?? 'Sufity Poland Group doskonałość stylu' }}</h2>
+                <n-button secondary class="planner-button" data-tour="planner-button" @click="openPlanner">
+                  Ceiling planner
+                </n-button>
+                <span v-if="isIos" data-tour="estimate-button">
+                  <EstimateButton @open="isEstimateOpen = true" />
+                </span>
               </div>
             </header>
             <section class="main__dropdown dropdown" v-if="currentCategories">
@@ -179,7 +188,7 @@ watch(
                       </n-button>
                     </div>
                   </li>
-                  <li v-for="category in currentCategories" :key="category.id">
+                  <li v-for="(category, index) in currentCategories" :key="category.id" :data-tour="index === 0 ? 'category-item' : undefined">
                     <router-link
                       :to="{
                         name: category.children.length > 0 ? RouteName.SITE.CATEGORIES.SLUG : RouteName.SITE.CATEGORIES.DETAIL,
@@ -192,7 +201,7 @@ watch(
                   </li>
 
                   <template v-if="slug === undefined">
-                    <li class="dropdown__item">
+                    <li class="dropdown__item" data-tour="download-section">
                       <n-collapse>
                         <n-collapse-item>
                           <template #arrow>
@@ -242,7 +251,7 @@ watch(
                       </n-collapse>
 
                     </li>
-                    <li class="dropdown__item">
+                    <li class="dropdown__item" data-tour="telegram-link">
                       <a class="dropdown__button" href="https://t.me/+aSOZnoJqLyo0ODA8" target="_blank">
                         <n-flex :align="'center'" justify="center" style="position: relative;">
                           <TelegramFilled width="32px" style="position: absolute; left: 8px;" />
@@ -274,7 +283,7 @@ watch(
         </div>
       </div>
     </div>
-    <div class="site-switcher">
+    <div class="site-switcher" data-tour="site-switcher">
       <div class="dropdown__button">
         <n-select :value="curOpt" :options="langOpts" @update:value="changeSite" />
       </div>
@@ -296,6 +305,9 @@ watch(
 .main__header-row h2 {
   margin: 0;
 }
+.planner-button {
+  flex: 0 0 auto;
+}
 .estimate-media {
   display: flex;
   flex-direction: column;
@@ -310,6 +322,9 @@ watch(
 @media (max-width: 600px) {
   .main__header-row {
     flex-wrap: wrap;
+  }
+  .planner-button {
+    width: 100%;
   }
 }
 </style>

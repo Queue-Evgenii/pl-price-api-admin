@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject } from 'vue';
+import { inject, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 import type { AuthApi } from './api/modules/auth';
 import { useUserStore } from './stores/user';
@@ -18,17 +18,27 @@ const themeOverrides = {
   },
 }
 
-if (!Capacitor.isNativePlatform()) {
-  authApi.getMe()
-    .then(res => {
-      Token.set(res.token);
-      userStore.setUser(res.user);
+let didBootstrapAuth = false;
 
-      if (route.path.startsWith('/auth') && !route.path.startsWith('path')) {
-        router.push({ name: RouteName.ADMIN.ROOT });
-      }
-    })
-}
+watch(
+  () => route.path,
+  path => {
+    const isAdminSurface = path.startsWith('/admin') || path.startsWith('/auth');
+    if (Capacitor.isNativePlatform() || !isAdminSurface || didBootstrapAuth) return;
+
+    didBootstrapAuth = true;
+    authApi.getMe()
+      .then(res => {
+        Token.set(res.token);
+        userStore.setUser(res.user);
+
+        if (route.path.startsWith('/auth')) {
+          router.push({ name: RouteName.ADMIN.ROOT });
+        }
+      });
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
