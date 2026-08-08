@@ -73,7 +73,7 @@ build_apk() {
     fi
     rm -f "$ROOT_DIR"/android/app/build/outputs/apk/debug/pl-price-*.apk
     EXPECTED_TS="$(date +'%y%m%d-%H%M')"
-    echo "Expected APK name pattern: pl-price-<version>-${EXPECTED_TS}.apk"
+    echo "Expected test APK name pattern: pl-price-test-apk-<version>-${EXPECTED_TS}.apk"
     
     # Load environment variables from .env file
     if [ -f "$ROOT_DIR/.env" ]; then

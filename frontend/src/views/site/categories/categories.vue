@@ -19,6 +19,7 @@ import EstimateButton from '@/components/estimate-button.vue';
 import EstimateDrawer from '@/components/estimate-drawer.vue';
 import { useEstimateStore } from '@/stores/estimate';
 import { Capacitor } from '@capacitor/core';
+import { IosStartSectionStorage } from '@/types/models/utils/browser/ios-start-section';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const settingsApi = inject<SettingsApi>('SettingsApi')!;
@@ -123,6 +124,7 @@ const addPhotoToEstimate = (photo: PhotoEntity) => {
 }
 
 onMounted(() => {
+  IosStartSectionStorage.set('catalog');
   if (categoriesStore.categories.length > 0) {
     bindCategories();
     return;
@@ -160,7 +162,7 @@ watch(
             <header class="main__header">
               <div class="main__header-row">
                 <h2 data-tour="site-title">{{ settingsStore.settings?.title ?? 'Sufity Poland Group doskonałość stylu' }}</h2>
-                <n-button secondary class="planner-button" data-tour="planner-button" @click="openPlanner">
+                <n-button v-if="isNative" secondary class="planner-button" data-tour="planner-button" @click="openPlanner">
                   Ceiling planner
                 </n-button>
                 <span v-if="isIos" data-tour="estimate-button">

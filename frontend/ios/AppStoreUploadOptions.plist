@@ -3,23 +3,27 @@
 <plist version="1.0">
 <dict>
 	<key>destination</key>
-	<string>export</string>
+	<string>upload</string>
+	<key>generateAppStoreInformation</key>
+	<false/>
 	<key>manageAppVersionAndBuildNumber</key>
 	<false/>
 	<key>method</key>
 	<string>app-store-connect</string>
-	<key>teamID</key>
-	<string>P92R3C6Z85</string>
-	<key>signingStyle</key>
-	<string>manual</string>
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.priceapi.admin</key>
 		<string>Price API Admin App Store</string>
 	</dict>
+	<key>signingCertificate</key>
+	<string>Apple Distribution</string>
+	<key>signingStyle</key>
+	<string>manual</string>
 	<key>stripSwiftSymbols</key>
 	<true/>
-	<key>uploadBitcode</key>
+	<key>teamID</key>
+	<string>P92R3C6Z85</string>
+	<key>testFlightInternalTestingOnly</key>
 	<false/>
 	<key>uploadSymbols</key>
 	<true/>

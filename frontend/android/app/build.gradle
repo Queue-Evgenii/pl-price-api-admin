@@ -37,6 +37,8 @@ android {
         }
         debug {
             applicationIdSuffix ".debug"
+            resValue "string", "app_name", "Poland Group Materials TEST APK v${defaultConfig.versionName}"
+            resValue "string", "title_activity_main", "Poland Group Materials TEST APK v${defaultConfig.versionName}"
         }
     }
 
@@ -47,7 +49,8 @@ android {
             def buildType = variant.buildType.name
             
             if (output.outputFile.name.endsWith('.apk')) {
-                outputFileName = "pl-price-${versionName}-${formattedDate}.apk"
+                def apkType = buildType == 'debug' ? 'test-apk' : buildType
+                outputFileName = "pl-price-${apkType}-${versionName}-${formattedDate}.apk"
             }
         }
     }

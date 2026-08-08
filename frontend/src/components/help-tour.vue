@@ -36,12 +36,18 @@ const focusStyle = computed(() => {
 });
 
 const tooltipStyle = computed(() => {
+  const verticalInset = 16;
+  const cardMinHeight = 190;
+  const estimatedCardHeight = Math.min(320, viewport.value.height - verticalInset * 2);
+  const maxTop = Math.max(verticalInset, viewport.value.height - estimatedCardHeight - verticalInset);
+
   if (!targetRect.value) {
     return {
       width: `${Math.min(360, window.innerWidth - 32)}px`,
-      minHeight: '190px',
+      minHeight: `${cardMinHeight}px`,
+      maxHeight: `calc(100vh - ${verticalInset * 2}px)`,
       left: '16px',
-      top: 'calc(env(safe-area-inset-top, 0px) + 72px)',
+      top: `${Math.min(Math.max(72, verticalInset), maxTop)}px`,
     };
   }
 
@@ -52,14 +58,16 @@ const tooltipStyle = computed(() => {
   );
   const prefersTop = currentStep.value?.placement === 'top';
   const bottomTop = targetRect.value.bottom + 22;
-  const topTop = targetRect.value.top - 210;
-  const top = prefersTop || bottomTop > viewport.value.height - 190
-    ? Math.max(topTop, 16)
+  const topTop = targetRect.value.top - cardMinHeight - 20;
+  const unclampedTop = prefersTop || bottomTop > viewport.value.height - cardMinHeight
+    ? topTop
     : bottomTop;
+  const top = Math.min(Math.max(unclampedTop, verticalInset), maxTop);
 
   return {
     width: `${tooltipWidth}px`,
-    minHeight: '190px',
+    minHeight: `${cardMinHeight}px`,
+    maxHeight: `calc(100vh - ${verticalInset * 2}px)`,
     left: `${left}px`,
     top: `${top}px`,
   };
@@ -83,8 +91,10 @@ const updateTarget = async () => {
     return;
   }
 
-  element.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' });
+  element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
+  window.scrollTo({ left: 0, top: window.scrollY, behavior: 'auto' });
   window.setTimeout(() => {
+    window.scrollTo({ left: 0, top: window.scrollY, behavior: 'auto' });
     targetRect.value = element.getBoundingClientRect();
   }, 260);
 };
@@ -111,6 +121,7 @@ const open = async (fromAutoStart = false) => {
 
 const close = () => {
   isOpen.value = false;
+  window.scrollTo({ left: 0, top: window.scrollY, behavior: 'auto' });
   markSeen();
 };
 
@@ -161,7 +172,7 @@ defineExpose({ open });
         <h3>{{ currentStep.title }}</h3>
         <p>{{ currentStep.text }}</p>
         <div class="help-tour__actions">
-          <n-button text @click="close">Pominąć</n-button>
+          <n-button secondary @click="close">Przejdź do pracy</n-button>
           <div class="help-tour__step-actions">
             <n-button secondary :disabled="currentIndex === 0" @click="prev">Wstecz</n-button>
             <n-button type="warning" @click="next">
@@ -198,11 +209,14 @@ defineExpose({ open });
 }
 .help-tour__card {
   position: fixed;
+  display: flex;
+  flex-direction: column;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(0, 0, 0, 0.18);
   border-radius: 8px;
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
   padding: 18px;
+  overflow-y: auto;
   text-align: left;
   pointer-events: auto;
 }
@@ -229,6 +243,12 @@ defineExpose({ open });
   gap: 8px;
 }
 .help-tour__actions {
+  position: sticky;
+  bottom: -18px;
+  margin-top: auto;
+  padding-top: 12px;
+  padding-bottom: 2px;
+  background: rgba(255, 255, 255, 0.96);
   justify-content: space-between;
 }
 @media (max-width: 600px) {

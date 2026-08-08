@@ -14,6 +14,7 @@ import EstimateDrawer from '@/components/estimate-drawer.vue';
 import { useEstimateStore } from '@/stores/estimate';
 import { Capacitor } from '@capacitor/core';
 import { useRoute } from 'vue-router';
+import { IosStartSectionStorage } from '@/types/models/utils/browser/ios-start-section';
 
 const categoriesApi = inject<CategoriesApi>('CategoriesApi')!;
 const photos = ref<PhotoEntity[]>([]);
@@ -138,6 +139,7 @@ const addPhotoToEstimate = (photo: PhotoEntity) => {
 }
 
 onMounted(() => {
+  IosStartSectionStorage.set('catalog');
   parentSlug.value = categoriesStore.getFirstParentSlug(props.slug);
   if (photosStore.getPhotosByKey(props.slug).length > 0) {
     bindPhotos();

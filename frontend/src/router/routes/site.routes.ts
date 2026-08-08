@@ -3,6 +3,8 @@ import { commonRoutes } from './common.routes';
 import { useSitesStore } from '@/stores/sites';
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 import type { SiteEntity } from '@/types/models/entities/site.entity';
+import { IosStartSectionStorage } from '@/types/models/utils/browser/ios-start-section';
+import { Capacitor } from '@capacitor/core';
 
 const DEFAULT_LANG = 'pl';
 const FALLBACK_SITES = [
@@ -28,7 +30,7 @@ function langGuard(to: RouteLocationNormalized, from: RouteLocationNormalized, n
 export const siteRoutes = [
   {
     path: '',
-    redirect: { path: `${DEFAULT_LANG}/planner`  },
+    redirect: () => ({ path: `${DEFAULT_LANG}/${Capacitor.isNativePlatform() && IosStartSectionStorage.get() !== 'catalog' ? 'planner' : 'categories'}` }),
   },
   ...commonRoutes,
   {
@@ -42,11 +44,21 @@ export const siteRoutes = [
       {
         path: '',
         name: RouteName.SITE.ROOT,
-        redirect: { name: RouteName.SITE.PLANNER },
+        redirect: () => ({
+          name: Capacitor.isNativePlatform() && IosStartSectionStorage.get() !== 'catalog'
+            ? RouteName.SITE.PLANNER
+            : RouteName.SITE.CATEGORIES.ROOT,
+        }),
       },
       {
         path: 'planner',
         name: RouteName.SITE.PLANNER,
+        beforeEnter: (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+          if (!Capacitor.isNativePlatform()) {
+            return next({ name: RouteName.SITE.CATEGORIES.ROOT });
+          }
+          next();
+        },
         component: () => import('@/views/site/ceiling-builder.vue'),
       },
       {

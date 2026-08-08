@@ -5,6 +5,7 @@ import { RouteName } from '@/types/constants/route-name';
 import { useSitesStore } from '@/stores/sites';
 import { useCeilingProjectsStore, type Ceiling, type ColorPreset, type Project, type Variant } from '@/stores/ceiling-projects';
 import { Site } from '@/types/models/utils/browser/site';
+import { IosStartSectionStorage } from '@/types/models/utils/browser/ios-start-section';
 import logoUrl from '@/assets/logo.png';
 import { AddRound, AllInclusiveRound, CheckRound, CloseRound, DomainAddRound, EditRound, HouseRound, RemoveRound, StarBorderRound, StarRound } from '@vicons/material';
 
@@ -755,6 +756,7 @@ const changeSite = async (newOptValue: string) => {
 
 watch(projectTotals, markSummaryChanged);
 onMounted(() => {
+  IosStartSectionStorage.set('planner');
   loadProjects();
   previousSummary = { ...projectTotals.value };
 });
@@ -1127,7 +1129,10 @@ onMounted(() => {
 
 <style scoped>
 .builder-page {
+  width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 18% 8%, rgba(180, 20, 40, 0.08), transparent 26%),
     linear-gradient(180deg, #f8f9fb 0%, #eef1f5 100%);
@@ -1183,6 +1188,9 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid #e1e4ea;
   backdrop-filter: blur(14px);
+  max-width: 100vw;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 .builder-logo {
@@ -1194,15 +1202,21 @@ onMounted(() => {
 .top-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .builder-lang { width: 104px; }
 
 .builder-shell {
-  width: min(1120px, 100%);
+  width: min(1120px, calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  max-width: 100%;
   margin: 0 auto;
   padding: 14px 14px 92px;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 .builder-shell--with-fab {
@@ -1219,7 +1233,8 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  width: min(520px, 100%);
+  width: auto;
+  max-width: 520px;
   margin: 0 auto;
   padding: 9px 10px 9px 12px;
   background: rgba(255, 248, 230, 0.9);
@@ -1542,6 +1557,7 @@ p { color: #5c6370; }
 
 .project-summary-content {
   grid-column: 1 / -1;
+  min-width: 0;
   min-height: 260px;
 }
 
@@ -1549,6 +1565,7 @@ p { color: #5c6370; }
   display: grid;
   grid-template-columns: minmax(300px, 0.9fr) minmax(320px, 1.1fr);
   gap: 10px;
+  min-width: 0;
 }
 
 .summary-view-enter-active,
@@ -1576,6 +1593,7 @@ p { color: #5c6370; }
 }
 
 .summary-card {
+  min-width: 0;
   display: grid;
   gap: 2px;
   padding: 10px;
@@ -1594,6 +1612,7 @@ p { color: #5c6370; }
   display: inline-block;
   font-size: 18px;
   font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
 }
 
 .summary-card strong.changed { animation: number-roll 0.46s ease; }
@@ -1670,7 +1689,7 @@ p { color: #5c6370; }
 }
 
 .color-total-row {
-  grid-template-columns: 28px 1fr auto auto;
+  grid-template-columns: 28px minmax(0, 1fr) auto auto;
   align-items: center;
   cursor: default;
 }
@@ -1684,6 +1703,8 @@ p { color: #5c6370; }
 
 .ceiling-row span,
 .project-drawer-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 15px;
   font-weight: 800;
 }
@@ -1691,6 +1712,8 @@ p { color: #5c6370; }
 .ceiling-row small,
 .project-drawer-row small,
 .empty-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #6d7480;
   font-size: 12px;
 }
@@ -2016,15 +2039,20 @@ p { color: #5c6370; }
 .visual-card__body div {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .visual-card__body strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #2f343c;
   font-size: 15px;
 }
 
 .visual-card__body small,
 .visual-card__stats span {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #6d7480;
   font-size: 12px;
   font-weight: 800;
@@ -2172,6 +2200,17 @@ p { color: #5c6370; }
   .builder-grid { grid-template-columns: 1fr; }
   .project-summary-content--numbers { grid-template-columns: 1fr; }
   .builder-form-row { grid-template-columns: minmax(0, 1fr) 104px 54px 60px; }
+}
+
+@media (max-width: 1024px) {
+  .summary-layout,
+  .project-summary-content--numbers {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 430px) {

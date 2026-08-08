@@ -61,11 +61,11 @@ const helpSteps = computed(() => {
         title: 'Wybierz kategorię',
         text: 'Kliknij kategorię, aby przejść głębiej: zobaczysz podkategorie, zdjęcia i dostępne materiały.',
       },
-      {
+      ...(isNative ? [{
         target: '[data-tour="planner-button"]',
         title: 'Ceiling planner',
         text: 'Ten przycisk otwiera planer sufitu. Tam możesz przygotować układ i obliczenia dla projektu.',
-      },
+      }] : []),
       {
         target: '[data-tour="download-section"]',
         title: 'Program do pobrania',
