@@ -15,6 +15,7 @@ dist
 dist-ssr
 coverage
 *.local
+REPORT.md
 
 /cypress/videos/
 /cypress/screenshots/
@@ -37,6 +38,15 @@ coverage
 *.jks
 android/signing.properties
 android/local.properties
+
+# Generated mobile release artifacts
+frontend/android-test-*.png
+frontend/ios/build/
+frontend/release/
+frontend/screenshots/appstore-final-simulator/
+frontend/screenshots/appstore-guideline4-audit/
+frontend/screenshots/appstore-review-4.2.2/
+frontend/screenshots/release-audit-*/
 
 
 # Android gradle properties with secrets
