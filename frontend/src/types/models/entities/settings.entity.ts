@@ -17,13 +17,19 @@ export interface SettingsEntity {
 
   downloadTabPcEmptyText: string;
 
+  downloadTabPcUrl: string;
+
   downloadTabAndroidButtonText: string;
 
   downloadTabAndroidEmptyText: string;
 
+  downloadTabAndroidUrl: string;
+
   downloadTabIosButtonText: string;
 
   downloadTabIosEmptyText: string;
+
+  downloadTabIosUrl: string;
 
   cookieText: string;
 

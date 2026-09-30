@@ -228,7 +228,7 @@ watch(
                                 <template #header>
                                 </template>
                                 <div class="subtab">
-                                  <a href="/NMRDealer.zip">{{ settingsStore.settings?.downloadTabPcButtonText ?? 'Pobierz' }}</a>
+                                  <a :href="settingsStore.settings?.downloadTabPcUrl || '/NMRDealer.zip'">{{ settingsStore.settings?.downloadTabPcButtonText ?? 'Pobierz' }}</a>
                                 </div>
                               </n-collapse-item>
                               <n-collapse-item name="inner-2">
@@ -237,7 +237,10 @@ watch(
                                 </template>
                                 <template #header>
                                 </template>
-                                <div class="subtab">{{ settingsStore.settings?.downloadTabAndroidEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
+                                <div class="subtab">
+                                  <a v-if="settingsStore.settings?.downloadTabAndroidUrl" :href="settingsStore.settings.downloadTabAndroidUrl" target="_blank" rel="noopener">{{ settingsStore.settings?.downloadTabAndroidButtonText ?? 'Pobierz' }}</a>
+                                  <template v-else>{{ settingsStore.settings?.downloadTabAndroidEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</template>
+                                </div>
                               </n-collapse-item>
                               <n-collapse-item name="inner-3">
                                 <template #arrow>
@@ -245,7 +248,10 @@ watch(
                                 </template>
                                 <template #header>
                                 </template>
-                                <div class="subtab">{{ settingsStore.settings?.downloadTabIosEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</div>
+                                <div class="subtab">
+                                  <a v-if="settingsStore.settings?.downloadTabIosUrl" :href="settingsStore.settings.downloadTabIosUrl" target="_blank" rel="noopener">{{ settingsStore.settings?.downloadTabIosButtonText ?? 'Pobierz' }}</a>
+                                  <template v-else>{{ settingsStore.settings?.downloadTabIosEmptyText ?? 'Aplikacja jest w fazie tworzenia i niebawem będzie dostępna' }}</template>
+                                </div>
                               </n-collapse-item>
                             </n-collapse>
                           </div>

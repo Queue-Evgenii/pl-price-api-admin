@@ -44,6 +44,10 @@ export class SettingsEntity extends BaseEntity {
   @ApiProperty()
   downloadTabPcEmptyText: string;
 
+  @Column({ nullable: true })
+  @ApiProperty()
+  downloadTabPcUrl: string;
+
   /** Android */
   @Column({ nullable: true })
   @ApiProperty()
@@ -53,6 +57,10 @@ export class SettingsEntity extends BaseEntity {
   @ApiProperty()
   downloadTabAndroidEmptyText: string;
 
+  @Column({ nullable: true })
+  @ApiProperty()
+  downloadTabAndroidUrl: string;
+
   /** iOS */
   @Column({ nullable: true })
   @ApiProperty()
@@ -61,6 +69,10 @@ export class SettingsEntity extends BaseEntity {
   @Column({ nullable: true })
   @ApiProperty()
   downloadTabIosEmptyText: string;
+
+  @Column({ nullable: true })
+  @ApiProperty()
+  downloadTabIosUrl: string;
 
   /** Cookies */
   @Column({ nullable: true, type: 'text' })

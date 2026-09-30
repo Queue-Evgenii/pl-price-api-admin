@@ -121,6 +121,12 @@ watch(
                 <n-form-item label="Таб - Скачать PC - Текст">
                     <n-input v-model:value="form.downloadTabPcEmptyText" />
                 </n-form-item>
+                <n-form-item label="Таб - Скачать PC - Ссылка">
+                    <n-input
+                        v-model:value="form.downloadTabPcUrl"
+                        placeholder="Если пусто - используется /NMRDealer.zip"
+                    />
+                </n-form-item>
 
                 <!-- Android Tab -->
                 <n-form-item label="Таб - Скачать Android - Заголовок">
@@ -134,6 +140,12 @@ watch(
                 <n-form-item label="Таб - Скачать Android - Текст">
                     <n-input v-model:value="form.downloadTabAndroidEmptyText" />
                 </n-form-item>
+                <n-form-item label="Таб - Скачать Android - Ссылка">
+                    <n-input
+                        v-model:value="form.downloadTabAndroidUrl"
+                        placeholder="Если пусто - показывается текст вместо кнопки"
+                    />
+                </n-form-item>
 
                 <!-- iOS Tab -->
                 <n-form-item label="Таб - Скачать Apple - Заголовок">
@@ -144,6 +156,12 @@ watch(
                 </n-form-item>
                 <n-form-item label="Таб - Скачать Apple - Текст">
                     <n-input v-model:value="form.downloadTabIosEmptyText" />
+                </n-form-item>
+                <n-form-item label="Таб - Скачать Apple - Ссылка">
+                    <n-input
+                        v-model:value="form.downloadTabIosUrl"
+                        placeholder="Если пусто - показывается текст вместо кнопки"
+                    />
                 </n-form-item>
 
                 <!-- Cookies -->

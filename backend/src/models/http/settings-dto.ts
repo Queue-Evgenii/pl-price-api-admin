@@ -43,6 +43,11 @@ export class UpdateSettingRequestDto {
   @IsString()
   downloadTabPcEmptyText?: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  downloadTabPcUrl?: string;
+
   /** Android */
   @ApiPropertyOptional()
   @IsOptional()
@@ -54,6 +59,11 @@ export class UpdateSettingRequestDto {
   @IsString()
   downloadTabAndroidEmptyText?: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  downloadTabAndroidUrl?: string;
+
   /** iOS */
   @ApiPropertyOptional()
   @IsOptional()
@@ -64,6 +74,11 @@ export class UpdateSettingRequestDto {
   @IsOptional()
   @IsString()
   downloadTabIosEmptyText?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  downloadTabIosUrl?: string;
 
   /** Cookies */
   @ApiPropertyOptional()
