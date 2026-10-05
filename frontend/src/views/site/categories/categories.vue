@@ -174,8 +174,8 @@ watch(
               <n-scrollbar style="max-height: 100%">
                 <img v-if="settingsStore.settings?.banner" :src="settingsStore.settings?.banner.url" alt="Banner" class="dropdown__list" style="padding-bottom: 0; width: 100%; object-fit: contain;">
                 <ul class="dropdown__list">
-                  <li v-if="slug !== undefined" class="dropdown__item">
-                    <router-link class="dropdown__button" :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" >
+                  <li v-if="slug !== undefined" class="dropdown__item category-back-item">
+                    <router-link class="dropdown__button category-back" aria-label="Back" :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" >
                       <n-flex :align="'center'" justify="center" style="position: relative;">
                         <ArrowBackIosFilled width="32px" style="position: absolute; left: 8px;" />
                         <span>Back</span>
@@ -327,6 +327,37 @@ watch(
 .estimate-media__add {
   align-self: center;
 }
+@media (max-width: 768px) {
+  .category-back-item {
+    margin: 0;
+    padding: 0;
+  }
+  .category-back {
+    position: fixed;
+    top: max(66px, calc(env(safe-area-inset-top, 0px) + 64px));
+    left: max(14px, calc(env(safe-area-inset-left, 0px) + 12px));
+    z-index: 1190;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    min-height: 44px;
+    padding: 0;
+    border: 1px solid rgba(0, 0, 0, 0.28);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2d2d2d;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+  .category-back span {
+    display: none;
+  }
+  .category-back svg {
+    position: static !important;
+    width: 24px;
+    height: 24px;
+  }
+}
 @media (max-width: 600px) {
   .main__header-row {
     flex-wrap: wrap;
@@ -453,6 +484,12 @@ watch(
 @media (max-width: 600px) {
   .site-switcher {
     width: min(180px, 48vw);
+  }
+}
+
+@media (max-width: 768px) {
+  .site-switcher {
+    top: max(66px, calc(env(safe-area-inset-top, 0px) + 64px));
   }
 }
 
