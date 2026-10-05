@@ -1184,7 +1184,8 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px max(18px, env(safe-area-inset-right)) 12px max(18px, env(safe-area-inset-left));
+  /* Keep controls below the iOS status bar, including while sticky. */
+  padding: calc(12px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) 12px max(18px, env(safe-area-inset-left, 0px));
   background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid #e1e4ea;
   backdrop-filter: blur(14px);
@@ -1194,6 +1195,9 @@ onMounted(() => {
 }
 
 .builder-logo {
+  /* Reserve space for the fixed help button. */
+  margin-left: 52px;
+  flex-shrink: 0;
   width: 118px;
   height: 42px;
   object-fit: contain;
@@ -2215,7 +2219,7 @@ p { color: #5c6370; }
 
 @media (max-width: 430px) {
   .builder-top {
-    padding: 10px;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) 10px max(10px, env(safe-area-inset-left, 0px));
   }
 
   .builder-logo {
