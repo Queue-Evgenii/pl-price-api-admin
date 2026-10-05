@@ -10,6 +10,7 @@ import { Site } from '@/types/models/utils/browser/site';
 import { Capacitor } from '@capacitor/core';
 import { inject } from 'vue';
 import CookieBanner from '@/components/cookie-banner.vue';
+import { RouteName } from '@/types/constants/route-name';
 
 const sitesStore = useSitesStore();
 const settingsStore = useSettingsStore();
@@ -193,6 +194,7 @@ const helpSteps = computed(() => {
   <button
     type="button"
     class="site-help-button"
+    :class="{ 'site-help-button--category-detail': route.name === RouteName.SITE.CATEGORIES.DETAIL }"
     data-tour="help-button"
     aria-label="Open help guide"
     @click="helpTour?.open()"
@@ -224,5 +226,11 @@ const helpSteps = computed(() => {
 }
 .site-help-button:active {
   transform: scale(0.96);
+}
+@media (max-width: 768px) {
+  .site-help-button--category-detail {
+    left: auto;
+    right: max(14px, calc(env(safe-area-inset-right, 0px) + 12px));
+  }
 }
 </style>
