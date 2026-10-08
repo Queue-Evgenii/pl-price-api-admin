@@ -203,6 +203,23 @@ watch(
                   </li>
 
                   <template v-if="slug === undefined">
+                    <li class="dropdown__item" data-tour="download-section-pc">
+                      <n-collapse>
+                        <n-collapse-item>
+                          <template #arrow>
+                            <n-icon></n-icon>
+                          </template>
+                          <template #header>
+                            <a class="dropdown__button">
+                              {{ settingsStore.settings?.downloadTabPcTitle ?? 'Wersja do komputera' }}
+                            </a>
+                          </template>
+                          <div class="subtab">
+                            <a :href="settingsStore.settings?.downloadTabPcUrl || '/NMRDealer.zip'">{{ settingsStore.settings?.downloadTabPcButtonText ?? 'Pobierz' }}</a>
+                          </div>
+                        </n-collapse-item>
+                      </n-collapse>
+                    </li>
                     <li class="dropdown__item" data-tour="download-section">
                       <n-collapse>
                         <n-collapse-item>
@@ -215,22 +232,11 @@ watch(
                             </a>
                           </template>
                           <ul class="tabs">
-                            <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-1' }" @click="openInner('inner-1')">{{ settingsStore.settings?.downloadTabPcTitle ?? 'Wersja do komputera' }}</li>
                             <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-2' }" @click="openInner('inner-2')">{{ settingsStore.settings?.downloadTabAndroidTitle ?? 'Wersja Do Androida' }}</li>
                             <li class="tab" :class="{ selected: innerExpanded[0] === 'inner-3' }" @click="openInner('inner-3')">{{ settingsStore.settings?.downloadTabIosTitle ?? 'Wersja do Apple' }}</li>
                           </ul>
                           <div class="subtabs">
                             <n-collapse v-model:expanded-names="innerExpanded">
-                              <n-collapse-item name="inner-1">
-                                <template #arrow>
-                                  <n-icon></n-icon>
-                                </template>
-                                <template #header>
-                                </template>
-                                <div class="subtab">
-                                  <a :href="settingsStore.settings?.downloadTabPcUrl || '/NMRDealer.zip'">{{ settingsStore.settings?.downloadTabPcButtonText ?? 'Pobierz' }}</a>
-                                </div>
-                              </n-collapse-item>
                               <n-collapse-item name="inner-2">
                                 <template #arrow>
                                   <n-icon></n-icon>
