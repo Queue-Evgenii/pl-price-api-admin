@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { withErrorHandling } from '@/api/api-error-handler';
 import type { SettingsApi } from '@/api/modules/settings';
+import type { SitesApi } from '@/api/modules/sites';
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import HelpTour from '@/components/help-tour.vue';
@@ -15,17 +16,19 @@ import { RouteName } from '@/types/constants/route-name';
 const sitesStore = useSitesStore();
 const settingsStore = useSettingsStore();
 const settingsApi = inject<SettingsApi>('SettingsApi')!;
+const sitesApi = inject<SitesApi>('SitesApi')!;
 
 const isNative = Capacitor.isNativePlatform();
 const route = useRoute();
 const helpTour = ref<InstanceType<typeof HelpTour> | null>(null);
-const fallbackSites = [
-  { id: 1, code: 'pl', name: 'PL', active: true },
-];
 
 const init = async () => {
   if (!sitesStore.sites || sitesStore.sites.length === 0) {
-    sitesStore.setSites(fallbackSites);
+    await withErrorHandling(sitesApi.getAll())
+      .then(res => {
+        res = res.filter(el => el.active == true);
+        sitesStore.setSites(res);
+      })
   }
 
   if (Site.exists()) {
