@@ -3,21 +3,24 @@ import { commonRoutes } from './common.routes';
 import { useSitesStore } from '@/stores/sites';
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
 import type { SiteEntity } from '@/types/models/entities/site.entity';
+import { withErrorHandling } from '@/api/api-error-handler';
+import type { SitesApi } from '@/api/modules/sites';
+import { inject } from 'vue';
 import { IosStartSectionStorage } from '@/types/models/utils/browser/ios-start-section';
 import { Capacitor } from '@capacitor/core';
 
 const DEFAULT_LANG = 'pl';
-const FALLBACK_SITES = [
-  { id: 1, code: 'pl', name: 'PL', active: true },
-];
 
-function langGuard(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+async function langGuard(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const lang = Array.isArray(to.params.lang) ? to.params.lang[0] : to.params.lang;
   const sitesStore = useSitesStore();
+  const sitesApi = inject<SitesApi>('SitesApi')!;
 
-  if (sitesStore.sites.length === 0) {
-    sitesStore.setSites(FALLBACK_SITES);
-  }
+  await withErrorHandling(sitesApi.getAll())
+    .then(res => {
+      res = res.filter(el => el.active == true);
+      sitesStore.setSites(res);
+    })
 
   if (!sitesStore.sites.find((el: SiteEntity) => el.code === lang)) {
     if (lang === 'categories' || lang === '') return next({ path: `/${DEFAULT_LANG}/categories` })
