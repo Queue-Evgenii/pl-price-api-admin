@@ -217,7 +217,7 @@ const columns: DataTableColumns<SiteEntity> = [
     <n-modal
         v-if="editingSite"
         v-model:show="isDeleteConfirmation"
-        :title="`Sure you want to delete category ${editingSite.id}`"
+        :title="`Sure you want to delete site ${editingSite.id}`"
         preset="dialog"
         @after-leave="closeDeleteModal"
     >

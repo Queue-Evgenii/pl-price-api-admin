@@ -57,6 +57,18 @@ const updatePhoto = async (photoId: number, dto: UpdatePhotosDto) => {
   }
 }
 
+const deletingPhoto = ref<PhotoEntity | null>(null);
+const isDeleteConfirmation = ref(false);
+
+const openDeleteModal = (photo: PhotoEntity) => {
+  deletingPhoto.value = photo;
+  isDeleteConfirmation.value = true;
+}
+const closeDeleteModal = () => {
+  deletingPhoto.value = null;
+  isDeleteConfirmation.value = false;
+}
+
 const removePhoto = async (photoId: number) => {
   try {
     const { data } = await categoriesAdminApi.deletePhoto(photoId);
@@ -64,6 +76,7 @@ const removePhoto = async (photoId: number) => {
   } catch (error) {
     console.error('Photo deleting error:', error);
   }
+  closeDeleteModal();
 }
 
 const beforeUpload = (uploadFile: { file: UploadFileInfo }) => {
@@ -191,7 +204,7 @@ onMounted(() => {
                 </n-image>
               </n-card>
               <n-switch v-model:value="image.isActive" @update:value="(value: boolean) => switchStatus(image, value)"  :round="false" size="large" />
-              <n-button size="small" type="error" @click="removePhoto(image.id)">
+              <n-button size="small" type="error" @click="openDeleteModal(image)">
                 <template #icon>
                   <DeleteFilled />
                 </template>
@@ -206,6 +219,19 @@ onMounted(() => {
       </n-list>
     </div>
   </n-card>
+
+  <n-modal
+    v-if="deletingPhoto"
+    v-model:show="isDeleteConfirmation"
+    :title="`Sure you want to delete ${deletingPhoto.type === 'video' ? 'video' : 'photo'} ${deletingPhoto.id}`"
+    preset="dialog"
+    @after-leave="closeDeleteModal"
+  >
+    <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 16px;">
+      <n-button @click="closeDeleteModal">Cancel</n-button>
+      <n-button type="error" @click="() => { if (deletingPhoto) removePhoto(deletingPhoto.id) }">Delete</n-button>
+    </div>
+  </n-modal>
 </template>
 
 <style scoped>

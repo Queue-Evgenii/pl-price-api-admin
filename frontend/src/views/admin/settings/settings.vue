@@ -62,6 +62,8 @@ const handleUpload = async ({ file }: { file: UploadFileInfo }) => {
     }
 };
 
+const isDeleteConfirmation = ref(false);
+
 const removeBanner = async () => {
     if (!form.banner?.id) return;
     try {
@@ -72,6 +74,7 @@ const removeBanner = async () => {
         console.error(err);
         message.error("Ошибка при удалении баннера");
     }
+    isDeleteConfirmation.value = false;
 };
 
 const submit = async () => {
@@ -211,7 +214,7 @@ watch(
                                 <n-button
                                     size="small"
                                     type="error"
-                                    @click="removeBanner"
+                                    @click="isDeleteConfirmation = true"
                                 >
                                     <template #icon>
                                         <DeleteFilled />
@@ -227,4 +230,22 @@ watch(
             </n-form>
         </n-card>
     </n-spin>
+
+    <n-modal
+        v-model:show="isDeleteConfirmation"
+        title="Удалить баннер?"
+        preset="dialog"
+    >
+        <div
+            style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.5rem;
+                margin-top: 16px;
+            "
+        >
+            <n-button @click="isDeleteConfirmation = false">Отмена</n-button>
+            <n-button type="error" @click="removeBanner">Удалить</n-button>
+        </div>
+    </n-modal>
 </template>
