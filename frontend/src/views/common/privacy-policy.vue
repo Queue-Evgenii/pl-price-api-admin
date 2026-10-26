@@ -1,14 +1,8 @@
 <template>
   <div class="privacy-policy">
-    <div class="privacy-policy__back-button">
-      <router-link to="/" class="privacy-policy__back-link">
-        <n-flex align="center" justify="center">
-          <span>← Back</span>
-        </n-flex>
-      </router-link>
-    </div>
     <div class="privacy-policy__container">
       <h1 class="privacy-policy__title">Privacy Policy</h1>
+      <BackLink to="/" class="privacy-policy__back" />
 
       <div class="privacy-policy__content">
         <div class="privacy-policy__updated">
@@ -116,8 +110,7 @@
 </template>
 
 <script setup lang="ts">
-// Privacy Policy page component
-// Provides information about data collection and usage
+import BackLink from '@/components/back-link.vue';
 </script>
 
 <style scoped>
@@ -127,33 +120,8 @@
   padding: 20px;
 }
 
-.privacy-policy__back-button {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-}
-
-.privacy-policy__back-link {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color: #3b82f6;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.privacy-policy__back-link:hover {
-  background-color: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.privacy-policy__back-link span {
-  font-size: 16px;
+.privacy-policy__back {
+  margin-bottom: 26px;
 }
 
 .privacy-policy__container {
@@ -271,22 +239,9 @@
     padding: 16px;
   }
 
-  .privacy-policy__back-button {
-    top: 30px;
-    left: 10px;
-  }
-
-  .privacy-policy__back-link {
-    padding: 10px 20px;
-  }
-
-  .privacy-policy__back-link span {
-    font-size: 14px;
-  }
-
   .privacy-policy__container {
     padding: 24px;
-    margin-top: 60px;
+    margin-top: 0;
   }
 
   .privacy-policy__title {

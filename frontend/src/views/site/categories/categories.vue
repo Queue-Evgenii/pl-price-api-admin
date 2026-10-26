@@ -5,7 +5,7 @@ import type { CategoryEntity } from '@/types/models/entities/category.entity';
 import { inject, onMounted, ref, watch } from 'vue';
 import loader from '@/components/loader.vue';
 import { RouteName } from '@/types/constants/route-name';
-import { ArrowBackIosFilled, TelegramFilled, VideoLibraryTwotone } from '@vicons/material';
+import { TelegramFilled, VideoLibraryTwotone } from '@vicons/material';
 import { useCategoriesStore } from '@/stores/categories';
 import { useSitesStore } from '@/stores/sites';
 import { useRoute, useRouter } from 'vue-router';
@@ -15,6 +15,7 @@ import { useSettingsStore } from '@/stores/settings';
 import { usePhotosStore } from '@/stores/photos';
 import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import CategoryMedia from '@/components/category-media.vue';
+import BackLink from '@/components/back-link.vue';
 import EstimateButton from '@/components/estimate-button.vue';
 import EstimateDrawer from '@/components/estimate-drawer.vue';
 import { useEstimateStore } from '@/stores/estimate';
@@ -175,12 +176,7 @@ watch(
                 <img v-if="settingsStore.settings?.banner" :src="settingsStore.settings?.banner.url" alt="Banner" class="dropdown__list" style="padding-bottom: 0; width: 100%; object-fit: contain;">
                 <ul class="dropdown__list">
                   <li v-if="slug !== undefined" class="dropdown__item category-back-item">
-                    <router-link class="dropdown__button category-back" aria-label="Back" :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" >
-                      <n-flex :align="'center'" justify="center" style="position: relative;">
-                        <ArrowBackIosFilled width="32px" style="position: absolute; left: 8px;" />
-                        <span>Back</span>
-                      </n-flex>
-                    </router-link>
+                    <BackLink :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" />
                   </li>
                   <li v-if="photos.length > 0" class="dropdown__item">
                     <div v-for="photo in photos" :key="photo.id" class="estimate-media">
@@ -332,37 +328,6 @@ watch(
 }
 .estimate-media__add {
   align-self: center;
-}
-@media (max-width: 768px) {
-  .category-back-item {
-    margin: 0;
-    padding: 0;
-  }
-  .category-back {
-    position: fixed;
-    top: max(66px, calc(env(safe-area-inset-top, 0px) + 64px));
-    left: max(14px, calc(env(safe-area-inset-left, 0px) + 12px));
-    z-index: 1190;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    min-height: 44px;
-    padding: 0;
-    border: 1px solid rgba(0, 0, 0, 0.28);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #2d2d2d;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
-  .category-back span {
-    display: none;
-  }
-  .category-back svg {
-    position: static !important;
-    width: 24px;
-    height: 24px;
-  }
 }
 @media (max-width: 600px) {
   .main__header-row {

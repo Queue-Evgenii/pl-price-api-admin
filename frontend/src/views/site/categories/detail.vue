@@ -4,7 +4,8 @@ import type { PhotoEntity } from '@/types/models/entities/photo.entity';
 import { inject, onMounted, ref, nextTick, onUnmounted } from 'vue';
 import loader from '@/components/loader.vue';
 import { usePhotosStore } from '@/stores/photos';
-import { ArrowBackIosFilled } from '@vicons/material';
+import BackLink from '@/components/back-link.vue';
+import { useSettingsStore } from '@/stores/settings';
 import { useCategoriesStore } from '@/stores/categories';
 import { RouteName } from '@/types/constants/route-name';
 import { withErrorHandling } from '@/api/api-error-handler';
@@ -21,6 +22,7 @@ const photos = ref<PhotoEntity[]>([]);
 const isLoading = ref<boolean>(false);
 const photosStore = usePhotosStore();
 const categoriesStore = useCategoriesStore();
+const settingsStore = useSettingsStore();
 const estimateStore = useEstimateStore();
 const parentSlug = ref<string | null>();
 const isEstimateOpen = ref(false);
@@ -167,14 +169,13 @@ onUnmounted(() => {
           <div class="content">
             <header class="main__header">
               <h2>
-                <router-link :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" class="icon">
-                  <ArrowBackIosFilled  />
-                </router-link>
                 <span>{{ photos && photos.length > 0 ? photos[0].category.name : "Oops! Nothing here :(" }}</span>
               </h2>
               <EstimateButton v-if="isIos" @open="isEstimateOpen = true" />
             </header>
-            <div v-if="photos && photos.length > 0" style="max-height: 100%; padding-bottom: 56px; overflow-y: auto;">
+            <div class="detail-content">
+              <img v-if="settingsStore.settings?.banner" :src="settingsStore.settings.banner.url" alt="Banner" class="detail-banner">
+              <BackLink :to="parentSlug ? { name: RouteName.SITE.CATEGORIES.SLUG, params: { slug: parentSlug } } : { name: RouteName.SITE.CATEGORIES.ROOT }" />
               <div v-for="photo in photos" :key="photo.id" class="estimate-media">
                 <CategoryMedia :media="photo" />
                 <n-button v-if="isIos" size="small" secondary class="estimate-media__add" @click="addPhotoToEstimate(photo)">
@@ -206,24 +207,20 @@ onUnmounted(() => {
   min-height: 44px;
   margin-top: 0;
   margin-bottom: 8px;
-  padding: 0 44px;
+  padding: 0;
 }
-.main__header .icon {
-  position: absolute;
-  left: 0;
-  top: 50%;
+.detail-content {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  font-size: 0;
-  transform: translateY(-50%);
-  cursor: pointer;
+  flex-direction: column;
+  gap: 26px;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 20px 0 56px;
 }
-.main__header .icon svg {
-  width: 24px;
-  height: 24px;
+.detail-banner {
+  width: 100%;
+  object-fit: contain;
 }
 .content {
   position: relative;

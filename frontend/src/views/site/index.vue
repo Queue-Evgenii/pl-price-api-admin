@@ -195,9 +195,9 @@ const helpSteps = computed(() => {
 
 <template>
   <button
+    v-if="route.name === RouteName.SITE.PLANNER"
     type="button"
     class="site-help-button"
-    :class="{ 'site-help-button--category-detail': route.name === RouteName.SITE.CATEGORIES.DETAIL }"
     data-tour="help-button"
     aria-label="Open help guide"
     @click="helpTour?.open()"
@@ -206,7 +206,7 @@ const helpSteps = computed(() => {
   </button>
   <router-view />
   <CookieBanner v-if="!isNative" />
-  <HelpTour ref="helpTour" :steps="helpSteps" storage-key="pl-price-site-help-tour-seen-v4" />
+  <HelpTour v-if="route.name === RouteName.SITE.PLANNER" ref="helpTour" :steps="helpSteps" storage-key="pl-price-site-help-tour-seen-v4" />
 </template>
 
 <style scoped>
@@ -229,11 +229,5 @@ const helpSteps = computed(() => {
 }
 .site-help-button:active {
   transform: scale(0.96);
-}
-@media (max-width: 768px) {
-  .site-help-button--category-detail {
-    left: auto;
-    right: max(14px, calc(env(safe-area-inset-right, 0px) + 12px));
-  }
 }
 </style>
