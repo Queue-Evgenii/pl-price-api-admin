@@ -772,10 +772,10 @@ onMounted(() => {
 
     <header class="builder-top">
       <img :src="logoUrl" alt="Poland Group" class="builder-logo">
+      <n-select class="builder-lang" data-tour="planner-lang" :value="curOpt" :options="langOpts" @update:value="changeSite" />
       <div class="top-actions">
         <n-button v-if="projects.length > 0" secondary @click="isProjectsDrawerOpen = true">{{ t.actions.projects }}</n-button>
-        <n-button secondary data-tour="catalog-link" @click="openCatalog">{{ t.actions.catalog }}</n-button>
-        <n-select class="builder-lang" data-tour="planner-lang" :value="curOpt" :options="langOpts" @update:value="changeSite" />
+        <button type="button" class="catalog-button" data-tour="catalog-link" @click="openCatalog">{{ t.actions.catalog }}</button>
       </div>
     </header>
 
@@ -1180,7 +1180,8 @@ onMounted(() => {
   position: sticky;
   top: 0;
   z-index: 5;
-  display: flex;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) 88px;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -1195,24 +1196,34 @@ onMounted(() => {
 }
 
 .builder-logo {
-  /* Reserve space for the fixed help button. */
-  margin-left: 52px;
-  flex-shrink: 0;
+  grid-column: 2;
+  justify-self: center;
   width: 118px;
-  height: 42px;
+  max-width: 100%;
+  height: 44px;
   object-fit: contain;
 }
 
 .top-actions {
-  display: flex;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
   min-width: 0;
-  flex-wrap: wrap;
 }
 
-.builder-lang { width: 104px; }
+.builder-lang {
+  grid-column: 3;
+  grid-row: 1;
+  width: 88px;
+  justify-self: end;
+}
+
+.builder-lang :deep(.n-base-selection-label) { height: 44px; }
+
+.top-actions :deep(.n-button) { min-height: 44px; }
 
 .builder-shell {
   width: min(1120px, calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
@@ -2095,6 +2106,16 @@ p { color: #5c6370; }
   min-width: 156px;
   min-height: 50px;
   padding: 0 18px;
+}
+
+.catalog-button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+}
+
+.create-fab,
+.catalog-button {
   border: 1px solid rgba(180, 20, 40, 0.28);
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(201, 39, 59, 0.88), rgba(169, 17, 36, 0.82));
@@ -2114,7 +2135,8 @@ p { color: #5c6370; }
   font-size: 22px;
 }
 
-.create-fab:active {
+.create-fab:active,
+.catalog-button:active {
   transform: translateY(1px);
 }
 
@@ -2199,7 +2221,6 @@ p { color: #5c6370; }
     grid-template-columns: 1fr 1fr;
   }
 
-  .builder-lang { width: 100%; grid-column: 1 / -1; }
   .summary-layout,
   .builder-grid { grid-template-columns: 1fr; }
   .project-summary-content--numbers { grid-template-columns: 1fr; }
@@ -2224,7 +2245,6 @@ p { color: #5c6370; }
 
   .builder-logo {
     width: 82px;
-    height: 34px;
   }
 
   .top-actions {

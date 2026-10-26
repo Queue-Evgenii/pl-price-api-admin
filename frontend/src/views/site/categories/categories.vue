@@ -452,15 +452,28 @@ watch(
   height: 18px !important;
 }
 
-@media (max-width: 600px) {
-  .site-switcher {
-    width: min(180px, 48vw);
-  }
-}
-
 @media (max-width: 768px) {
   .site-switcher {
     top: max(66px, calc(env(safe-area-inset-top, 0px) + 64px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    width: 88px;
+  }
+
+  .site-switcher .dropdown__button {
+    border-radius: 8px;
+  }
+
+  .site-switcher .n-base-selection > * {
+    font-size: 16px !important;
+  }
+
+  .site-switcher .n-base-selection-label {
+    height: 44px;
+  }
+
+  .site-switcher img {
+    width: 18px !important;
+    height: 14px !important;
   }
 }
 
